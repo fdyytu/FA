@@ -7,6 +7,7 @@ from app.models.wallet import (
     WalletTransaction, Transfer, TopUpRequest,
     TransactionType, PaymentMethod, TopUpStatus
 )
+from app.models.admin import AdminConfig, PPOBMarginConfig, MarginType
 
 __all__ = [
     "Base",
@@ -22,6 +23,9 @@ __all__ = [
     "TopUpRequest",
     "TransactionType",
     "PaymentMethod",
-    "TopUpStatus"
+    "TopUpStatus",
+    "AdminConfig",
+    "PPOBMarginConfig",
+    "MarginType"
 ]
 

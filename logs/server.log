@@ -1,0 +1,12 @@
+2025-06-12 04:26:07,377 - server - INFO - Logging system initialized
+2025-06-12 04:26:07,377 - server - INFO - Log level: INFO
+2025-06-12 04:26:07,377 - server - INFO - Starting FA Application...
+2025-06-12 04:26:07,385 - server - INFO - Database tables created/verified
+2025-06-12 04:26:07,431 - server - INFO - API routes registered
+2025-06-12 04:26:07,431 - server - INFO - FA Application initialized successfully
+2025-06-12 04:28:12,116 - server - INFO - Logging system initialized
+2025-06-12 04:28:12,116 - server - INFO - Log level: INFO
+2025-06-12 04:28:12,116 - server - INFO - Starting FA Application...
+2025-06-12 04:28:12,123 - server - INFO - Database tables created/verified
+2025-06-12 04:28:12,180 - server - INFO - API routes registered
+2025-06-12 04:28:12,180 - server - INFO - FA Application initialized successfully

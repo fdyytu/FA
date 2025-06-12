@@ -9,6 +9,8 @@ from app.schemas.ppob import (
     PPOBTransactionResponse, PPOBProductResponse
 )
 from app.services.ppob.providers import DefaultPPOBProvider
+from app.services.ppob.providers.digiflazz_provider import DigiflazzProvider
+from app.services.admin_service import AdminConfigService, PPOBMarginService
 from app.core.config import settings
 
 class PPOBService:
@@ -16,11 +18,36 @@ class PPOBService:
     
     def __init__(self, db: Session):
         self.db = db
-        self.provider = DefaultPPOBProvider(
-            api_url=settings.PPOB_API_URL,
-            api_key=settings.PPOB_API_KEY,
-            timeout=settings.PPOB_TIMEOUT
-        )
+        self.admin_service = AdminConfigService(db)
+        self.margin_service = PPOBMarginService(db)
+        self.provider = self._get_provider()
+    
+    def _get_provider(self):
+        """Ambil provider berdasarkan konfigurasi admin"""
+        try:
+            # Coba ambil konfigurasi Digiflazz
+            digiflazz_config = self.admin_service.get_digiflazz_config()
+            
+            if digiflazz_config["is_configured"]:
+                return DigiflazzProvider(
+                    username=digiflazz_config["username"],
+                    api_key=digiflazz_config["api_key"],
+                    production=digiflazz_config["production"]
+                )
+            else:
+                # Fallback ke default provider
+                return DefaultPPOBProvider(
+                    api_url=settings.PPOB_API_URL,
+                    api_key=settings.PPOB_API_KEY,
+                    timeout=settings.PPOB_TIMEOUT
+                )
+        except Exception as e:
+            # Jika ada error, gunakan default provider
+            return DefaultPPOBProvider(
+                api_url=settings.PPOB_API_URL,
+                api_key=settings.PPOB_API_KEY,
+                timeout=settings.PPOB_TIMEOUT
+            )
     
     def get_products_by_category(self, category: PPOBCategory) -> List[PPOBProduct]:
         """Ambil produk berdasarkan kategori"""
@@ -74,6 +101,14 @@ class PPOBService:
             # Generate transaction code
             transaction_code = self.provider._generate_transaction_code()
             
+            # Hitung harga dengan margin
+            base_price = product.price
+            final_price = self.margin_service.calculate_price_with_margin(
+                base_price=base_price,
+                category=request.category.value,
+                product_code=request.product_code
+            )
+            
             # Buat transaksi
             transaction = PPOBTransaction(
                 user_id=user.id,
@@ -82,9 +117,9 @@ class PPOBService:
                 product_code=request.product_code,
                 product_name=product.product_name,
                 customer_number=request.customer_number,
-                amount=product.price,
+                amount=final_price,  # Gunakan harga dengan margin
                 admin_fee=product.admin_fee,
-                total_amount=product.price + product.admin_fee,
+                total_amount=final_price + product.admin_fee,
                 status=TransactionStatus.PENDING
             )
             
