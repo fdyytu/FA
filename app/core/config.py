@@ -9,6 +9,20 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     WATCH_PATH: Path = Path("./monitored_files")
     
+    # Database settings
+    DATABASE_URL: str = "postgresql://user:password@localhost/fa_db"
+    
+    # Security settings
+    SECRET_KEY: str = "your-secret-key-here-change-in-production"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    
+    # PPOB settings
+    PPOB_API_URL: str = "https://api.ppob-provider.com"
+    PPOB_API_KEY: str = "your-ppob-api-key"
+    PPOB_TIMEOUT: int = 30
+    
     class Config:
         env_file = ".env"
 
