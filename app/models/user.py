@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Text
+from sqlalchemy import Column, String, Boolean, Text, Numeric
 from sqlalchemy.orm import relationship
 from app.models.base import BaseModel
 
@@ -12,6 +12,11 @@ class User(BaseModel):
     is_active = Column(Boolean, default=True)
     is_superuser = Column(Boolean, default=False)
     phone_number = Column(String(20), nullable=True)
+    balance = Column(Numeric(15, 2), default=0, nullable=False)
     
-    # Relationship dengan transaksi PPOB
+    # Relationships
     ppob_transactions = relationship("PPOBTransaction", back_populates="user")
+    wallet_transactions = relationship("WalletTransaction", back_populates="user")
+    sent_transfers = relationship("Transfer", foreign_keys="Transfer.sender_id", back_populates="sender")
+    received_transfers = relationship("Transfer", foreign_keys="Transfer.receiver_id", back_populates="receiver")
+    topup_requests = relationship("TopUpRequest", back_populates="user")

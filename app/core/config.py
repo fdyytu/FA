@@ -23,6 +23,12 @@ class Settings(BaseSettings):
     PPOB_API_KEY: str = "your-ppob-api-key"
     PPOB_TIMEOUT: int = 30
     
+    # Midtrans settings
+    MIDTRANS_SERVER_KEY: str = "your-midtrans-server-key"
+    MIDTRANS_CLIENT_KEY: str = "your-midtrans-client-key"
+    MIDTRANS_IS_PRODUCTION: bool = False
+    MIDTRANS_MERCHANT_ID: str = "your-merchant-id"
+    
     class Config:
         env_file = ".env"
 
