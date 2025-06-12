@@ -2,12 +2,32 @@
 Middleware package untuk FA application
 """
 
-from .rate_limiter import RateLimiterMiddleware
-from .security import SecurityMiddleware
-from .error_handler import ErrorHandlerMiddleware
+from .security import (
+    require_admin, 
+    require_active_user, 
+    require_verified_user,
+    RateLimiter,
+    api_rate_limiter,
+    auth_rate_limiter,
+    rate_limit_check,
+    log_user_activity,
+    SecurityHeaders,
+    validate_user_access,
+    IPWhitelist,
+    admin_ip_whitelist
+)
 
 __all__ = [
-    "RateLimiterMiddleware",
-    "SecurityMiddleware", 
-    "ErrorHandlerMiddleware"
+    "require_admin",
+    "require_active_user", 
+    "require_verified_user",
+    "RateLimiter",
+    "api_rate_limiter",
+    "auth_rate_limiter",
+    "rate_limit_check",
+    "log_user_activity",
+    "SecurityHeaders",
+    "validate_user_access",
+    "IPWhitelist",
+    "admin_ip_whitelist"
 ]
