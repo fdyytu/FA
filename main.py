@@ -31,6 +31,7 @@ from app.api.v1.wallet import router as wallet_router
 from app.api.v1.transactions import router as transactions_router
 from app.api.v1.ppob import router as ppob_router
 from app.api.v1.admin import router as admin_router
+from app.api.v1.endpoints.cache import router as cache_router
 
 # Setup logging
 setup_logging()
@@ -80,6 +81,9 @@ async def startup_tasks():
         
         # Initialize cache connections
         logger.info("Initializing cache connections...")
+        from app.cache.managers.cache_manager import cache_manager
+        await cache_manager.initialize()
+        logger.info("Cache manager initialized successfully")
         
         # Load initial data if needed
         logger.info("Loading initial application data...")
@@ -96,6 +100,9 @@ async def shutdown_tasks():
         
         # Clear caches
         logger.info("Clearing application caches...")
+        from app.cache.managers.cache_manager import cache_manager
+        await cache_manager.close_all()
+        logger.info("Cache connections closed successfully")
         
         # Close external service connections
         logger.info("Closing external service connections...")
@@ -215,6 +222,12 @@ def include_routers(app: FastAPI):
         tags=["Admin"]
     )
     
+    app.include_router(
+        cache_router,
+        prefix=f"{api_prefix}/cache",
+        tags=["Cache Management"]
+    )
+    
     logger.info("API routes configured successfully")
 
 
@@ -242,9 +255,18 @@ def add_health_check(app: FastAPI):
         except Exception as e:
             db_status = f"unhealthy: {str(e)}"
         
+        # Check cache health
+        try:
+            from app.cache.managers.cache_manager import cache_manager
+            cache_health = await cache_manager.health_check()
+            cache_status = cache_health.get("overall_status", "unknown")
+        except Exception as e:
+            cache_status = f"unhealthy: {str(e)}"
+        
         # Check external services
         external_services = {
             "database": db_status,
+            "cache": cache_status,
             # Add other service checks here
         }
         

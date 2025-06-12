@@ -34,6 +34,19 @@ class Settings(BaseSettings):
     REDIS_PASSWORD: Optional[str] = None
     REDIS_DB: str = "0"
     
+    # Cache Settings
+    CACHE_ENABLED: bool = True
+    CACHE_DEFAULT_TTL: int = 1800  # 30 menit dalam detik
+    CACHE_REDIS_TTL: int = 3600    # 1 jam untuk Redis
+    CACHE_MEMORY_TTL: int = 900    # 15 menit untuk Memory
+    CACHE_MAX_MEMORY_SIZE: int = 1000  # Max items di memory cache
+    
+    # Cache per Domain
+    CACHE_PPOB_PRODUCT_TTL: int = 3600     # 1 jam untuk PPOB products
+    CACHE_PPOB_INQUIRY_TTL: int = 300      # 5 menit untuk inquiry
+    CACHE_USER_PROFILE_TTL: int = 1800     # 30 menit untuk user profile
+    CACHE_TRANSACTION_TTL: int = 600       # 10 menit untuk transaction
+    
     # Logging
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "json"

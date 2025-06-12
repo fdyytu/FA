@@ -12,6 +12,9 @@ from app.services.ppob.providers import DefaultPPOBProvider
 from app.services.ppob.providers.digiflazz_provider import DigiflazzProvider
 from app.services.admin_service import AdminConfigService, PPOBMarginService
 from app.core.config import settings
+from app.cache.managers.ppob_cache_manager import ppob_cache_manager
+from app.cache.decorators.cache_decorators import cache_result, cache_invalidate
+from datetime import timedelta
 
 class PPOBService:
     """Service untuk menangani transaksi PPOB (Single Responsibility Principle)"""
@@ -49,22 +52,40 @@ class PPOBService:
                 timeout=settings.PPOB_TIMEOUT
             )
     
-    def get_products_by_category(self, category: PPOBCategory) -> List[PPOBProduct]:
-        """Ambil produk berdasarkan kategori"""
-        return self.db.query(PPOBProduct).filter(
-            PPOBProduct.category == category,
-            PPOBProduct.is_active == "1"
-        ).all()
+    async def get_products_by_category(self, category: PPOBCategory) -> List[PPOBProduct]:
+        """Ambil produk berdasarkan kategori dengan cache"""
+        
+        def fetch_from_db(cat: PPOBCategory) -> List[PPOBProduct]:
+            """Function untuk fetch dari database"""
+            return self.db.query(PPOBProduct).filter(
+                PPOBProduct.category == cat,
+                PPOBProduct.is_active == "1"
+            ).all()
+        
+        # Gunakan cache manager untuk get products
+        return await ppob_cache_manager.get_products_by_category(
+            category=category,
+            fetch_func=fetch_from_db
+        )
     
-    def get_product_by_code(self, product_code: str) -> Optional[PPOBProduct]:
-        """Ambil produk berdasarkan kode"""
-        return self.db.query(PPOBProduct).filter(
-            PPOBProduct.product_code == product_code,
-            PPOBProduct.is_active == "1"
-        ).first()
+    async def get_product_by_code(self, product_code: str) -> Optional[PPOBProduct]:
+        """Ambil produk berdasarkan kode dengan cache"""
+        
+        def fetch_from_db(code: str) -> Optional[PPOBProduct]:
+            """Function untuk fetch dari database"""
+            return self.db.query(PPOBProduct).filter(
+                PPOBProduct.product_code == code,
+                PPOBProduct.is_active == "1"
+            ).first()
+        
+        # Gunakan cache manager untuk get product
+        return await ppob_cache_manager.get_product_by_code(
+            product_code=product_code,
+            fetch_func=fetch_from_db
+        )
     
     async def inquiry(self, request: PPOBInquiryRequest) -> PPOBInquiryResponse:
-        """Melakukan inquiry tagihan"""
+        """Melakukan inquiry tagihan dengan cache"""
         try:
             # Validasi kategori didukung
             if request.category not in self.provider.get_supported_categories():
@@ -73,8 +94,26 @@ class PPOBService:
                     detail=f"Kategori {request.category.value} tidak didukung"
                 )
             
+            # Cek cache inquiry dulu
+            cached_inquiry = await ppob_cache_manager.get_cached_inquiry(
+                category=request.category,
+                customer_number=request.customer_number
+            )
+            
+            if cached_inquiry:
+                # Return dari cache jika ada
+                return PPOBInquiryResponse(**cached_inquiry)
+            
             # Panggil provider untuk inquiry
             inquiry_result = await self.provider.inquiry(request)
+            
+            # Cache hasil inquiry
+            await ppob_cache_manager.cache_inquiry_result(
+                category=request.category,
+                customer_number=request.customer_number,
+                inquiry_data=inquiry_result.dict()
+            )
+            
             return inquiry_result
             
         except Exception as e:
@@ -90,8 +129,8 @@ class PPOBService:
     ) -> PPOBTransaction:
         """Buat transaksi PPOB baru"""
         try:
-            # Ambil produk
-            product = self.get_product_by_code(request.product_code)
+            # Ambil produk dengan cache
+            product = await self.get_product_by_code(request.product_code)
             if not product:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
