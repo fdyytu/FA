@@ -94,3 +94,38 @@
 2025-06-12 11:52:23,731 - server - INFO - FA Application initialized successfully
 2025-06-12 11:52:23,735 - app.services.file_watcher - INFO - Started watching directory: monitored_files
 2025-06-12 11:52:32,375 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-12 14:14:08 - app.core.logging_config - INFO - logging_config - setup_logging:104 - Logging system initialized
+2025-06-12 14:14:08 - app.core.logging_config - INFO - logging_config - setup_logging:105 - Log level: DEBUG
+2025-06-12 14:14:08 - __main__ - INFO - main - add_middleware:173 - Middleware configured successfully
+2025-06-12 14:14:08 - __main__ - INFO - main - include_routers:218 - API routes configured successfully
+2025-06-12 14:14:09 - app.core.logging_config - INFO - logging_config - setup_logging:104 - Logging system initialized
+2025-06-12 14:14:09 - app.core.logging_config - INFO - logging_config - setup_logging:105 - Log level: DEBUG
+2025-06-12 14:14:09 - __mp_main__ - INFO - main - add_middleware:173 - Middleware configured successfully
+2025-06-12 14:14:09 - __mp_main__ - INFO - main - include_routers:218 - API routes configured successfully
+2025-06-12 14:14:09 - asyncio - DEBUG - selector_events - __init__:54 - Using selector: EpollSelector
+2025-06-12 14:14:09 - app.core.logging_config - INFO - logging_config - setup_logging:104 - Logging system initialized
+2025-06-12 14:14:09 - app.core.logging_config - INFO - logging_config - setup_logging:105 - Log level: DEBUG
+2025-06-12 14:14:09 - main - INFO - main - add_middleware:173 - Middleware configured successfully
+2025-06-12 14:14:09 - main - INFO - main - include_routers:218 - API routes configured successfully
+2025-06-12 14:14:09 - uvicorn.error - INFO - server - _serve:83 - Started server process [1324]
+2025-06-12 14:14:09 - uvicorn.error - INFO - on - startup:48 - Waiting for application startup.
+2025-06-12 14:14:09 - main - INFO - main - lifespan:47 - Starting PPOB API application...
+2025-06-12 14:14:09 - sqlalchemy.engine.Engine - INFO - base - _begin_impl:1096 - BEGIN (implicit)
+2025-06-12 14:14:09 - sqlalchemy.engine.Engine - INFO - base - _commit_impl:1139 - COMMIT
+2025-06-12 14:14:09 - main - INFO - main - lifespan:52 - Database tables created successfully
+2025-06-12 14:14:09 - app.core.container - INFO - container - setup_dependencies:19 - Dependencies configured successfully
+2025-06-12 14:14:09 - main - INFO - main - lifespan:56 - Dependencies configured successfully
+2025-06-12 14:14:09 - main - INFO - main - startup_tasks:79 - Warming up external services...
+2025-06-12 14:14:09 - main - INFO - main - startup_tasks:82 - Initializing cache connections...
+2025-06-12 14:14:09 - main - INFO - main - startup_tasks:85 - Loading initial application data...
+2025-06-12 14:14:09 - main - INFO - main - lifespan:61 - Application startup completed
+2025-06-12 14:14:09 - uvicorn.error - INFO - on - startup:62 - Application startup complete.
+2025-06-12 14:14:17 - uvicorn.error - INFO - server - shutdown:263 - Shutting down
+2025-06-12 14:14:17 - uvicorn.error - INFO - on - shutdown:67 - Waiting for application shutdown.
+2025-06-12 14:14:17 - main - INFO - main - lifespan:70 - Shutting down PPOB API application...
+2025-06-12 14:14:17 - main - INFO - main - shutdown_tasks:95 - Closing database connections...
+2025-06-12 14:14:17 - main - INFO - main - shutdown_tasks:98 - Clearing application caches...
+2025-06-12 14:14:17 - main - INFO - main - shutdown_tasks:101 - Closing external service connections...
+2025-06-12 14:14:17 - main - INFO - main - lifespan:72 - Application shutdown completed
+2025-06-12 14:14:17 - uvicorn.error - INFO - on - shutdown:76 - Application shutdown complete.
+2025-06-12 14:14:17 - uvicorn.error - INFO - server - _serve:93 - Finished server process [1324]

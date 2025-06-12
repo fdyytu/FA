@@ -1,39 +1,60 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import List, Optional
 import os
 from pathlib import Path
 
 class Settings(BaseSettings):
-    APP_NAME: str = "FileMonitor"
-    DEBUG: bool = False
-    LOG_LEVEL: str = "INFO"
-    WATCH_PATH: Path = Path("./monitored_files")
+    # Database
+    DATABASE_URL: str = "sqlite:///./ppob_api.db"
+    DATABASE_TEST_URL: Optional[str] = None
     
-    # Database settings
-    DATABASE_URL: str = "postgresql://user:password@localhost/fa_db"
-    
-    # Security settings
-    SECRET_KEY: str = "your-secret-key-here-change-in-production"
+    # Security
+    SECRET_KEY: str = "your-secret-key-here"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
-    # PPOB settings
-    PPOB_API_URL: str = "https://api.ppob-provider.com"
-    PPOB_API_KEY: str = "your-ppob-api-key"
-    PPOB_TIMEOUT: int = 30
+    # Application
+    DEBUG: bool = True
+    ENVIRONMENT: str = "development"
+    ALLOWED_HOSTS: str = '["localhost", "127.0.0.1", "0.0.0.0"]'
     
-    # Midtrans settings
-    MIDTRANS_SERVER_KEY: str = "your-midtrans-server-key"
-    MIDTRANS_CLIENT_KEY: str = "your-midtrans-client-key"
+    # External Services
+    DIGIFLAZZ_USERNAME: str = ""
+    DIGIFLAZZ_API_KEY: str = ""
+    DIGIFLAZZ_BASE_URL: str = "https://api.digiflazz.com/v1"
+    
+    # Midtrans
+    MIDTRANS_SERVER_KEY: str = ""
+    MIDTRANS_CLIENT_KEY: str = ""
     MIDTRANS_IS_PRODUCTION: bool = False
-    MIDTRANS_MERCHANT_ID: str = "your-merchant-id"
+    MIDTRANS_BASE_URL: str = "https://api.sandbox.midtrans.com/v2"
     
-    # Admin settings
-    ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "admin123"
+    # Redis
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_PASSWORD: Optional[str] = None
+    REDIS_DB: str = "0"
+    
+    # Logging
+    LOG_LEVEL: str = "INFO"
+    LOG_FORMAT: str = "json"
+    LOG_FILE: str = "logs/app.log"
+    
+    # Rate Limiting
+    RATE_LIMIT_ENABLED: str = "True"
+    RATE_LIMIT_STORAGE: str = "memory"
+    
+    # Monitoring
+    HEALTH_CHECK_ENABLED: str = "True"
+    METRICS_ENABLED: str = "True"
+    
+    # CORS
+    CORS_ORIGINS: str = '["http://localhost:3000", "http://localhost:8080"]'
+    CORS_ALLOW_CREDENTIALS: str = "True"
     
     class Config:
         env_file = ".env"
+        case_sensitive = True
+        extra = "allow"  # Allow extra fields
 
+# Create settings instance
 settings = Settings()
