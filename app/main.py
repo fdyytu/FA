@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.core.config import Settings
 from app.api.v1.router import api_router
 from app.core.events import startup_event_handler, shutdown_event_handler
@@ -45,6 +46,10 @@ def create_application() -> FastAPI:
     # Include routers
     application.include_router(api_router, prefix="/api/v1")
     server_logger.info("API routes registered")
+    
+    # Mount static files
+    application.mount("/static", StaticFiles(directory="static"), name="static")
+    server_logger.info("Static files mounted")
     
     server_logger.info("FA Application initialized successfully")
     return application

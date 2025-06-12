@@ -49,3 +49,48 @@
 2025-06-12 04:28:12,180 - server - INFO - API routes registered
 2025-06-12 04:28:12,180 - server - INFO - FA Application initialized successfully
 2025-06-12 04:28:12,183 - app.services.file_watcher - INFO - Started watching directory: monitored_files
+2025-06-12 11:52:23,610 - server - INFO - Logging system initialized
+2025-06-12 11:52:23,610 - server - INFO - Log level: INFO
+2025-06-12 11:52:23,611 - server - INFO - Starting FA Application...
+2025-06-12 11:52:23,612 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-06-12 11:52:23,612 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("users")
+2025-06-12 11:52:23,612 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,613 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("ppob_transactions")
+2025-06-12 11:52:23,614 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,614 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("ppob_products")
+2025-06-12 11:52:23,614 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,614 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("wallet_transactions")
+2025-06-12 11:52:23,614 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,615 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("transfers")
+2025-06-12 11:52:23,615 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,615 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("topup_requests")
+2025-06-12 11:52:23,615 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,616 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("admins")
+2025-06-12 11:52:23,616 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,616 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("admin_configs")
+2025-06-12 11:52:23,616 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,616 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("ppob_margin_configs")
+2025-06-12 11:52:23,617 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,617 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("transactions")
+2025-06-12 11:52:23,617 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,617 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("user_profiles")
+2025-06-12 11:52:23,617 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,618 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("daily_mutations")
+2025-06-12 11:52:23,618 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,618 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("notifications")
+2025-06-12 11:52:23,618 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,618 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("admin_notification_settings")
+2025-06-12 11:52:23,619 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,619 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("webhook_logs")
+2025-06-12 11:52:23,619 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,619 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("products")
+2025-06-12 11:52:23,619 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,620 - sqlalchemy.engine.Engine - INFO - PRAGMA main.table_info("product_stocks")
+2025-06-12 11:52:23,620 - sqlalchemy.engine.Engine - INFO - [raw sql] ()
+2025-06-12 11:52:23,621 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-06-12 11:52:23,621 - server - INFO - Database tables created/verified
+2025-06-12 11:52:23,730 - server - INFO - API routes registered
+2025-06-12 11:52:23,731 - server - INFO - Static files mounted
+2025-06-12 11:52:23,731 - server - INFO - FA Application initialized successfully
+2025-06-12 11:52:23,735 - app.services.file_watcher - INFO - Started watching directory: monitored_files
+2025-06-12 11:52:32,375 - app.services.file_watcher - INFO - Stopped file watching service

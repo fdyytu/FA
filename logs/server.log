@@ -10,3 +10,10 @@
 2025-06-12 04:28:12,123 - server - INFO - Database tables created/verified
 2025-06-12 04:28:12,180 - server - INFO - API routes registered
 2025-06-12 04:28:12,180 - server - INFO - FA Application initialized successfully
+2025-06-12 11:52:23,610 - server - INFO - Logging system initialized
+2025-06-12 11:52:23,610 - server - INFO - Log level: INFO
+2025-06-12 11:52:23,611 - server - INFO - Starting FA Application...
+2025-06-12 11:52:23,621 - server - INFO - Database tables created/verified
+2025-06-12 11:52:23,730 - server - INFO - API routes registered
+2025-06-12 11:52:23,731 - server - INFO - Static files mounted
+2025-06-12 11:52:23,731 - server - INFO - FA Application initialized successfully

@@ -31,7 +31,7 @@ class Transaction(BaseModel):
     status = Column(Enum(TransactionStatus), default=TransactionStatus.PENDING)
     description = Column(Text, nullable=True)
     reference_id = Column(String(100), nullable=True)  # ID dari provider eksternal
-    metadata = Column(Text, nullable=True)  # JSON untuk data tambahan
+    extra_data = Column(Text, nullable=True)  # JSON untuk data tambahan
     processed_at = Column(DateTime, nullable=True)
     
     # Relationship

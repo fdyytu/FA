@@ -10,7 +10,7 @@ from app.schemas.transaction import (
     TransactionHistoryResponse, DailyMutationResponse, TransactionSummaryResponse,
     TransactionFilterRequest, TransactionTypeEnum, TransactionStatusEnum
 )
-from app.utils.responses import success_response, error_response
+from app.utils.responses import create_success_response, create_error_response
 import logging
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ async def create_transaction(
         service = TransactionService(db)
         transaction = await service.create_transaction(transaction_data)
         
-        return success_response(
+        return create_success_response(
             data=transaction.dict(),
             message="Transaksi berhasil dibuat"
         )
@@ -44,7 +44,7 @@ async def create_transaction(
         raise e
     except Exception as e:
         logger.error(f"Error creating transaction: {str(e)}")
-        return error_response(message=f"Gagal membuat transaksi: {str(e)}")
+        return create_error_response(message=f"Gagal membuat transaksi: {str(e)}")
 
 @router.put("/{transaction_id}", response_model=dict)
 async def update_transaction(
@@ -62,7 +62,7 @@ async def update_transaction(
         service = TransactionService(db)
         transaction = await service.update_transaction(transaction_id, update_data)
         
-        return success_response(
+        return create_success_response(
             data=transaction.dict(),
             message="Transaksi berhasil diupdate"
         )
@@ -71,7 +71,7 @@ async def update_transaction(
         raise e
     except Exception as e:
         logger.error(f"Error updating transaction: {str(e)}")
-        return error_response(message=f"Gagal update transaksi: {str(e)}")
+        return create_error_response(message=f"Gagal update transaksi: {str(e)}")
 
 @router.get("/history", response_model=dict)
 async def get_transaction_history(
@@ -104,7 +104,7 @@ async def get_transaction_history(
         service = TransactionService(db)
         transactions = await service.get_transaction_history(filter_request)
         
-        return success_response(
+        return create_success_response(
             data={
                 "transactions": [t.dict() for t in transactions],
                 "page": page,
@@ -116,7 +116,7 @@ async def get_transaction_history(
         
     except Exception as e:
         logger.error(f"Error getting transaction history: {str(e)}")
-        return error_response(message=f"Gagal mengambil riwayat transaksi: {str(e)}")
+        return create_error_response(message=f"Gagal mengambil riwayat transaksi: {str(e)}")
 
 @router.get("/summary", response_model=dict)
 async def get_transaction_summary(
@@ -135,14 +135,14 @@ async def get_transaction_summary(
         service = TransactionService(db)
         summary = await service.get_transaction_summary(user_id, start_date, end_date)
         
-        return success_response(
+        return create_success_response(
             data=summary.dict(),
             message="Ringkasan transaksi berhasil diambil"
         )
         
     except Exception as e:
         logger.error(f"Error getting transaction summary: {str(e)}")
-        return error_response(message=f"Gagal mengambil ringkasan transaksi: {str(e)}")
+        return create_error_response(message=f"Gagal mengambil ringkasan transaksi: {str(e)}")
 
 # Endpoints untuk mutasi harian (admin only)
 @router.post("/daily-mutation/generate", response_model=dict)
@@ -159,7 +159,7 @@ async def generate_daily_mutation(
         service = DailyMutationService(db)
         mutation = await service.generate_daily_mutation(target_date)
         
-        return success_response(
+        return create_success_response(
             data=mutation.dict(),
             message=f"Mutasi harian berhasil dibuat untuk {target_date}"
         )
@@ -168,7 +168,7 @@ async def generate_daily_mutation(
         raise e
     except Exception as e:
         logger.error(f"Error generating daily mutation: {str(e)}")
-        return error_response(message=f"Gagal generate mutasi harian: {str(e)}")
+        return create_error_response(message=f"Gagal generate mutasi harian: {str(e)}")
 
 @router.get("/daily-mutation", response_model=dict)
 async def get_daily_mutations(
@@ -185,7 +185,7 @@ async def get_daily_mutations(
         service = DailyMutationService(db)
         mutations = await service.get_daily_mutations(start_date, end_date)
         
-        return success_response(
+        return create_success_response(
             data={
                 "mutations": [m.dict() for m in mutations],
                 "start_date": start_date,
@@ -199,7 +199,7 @@ async def get_daily_mutations(
         raise e
     except Exception as e:
         logger.error(f"Error getting daily mutations: {str(e)}")
-        return error_response(message=f"Gagal mengambil mutasi harian: {str(e)}")
+        return create_error_response(message=f"Gagal mengambil mutasi harian: {str(e)}")
 
 @router.get("/daily-mutation/summary", response_model=dict)
 async def get_mutation_summary(
@@ -216,14 +216,14 @@ async def get_mutation_summary(
         service = DailyMutationService(db)
         summary = await service.get_mutation_summary(start_date, end_date)
         
-        return success_response(
+        return create_success_response(
             data=summary,
             message="Ringkasan mutasi berhasil diambil"
         )
         
     except Exception as e:
         logger.error(f"Error getting mutation summary: {str(e)}")
-        return error_response(message=f"Gagal mengambil ringkasan mutasi: {str(e)}")
+        return create_error_response(message=f"Gagal mengambil ringkasan mutasi: {str(e)}")
 
 @router.post("/daily-mutation/auto-generate", response_model=dict)
 async def auto_generate_daily_mutation(
@@ -238,11 +238,11 @@ async def auto_generate_daily_mutation(
         service = DailyMutationService(db)
         await service.auto_generate_daily_mutations()
         
-        return success_response(
+        return create_success_response(
             data=None,
             message="Auto generate mutasi harian berhasil"
         )
         
     except Exception as e:
         logger.error(f"Error auto generating daily mutation: {str(e)}")
-        return error_response(message=f"Gagal auto generate mutasi harian: {str(e)}")
+        return create_error_response(message=f"Gagal auto generate mutasi harian: {str(e)}")

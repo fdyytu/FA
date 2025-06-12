@@ -11,7 +11,7 @@ from app.schemas.notification import (
     AdminNotificationSettingCreate, AdminNotificationSettingUpdate,
     NotificationSendRequest, WebhookLogCreate
 )
-from app.utils.responses import success_response, error_response
+from app.utils.responses import create_success_response, create_error_response
 import logging
 import json
 
@@ -31,7 +31,7 @@ async def get_user_notifications(
         service = NotificationService(db)
         notifications = await service.get_user_notifications(current_user.id, page, limit)
         
-        return success_response(
+        return create_success_response(
             data={
                 "notifications": [n.dict() for n in notifications],
                 "page": page,
@@ -43,7 +43,7 @@ async def get_user_notifications(
         
     except Exception as e:
         logger.error(f"Error getting user notifications: {str(e)}")
-        return error_response(message=f"Gagal mengambil notifikasi: {str(e)}")
+        return create_error_response(message=f"Gagal mengambil notifikasi: {str(e)}")
 
 @router.post("/{notification_id}/read", response_model=dict)
 async def mark_notification_as_read(
@@ -56,7 +56,7 @@ async def mark_notification_as_read(
         service = NotificationService(db)
         notification = await service.mark_as_read(notification_id, current_user.id)
         
-        return success_response(
+        return create_success_response(
             data=notification.dict(),
             message="Notifikasi berhasil ditandai sebagai dibaca"
         )
@@ -65,7 +65,7 @@ async def mark_notification_as_read(
         raise e
     except Exception as e:
         logger.error(f"Error marking notification as read: {str(e)}")
-        return error_response(message=f"Gagal menandai notifikasi: {str(e)}")
+        return create_error_response(message=f"Gagal menandai notifikasi: {str(e)}")
 
 # Endpoints untuk admin notifikasi
 @router.post("/admin/send", response_model=dict)
@@ -82,7 +82,7 @@ async def send_admin_notification(
         service = AdminNotificationService(db)
         await service.send_admin_notification(notification_request)
         
-        return success_response(
+        return create_success_response(
             data=None,
             message="Notifikasi admin berhasil dikirim"
         )
@@ -91,7 +91,7 @@ async def send_admin_notification(
         raise e
     except Exception as e:
         logger.error(f"Error sending admin notification: {str(e)}")
-        return error_response(message=f"Gagal kirim notifikasi admin: {str(e)}")
+        return create_error_response(message=f"Gagal kirim notifikasi admin: {str(e)}")
 
 @router.post("/admin/settings", response_model=dict)
 async def create_admin_notification_setting(
@@ -107,7 +107,7 @@ async def create_admin_notification_setting(
         service = AdminNotificationService(db)
         setting = await service.create_admin_notification_setting(setting_data)
         
-        return success_response(
+        return create_success_response(
             data={
                 "id": setting.id,
                 "admin_id": setting.admin_id,
@@ -122,7 +122,7 @@ async def create_admin_notification_setting(
         raise e
     except Exception as e:
         logger.error(f"Error creating admin notification setting: {str(e)}")
-        return error_response(message=f"Gagal membuat pengaturan notifikasi: {str(e)}")
+        return create_error_response(message=f"Gagal membuat pengaturan notifikasi: {str(e)}")
 
 # Webhook endpoints
 @router.post("/webhook/digiflazz", response_model=dict)
@@ -154,19 +154,19 @@ async def digiflazz_webhook(
         success = await service.process_digiflazz_webhook(webhook_data)
         
         if success:
-            return success_response(
+            return create_success_response(
                 data={"processed": True},
                 message="Webhook berhasil diproses"
             )
         else:
-            return error_response(
+            return create_error_response(
                 message="Gagal memproses webhook",
                 status_code=500
             )
         
     except Exception as e:
         logger.error(f"Error processing Digiflazz webhook: {str(e)}")
-        return error_response(
+        return create_error_response(
             message=f"Error webhook: {str(e)}",
             status_code=500
         )
@@ -198,7 +198,7 @@ async def get_webhook_logs(
         offset = (page - 1) * limit
         logs = query.order_by(WebhookLog.created_at.desc()).offset(offset).limit(limit).all()
         
-        return success_response(
+        return create_success_response(
             data={
                 "logs": [
                     {
@@ -223,7 +223,7 @@ async def get_webhook_logs(
         raise e
     except Exception as e:
         logger.error(f"Error getting webhook logs: {str(e)}")
-        return error_response(message=f"Gagal mengambil log webhook: {str(e)}")
+        return create_error_response(message=f"Gagal mengambil log webhook: {str(e)}")
 
 # Test endpoints untuk notifikasi
 @router.post("/test/email", response_model=dict)
@@ -245,18 +245,18 @@ async def test_email_notification(
         success = await service.send_email(email, subject, message)
         
         if success:
-            return success_response(
+            return create_success_response(
                 data={"sent": True, "email": email},
                 message="Test email berhasil dikirim"
             )
         else:
-            return error_response(message="Gagal kirim test email")
+            return create_error_response(message="Gagal kirim test email")
         
     except HTTPException as e:
         raise e
     except Exception as e:
         logger.error(f"Error sending test email: {str(e)}")
-        return error_response(message=f"Gagal kirim test email: {str(e)}")
+        return create_error_response(message=f"Gagal kirim test email: {str(e)}")
 
 @router.post("/test/whatsapp", response_model=dict)
 async def test_whatsapp_notification(
@@ -276,18 +276,18 @@ async def test_whatsapp_notification(
         success = await service.send_whatsapp(phone_number, message)
         
         if success:
-            return success_response(
+            return create_success_response(
                 data={"sent": True, "phone_number": phone_number},
                 message="Test WhatsApp berhasil dikirim"
             )
         else:
-            return error_response(message="Gagal kirim test WhatsApp")
+            return create_error_response(message="Gagal kirim test WhatsApp")
         
     except HTTPException as e:
         raise e
     except Exception as e:
         logger.error(f"Error sending test WhatsApp: {str(e)}")
-        return error_response(message=f"Gagal kirim test WhatsApp: {str(e)}")
+        return create_error_response(message=f"Gagal kirim test WhatsApp: {str(e)}")
 
 @router.post("/test/discord", response_model=dict)
 async def test_discord_notification(
@@ -308,15 +308,15 @@ async def test_discord_notification(
         success = await service.send_discord(webhook_url, title, message)
         
         if success:
-            return success_response(
+            return create_success_response(
                 data={"sent": True, "webhook_url": webhook_url},
                 message="Test Discord berhasil dikirim"
             )
         else:
-            return error_response(message="Gagal kirim test Discord")
+            return create_error_response(message="Gagal kirim test Discord")
         
     except HTTPException as e:
         raise e
     except Exception as e:
         logger.error(f"Error sending test Discord: {str(e)}")
-        return error_response(message=f"Gagal kirim test Discord: {str(e)}")
+        return create_error_response(message=f"Gagal kirim test Discord: {str(e)}")

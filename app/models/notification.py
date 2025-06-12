@@ -39,7 +39,7 @@ class Notification(BaseModel):
     is_read = Column(Boolean, default=False)
     sent_at = Column(DateTime, nullable=True)
     read_at = Column(DateTime, nullable=True)
-    metadata = Column(Text, nullable=True)  # JSON untuk data tambahan
+    extra_data = Column(Text, nullable=True)  # JSON untuk data tambahan
     
     # Relationship
     user = relationship("User", back_populates="notifications")

@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     MIDTRANS_IS_PRODUCTION: bool = False
     MIDTRANS_MERCHANT_ID: str = "your-merchant-id"
     
+    # Admin settings
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "admin123"
+    
     class Config:
         env_file = ".env"
 

@@ -13,6 +13,7 @@ from app.models.notification import (
     Notification, AdminNotificationSetting, WebhookLog,
     NotificationType, NotificationChannel, NotificationStatus
 )
+from app.models.product import Product, ProductStock
 
 __all__ = [
     "Base",
@@ -43,6 +44,8 @@ __all__ = [
     "WebhookLog",
     "NotificationType",
     "NotificationChannel",
-    "NotificationStatus"
+    "NotificationStatus",
+    "Product",
+    "ProductStock"
 ]
 
