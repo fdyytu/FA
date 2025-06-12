@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FA Admin Dashboard - PPOB Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar-transition { transition: transform 0.3s ease-in-out; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-card-2 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .stat-card-3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .stat-card-4 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg sidebar-transition transform -translate-x-full lg:translate-x-0">
+        <div class="flex items-center justify-center h-16 gradient-bg">
+            <h1 class="text-xl font-bold text-white">FA Admin Panel</h1>
+        </div>
+        
+        <nav class="mt-8">
+            <div class="px-4 space-y-2">
+                <a href="#dashboard" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors active">
+                    <i class="fas fa-tachometer-alt mr-3"></i>
+                    Dashboard
+                </a>
+                <a href="#users" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-users mr-3"></i>
+                    User Management
+                </a>
+                <a href="#products" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-box mr-3"></i>
+                    Product Management
+                </a>
+                <a href="#transactions" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-exchange-alt mr-3"></i>
+                    Transactions
+                </a>
+                <a href="#providers" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-server mr-3"></i>
+                    Provider Management
+                </a>
+                <a href="#margins" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-percentage mr-3"></i>
+                    Margin Settings
+                </a>
+                <a href="#config" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-cog mr-3"></i>
+                    Configuration
+                </a>
+                <a href="#audit" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-history mr-3"></i>
+                    Audit Logs
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:ml-64">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center">
+                    <button id="sidebar-toggle" class="lg:hidden text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 id="page-title" class="ml-4 text-2xl font-semibold text-gray-800">Dashboard</h2>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="flex items-center text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                        </button>
+                    </div>
+                    
+                    <div class="relative">
+                        <button id="profile-dropdown" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+                            <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop" 
+                                 alt="Admin" class="w-8 h-8 rounded-full">
+                            <span class="font-medium">Admin User</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="p-6">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card rounded-xl p-6 text-white card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm">Total Users</p>
+                                <p class="text-3xl font-bold">1,234</p>
+                                <p class="text-white/80 text-sm mt-1">+12% from last month</p>
+                            </div>
+                            <i class="fas fa-users text-4xl text-white/50"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card-2 rounded-xl p-6 text-white card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm">Total Revenue</p>
+                                <p class="text-3xl font-bold">Rp 45.2M</p>
+                                <p class="text-white/80 text-sm mt-1">+8% from last month</p>
+                            </div>
+                            <i class="fas fa-chart-line text-4xl text-white/50"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card-3 rounded-xl p-6 text-white card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm">Transactions</p>
+                                <p class="text-3xl font-bold">8,567</p>
+                                <p class="text-white/80 text-sm mt-1">+15% from last month</p>
+                            </div>
+                            <i class="fas fa-exchange-alt text-4xl text-white/50"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card-4 rounded-xl p-6 text-white card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-white/80 text-sm">Active Products</p>
+                                <p class="text-3xl font-bold">156</p>
+                                <p class="text-white/80 text-sm mt-1">+3 new products</p>
+                            </div>
+                            <i class="fas fa-box text-4xl text-white/50"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Transaction Trends</h3>
+                        <canvas id="transactionChart" height="200"></canvas>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Provider Status</h3>
+                        <canvas id="providerChart" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Transactions</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Transaction ID</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Product</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Customer</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Amount</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Status</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-transactions">
+                                <!-- Dynamic content will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management Section -->
+            <div id="users-section" class="section hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800">User Management</h3>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Add User
+                        </button>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <input type="text" placeholder="Search users..." 
+                                   class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option>All Status</option>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-gray-200">
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">User</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Email</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Balance</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Status</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Joined</th>
+                                    <th class="text-left py-3 px-4 font-medium text-gray-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table">
+                                <!-- Dynamic content will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Provider Management Section -->
+            <div id="providers-section" class="section hidden">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800">Provider Management</h3>
+                        <button id="health-check-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fas fa-heartbeat mr-2"></i>Health Check
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="providers-grid">
+                        <!-- Dynamic provider cards will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard JavaScript
+        class AdminDashboard {
+            constructor() {
+                this.currentSection = 'dashboard';
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setupCharts();
+                this.loadDashboardData();
+            }
+
+            setupEventListeners() {
+                // Sidebar toggle
+                document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = item.getAttribute('href').substring(1);
+                        this.showSection(section);
+                        this.updateActiveNav(item);
+                    });
+                });
+
+                // Health check button
+                document.getElementById('health-check-btn')?.addEventListener('click', () => {
+                    this.performHealthCheck();
+                });
+            }
+
+            showSection(sectionName) {
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                // Show selected section
+                const targetSection = document.getElementById(`${sectionName}-section`);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    this.currentSection = sectionName;
+                    
+                    // Update page title
+                    const titles = {
+                        'dashboard': 'Dashboard',
+                        'users': 'User Management',
+                        'products': 'Product Management',
+                        'transactions': 'Transactions',
+                        'providers': 'Provider Management',
+                        'margins': 'Margin Settings',
+                        'config': 'Configuration',
+                        'audit': 'Audit Logs'
+                    };
+                    document.getElementById('page-title').textContent = titles[sectionName] || 'Dashboard';
+                    
+                    // Load section-specific data
+                    this.loadSectionData(sectionName);
+                }
+            }
+
+            updateActiveNav(activeItem) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('active', 'bg-blue-50', 'text-blue-600');
+                });
+                activeItem.classList.add('active', 'bg-blue-50', 'text-blue-600');
+            }
+
+            setupCharts() {
+                // Transaction Trends Chart
+                const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+                new Chart(transactionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Transactions',
+                            data: [1200, 1900, 3000, 5000, 2000, 3000],
+                            borderColor: '#4F46E5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Provider Status Chart
+                const providerCtx = document.getElementById('providerChart').getContext('2d');
+                new Chart(providerCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Healthy', 'Unhealthy', 'Maintenance'],
+                        datasets: [{
+                            data: [8, 1, 1],
+                            backgroundColor: ['#10B981', '#EF4444', '#F59E0B']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            async loadDashboardData() {
+                try {
+                    this.showLoading();
+                    
+                    // Simulate API call
+                    await this.delay(1000);
+                    
+                    // Load recent transactions
+                    this.loadRecentTransactions();
+                    
+                    this.hideLoading();
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    this.hideLoading();
+                }
+            }
+
+            loadRecentTransactions() {
+                const transactions = [
+                    { id: 'TRX001', product: 'Pulsa Telkomsel 50K', customer: '081234567890', amount: 'Rp 52,500', status: 'success', time: '2 min ago' },
+                    { id: 'TRX002', product: 'PLN Token 100K', customer: '123456789012', amount: 'Rp 102,500', status: 'pending', time: '5 min ago' },
+                    { id: 'TRX003', product: 'BPJS Kesehatan', customer: '0001234567890', amount: 'Rp 42,000', status: 'success', time: '8 min ago' },
+                    { id: 'TRX004', product: 'Pulsa XL 25K', customer: '087654321098', amount: 'Rp 26,500', status: 'failed', time: '12 min ago' },
+                    { id: 'TRX005', product: 'Paket Data Indosat 5GB', customer: '085678901234', amount: 'Rp 35,000', status: 'success', time: '15 min ago' }
+                ];
+
+                const tbody = document.getElementById('recent-transactions');
+                tbody.innerHTML = transactions.map(tx => `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="py-3 px-4 font-medium text-gray-900">${tx.id}</td>
+                        <td class="py-3 px-4 text-gray-600">${tx.product}</td>
+                        <td class="py-3 px-4 text-gray-600">${tx.customer}</td>
+                        <td class="py-3 px-4 font-medium text-gray-900">${tx.amount}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs rounded-full ${this.getStatusClass(tx.status)}">
+                                ${tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-500 text-sm">${tx.time}</td>
+                    </tr>
+                `).join('');
+            }
+
+            getStatusClass(status) {
+                const classes = {
+                    'success': 'bg-green-100 text-green-800',
+                    'pending': 'bg-yellow-100 text-yellow-800',
+                    'failed': 'bg-red-100 text-red-800'
+                };
+                return classes[status] || 'bg-gray-100 text-gray-800';
+            }
+
+            async loadSectionData(section) {
+                switch(section) {
+                    case 'users':
+                        await this.loadUsersData();
+                        break;
+                    case 'providers':
+                        await this.loadProvidersData();
+                        break;
+                    // Add other sections as needed
+                }
+            }
+
+            async loadUsersData() {
+                // Simulate loading users data
+                const users = [
+                    { name: 'John Doe', email: 'john@example.com', balance: 'Rp 150,000', status: 'active', joined: '2024-01-15' },
+                    { name: 'Jane Smith', email: 'jane@example.com', balance: 'Rp 75,500', status: 'active', joined: '2024-01-10' },
+                    { name: 'Bob Johnson', email: 'bob@example.com', balance: 'Rp 0', status: 'inactive', joined: '2024-01-05' }
+                ];
+
+                const tbody = document.getElementById('users-table');
+                tbody.innerHTML = users.map(user => `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="py-3 px-4">
+                            <div class="flex items-center">
+                                <img src="https://images.pexels.com/photos/1040880/pexels-photo-1040880.jpeg?auto=compress&cs=tinysrgb&w=40&h=40&fit=crop" 
+                                     alt="${user.name}" class="w-8 h-8 rounded-full mr-3">
+                                <span class="font-medium text-gray-900">${user.name}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600">${user.email}</td>
+                        <td class="py-3 px-4 font-medium text-gray-900">${user.balance}</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-1 text-xs rounded-full ${user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-500">${user.joined}</td>
+                        <td class="py-3 px-4">
+                            <button class="text-blue-600 hover:text-blue-800 mr-2">Edit</button>
+                            <button class="text-red-600 hover:text-red-800">Delete</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            async loadProvidersData() {
+                const providers = [
+                    { name: 'Digiflazz', status: 'healthy', priority: 1, lastCheck: '2 min ago' },
+                    { name: 'Default Provider', status: 'healthy', priority: 2, lastCheck: '5 min ago' },
+                    { name: 'Backup Provider', status: 'maintenance', priority: 3, lastCheck: '1 hour ago' }
+                ];
+
+                const grid = document.getElementById('providers-grid');
+                grid.innerHTML = providers.map(provider => `
+                    <div class="bg-white border rounded-lg p-6 card-hover">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800">${provider.name}</h4>
+                            <span class="px-2 py-1 text-xs rounded-full ${this.getProviderStatusClass(provider.status)}">
+                                ${provider.status.charAt(0).toUpperCase() + provider.status.slice(1)}
+                            </span>
+                        </div>
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <div>Priority: ${provider.priority}</div>
+                            <div>Last Check: ${provider.lastCheck}</div>
+                        </div>
+                        <div class="mt-4 flex space-x-2">
+                            <button class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+                                Configure
+                            </button>
+                            <button class="flex-1 bg-gray-600 text-white py-2 px-3 rounded text-sm hover:bg-gray-700">
+                                ${provider.status === 'healthy' ? 'Disable' : 'Enable'}
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getProviderStatusClass(status) {
+                const classes = {
+                    'healthy': 'bg-green-100 text-green-800',
+                    'unhealthy': 'bg-red-100 text-red-800',
+                    'maintenance': 'bg-yellow-100 text-yellow-800'
+                };
+                return classes[status] || 'bg-gray-100 text-gray-800';
+            }
+
+            async performHealthCheck() {
+                this.showLoading();
+                try {
+                    // Simulate health check API call
+                    await this.delay(2000);
+                    
+                    // Reload providers data
+                    await this.loadProvidersData();
+                    
+                    // Show success message
+                    this.showNotification('Health check completed successfully!', 'success');
+                } catch (error) {
+                    this.showNotification('Health check failed!', 'error');
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            showLoading() {
+                document.getElementById('loading-overlay').classList.remove('hidden');
+            }
+
+            hideLoading() {
+                document.getElementById('loading-overlay').classList.add('hidden');
+            }
+
+            showNotification(message, type = 'info') {
+                // Simple notification implementation
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 ${
+                    type === 'success' ? 'bg-green-500' : 
+                    type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                }`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AdminDashboard();
+        });
+    </script>
+</body>
+</html>

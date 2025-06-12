@@ -4,8 +4,7 @@ from app.models.base import BaseModel
 
 class User(BaseModel):
     """
-    User model untuk domain authentication.
-    Mengimplementasikan Single Responsibility Principle - hanya menangani data user.
+    User model - Single Responsibility: Mengelola data user
     """
     __tablename__ = "users"
     
@@ -18,7 +17,7 @@ class User(BaseModel):
     phone_number = Column(String(20), nullable=True)
     balance = Column(Numeric(15, 2), default=0, nullable=False)
     
-    # Relationships - akan dipindahkan ke domain masing-masing
+    # Relationships
     ppob_transactions = relationship("PPOBTransaction", back_populates="user")
     wallet_transactions = relationship("WalletTransaction", back_populates="user")
     sent_transfers = relationship("Transfer", foreign_keys="Transfer.sender_id", back_populates="sender")
@@ -27,15 +26,3 @@ class User(BaseModel):
     transactions = relationship("Transaction", back_populates="user")
     profile = relationship("UserProfile", back_populates="user", uselist=False)
     notifications = relationship("Notification", back_populates="user")
-    
-    def __repr__(self):
-        return f"<User(id={self.id}, username='{self.username}', email='{self.email}')>"
-    
-    @property
-    def is_authenticated(self) -> bool:
-        """Check if user is authenticated (active)"""
-        return self.is_active
-    
-    def can_perform_transaction(self, amount: float) -> bool:
-        """Check if user has sufficient balance for transaction"""
-        return float(self.balance) >= amount
