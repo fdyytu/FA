@@ -20,3 +20,6 @@ class User(BaseModel):
     sent_transfers = relationship("Transfer", foreign_keys="Transfer.sender_id", back_populates="sender")
     received_transfers = relationship("Transfer", foreign_keys="Transfer.receiver_id", back_populates="receiver")
     topup_requests = relationship("TopUpRequest", back_populates="user")
+    transactions = relationship("Transaction", back_populates="user")
+    profile = relationship("UserProfile", back_populates="user", uselist=False)
+    notifications = relationship("Notification", back_populates="user")

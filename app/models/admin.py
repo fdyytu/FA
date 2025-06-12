@@ -1,10 +1,26 @@
 from sqlalchemy import Column, String, Numeric, Boolean, Text, Enum
+from sqlalchemy.orm import relationship
 from app.models.base import BaseModel
 import enum
 
 class MarginType(enum.Enum):
     PERCENTAGE = "percentage"
     NOMINAL = "nominal"
+
+class Admin(BaseModel):
+    """Model untuk admin - mengikuti prinsip Single Responsibility"""
+    __tablename__ = "admins"
+    
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    email = Column(String(100), unique=True, index=True, nullable=False)
+    full_name = Column(String(100), nullable=False)
+    hashed_password = Column(Text, nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_superadmin = Column(Boolean, default=False)
+    phone_number = Column(String(20), nullable=True)
+    
+    # Relationships
+    notification_settings = relationship("AdminNotificationSetting", back_populates="admin")
 
 class AdminConfig(BaseModel):
     """Model untuk konfigurasi admin"""
