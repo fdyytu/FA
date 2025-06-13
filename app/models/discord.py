@@ -5,9 +5,9 @@ import enum
 from datetime import datetime
 
 class DiscordBotStatus(enum.Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
-    MAINTENANCE = "maintenance"
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+    MAINTENANCE = "MAINTENANCE"
 
 class CurrencyType(enum.Enum):
     WL = "wl"

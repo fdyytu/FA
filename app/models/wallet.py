@@ -82,5 +82,5 @@ class TopUpRequest(BaseModel):
     wallet_transaction_id = Column(Integer, ForeignKey("wallet_transactions.id"), nullable=True)
     
     # Relationships
-    user = relationship("User", back_populates="topup_requests")
+    user = relationship("User", foreign_keys=[user_id], back_populates="topup_requests")
     processed_by_user = relationship("User", foreign_keys=[processed_by])

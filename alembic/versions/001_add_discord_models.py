@@ -17,7 +17,7 @@ depends_on = None
 
 def upgrade():
     # Create enum types
-    op.execute("CREATE TYPE discordbotstatus AS ENUM ('active', 'inactive', 'maintenance')")
+    op.execute("CREATE TYPE discordbotstatus AS ENUM ('ACTIVE', 'INACTIVE', 'MAINTENANCE')")
     op.execute("CREATE TYPE currencytype AS ENUM ('wl', 'dl', 'bgl')")
     
     # Create discord_bots table
@@ -28,7 +28,7 @@ def upgrade():
         sa.Column('guild_id', sa.String(length=50), nullable=False),
         sa.Column('live_stock_channel_id', sa.String(length=50), nullable=True),
         sa.Column('donation_webhook_url', sa.Text(), nullable=True),
-        sa.Column('status', postgresql.ENUM('active', 'inactive', 'maintenance', name='discordbotstatus'), nullable=False, server_default='inactive'),
+        sa.Column('status', postgresql.ENUM('ACTIVE', 'INACTIVE', 'MAINTENANCE', name='discordbotstatus'), nullable=False, server_default='INACTIVE'),
         sa.Column('is_active', sa.Boolean(), nullable=False, server_default='true'),
         sa.Column('created_at', sa.DateTime(), nullable=False, server_default=sa.text('CURRENT_TIMESTAMP')),
         sa.Column('updated_at', sa.DateTime(), nullable=True),
