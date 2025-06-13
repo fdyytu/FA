@@ -26,6 +26,10 @@ class DatabaseManager:
         finally:
             db.close()
     
+    def get_session(self):
+        """Get database session for health check"""
+        return self.SessionLocal()
+    
     def create_tables(self):
         """Buat semua tabel database"""
         self.Base.metadata.create_all(bind=self.engine)

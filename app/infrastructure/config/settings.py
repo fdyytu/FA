@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
     
-    # Database settings
-    DATABASE_URL: str = "sqlite:///./fa_database.db"
+    # Database settings - Railway akan provide PostgreSQL URL otomatis
+    DATABASE_URL: str = "sqlite:///./fa_database.db"  # Fallback untuk development
     
     # File monitoring settings
     WATCH_PATH: Path = Path("./monitored_files")

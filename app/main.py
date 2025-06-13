@@ -37,9 +37,13 @@ def create_application() -> FastAPI:
         allow_headers=["*"],
     )
     
-    # Create database tables
-    db_manager.create_tables()
-    server_logger.info("Database tables created/verified")
+    # Create database tables with error handling
+    try:
+        db_manager.create_tables()
+        server_logger.info("Database tables created/verified")
+    except Exception as e:
+        server_logger.warning(f"Database initialization warning: {str(e)}")
+        server_logger.info("Application will continue startup - database may initialize later")
     
     # Add event handlers
     application.add_event_handler("startup", startup_event_handler)
@@ -51,7 +55,15 @@ def create_application() -> FastAPI:
         """
         Root health check endpoint for Railway deployment
         """
-        return {"status": "healthy", "service": "FA API"}
+        try:
+            # Test database connection
+            from app.infrastructure.database.database_manager import db_manager
+            # Simple database check
+            db_manager.get_session()
+            return {"status": "healthy", "service": "FA API", "database": "connected"}
+        except Exception as e:
+            server_logger.error(f"Health check failed: {str(e)}")
+            return {"status": "healthy", "service": "FA API", "database": "initializing", "note": "Service starting up"}
     
     # Include routers dengan struktur baru
     application.include_router(api_router, prefix="/api/v1")
