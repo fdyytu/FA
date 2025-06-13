@@ -4,8 +4,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from sqlalchemy.orm import Session
 from app.domains.file_monitor.services.file_watcher import FileWatcherService
-from app.core.config import settings
-from app.core import security
+from app.infrastructure.config.settings import settings
+from app.infrastructure.security import token_handler
 from app.core.database import get_db
 
 # Try to import User from domains
@@ -53,7 +53,8 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = security.verify_token(token)
+        token_handler_instance = token_handler.TokenHandler()
+        payload = token_handler_instance.verify_token(token)
         if payload is None:
             raise credentials_exception
         username: str = payload.get("sub")

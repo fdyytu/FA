@@ -5,7 +5,7 @@ import asyncio
 from typing import Optional, Union
 import logging
 from app.domains.file_monitor.models.file_event import FileEvent
-from app.core.config import settings
+from app.infrastructure.config.settings import settings
 
 logger = logging.getLogger(__name__)
 

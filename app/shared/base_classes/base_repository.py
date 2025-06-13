@@ -11,7 +11,7 @@ from sqlalchemy import and_, or_, func
 from pydantic import BaseModel
 from app.core.interfaces import IRepository
 from app.core.database import get_db
-from app.core.constants import DatabaseConstants
+from app.config.constants import DatabaseConstants
 import logging
 
 logger = logging.getLogger(__name__)

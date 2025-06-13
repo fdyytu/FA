@@ -27,7 +27,7 @@ try:
 except ImportError:
     AdminConfigService = PPOBMarginService = None
 
-from app.core.config import settings
+from app.infrastructure.config.settings import settings
 
 try:
     from app.cache.managers.ppob_cache_manager import ppob_cache_manager

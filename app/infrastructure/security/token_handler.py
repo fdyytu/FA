@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from jose import JWTError, jwt
 from fastapi import HTTPException, status
-from app.core.config import settings
+from app.infrastructure.config.settings import settings
 
 class TokenHandler:
     """

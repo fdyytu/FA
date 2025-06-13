@@ -15,7 +15,7 @@ from app.domains.wallet.schemas.wallet_schemas import (
 )
 from app.domains.auth.models.user import User
 
-from app.shared.utils.exceptions import ValidationError, NotFoundError, InsufficientBalanceError
+from app.common.exceptions.custom_exceptions import ValidationException, NotFoundError, InsufficientBalanceError
 
 class WalletService(BaseService):
     """
@@ -124,7 +124,7 @@ class WalletService(BaseService):
                 raise NotFoundError("User penerima tidak ditemukan")
             
             if receiver.id == sender_id:
-                raise ValidationError("Tidak dapat transfer ke diri sendiri")
+                raise ValidationException("Tidak dapat transfer ke diri sendiri")
             
             # Validasi saldo sender
             sender_balance = self.get_user_balance(sender_id)
@@ -174,7 +174,7 @@ class WalletService(BaseService):
             
             return transfer
             
-        except (ValidationError, NotFoundError, InsufficientBalanceError):
+        except (ValidationException, NotFoundError, InsufficientBalanceError):
             raise
         except Exception as e:
             raise HTTPException(
@@ -218,7 +218,7 @@ class WalletService(BaseService):
                 raise NotFoundError("Permintaan top up tidak ditemukan")
             
             if topup_request.status != TopUpStatus.PENDING:
-                raise ValidationError("Permintaan top up sudah diproses")
+                raise ValidationException("Permintaan top up sudah diproses")
             
             # Update dengan bukti pembayaran
             update_data = {
@@ -228,7 +228,7 @@ class WalletService(BaseService):
             
             return self.repository.update_topup_request(request_id, update_data)
             
-        except (ValidationError, NotFoundError):
+        except (ValidationException, NotFoundError):
             raise
         except Exception as e:
             raise HTTPException(
@@ -385,7 +385,7 @@ class WalletService(BaseService):
                 raise NotFoundError("Permintaan top up tidak ditemukan")
             
             if topup_request.status != TopUpStatus.PENDING:
-                raise ValidationError("Permintaan top up sudah diproses")
+                raise ValidationException("Permintaan top up sudah diproses")
             
             # Update status
             update_data = {
@@ -413,7 +413,7 @@ class WalletService(BaseService):
             
             return self.repository.update_topup_request(request_id, update_data)
             
-        except (ValidationError, NotFoundError):
+        except (ValidationException, NotFoundError):
             raise
         except Exception as e:
             raise HTTPException(

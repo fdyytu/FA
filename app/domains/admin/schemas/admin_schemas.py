@@ -121,7 +121,7 @@ class ConfigCreate(BaseModel):
     """Schema untuk membuat konfigurasi"""
     config_key: str = Field(..., min_length=1, max_length=100)
     config_value: str
-    config_type: str = Field("string", regex="^(string|number|boolean|encrypted)$")
+    config_type: str = Field("string", pattern="^(string|number|boolean|encrypted)$")
     description: Optional[str] = None
 
 class ConfigUpdate(BaseModel):

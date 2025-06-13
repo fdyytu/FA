@@ -9,16 +9,16 @@ from app.domains.admin.models.admin import (
 )
 from app.domains.auth.models.user import User
 from app.domains.ppob.models.ppob import PPOBProduct, PPOBTransaction
-from app.models.transaction import Transaction
+from app.domains.wallet.models.wallet import WalletTransaction
 
 
-class AdminRepository(BaseRepository[Admin]):
+class AdminRepository:
     """
     Repository untuk admin - Single Responsibility: Data access untuk admin
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, Admin)
+        self.db = db
     
     def get_by_username(self, username: str) -> Optional[Admin]:
         """Ambil admin berdasarkan username"""
@@ -36,13 +36,13 @@ class AdminRepository(BaseRepository[Admin]):
         self.db.commit()
 
 
-class AdminConfigRepository(BaseRepository[AdminConfig]):
+class AdminConfigRepository:
     """
     Repository untuk konfigurasi admin - Single Responsibility: Data access untuk config
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, AdminConfig)
+        self.db = db
     
     def get_by_key(self, config_key: str) -> Optional[AdminConfig]:
         """Ambil konfigurasi berdasarkan key"""
@@ -66,13 +66,13 @@ class AdminConfigRepository(BaseRepository[AdminConfig]):
         return result > 0
 
 
-class PPOBMarginRepository(BaseRepository[PPOBMarginConfig]):
+class PPOBMarginRepository:
     """
     Repository untuk margin PPOB - Single Responsibility: Data access untuk margin
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, PPOBMarginConfig)
+        self.db = db
     
     def get_by_category(self, category: str) -> List[PPOBMarginConfig]:
         """Ambil margin berdasarkan kategori"""
@@ -286,13 +286,13 @@ class DashboardRepository:
         ]
 
 
-class AuditLogRepository(BaseRepository[AdminAuditLog]):
+class AuditLogRepository:
     """
     Repository untuk audit log - Single Responsibility: Data access untuk audit log
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, AdminAuditLog)
+        self.db = db
     
     def create_log(
         self,
