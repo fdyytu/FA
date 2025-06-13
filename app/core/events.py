@@ -1,5 +1,5 @@
-from app.services.file_watcher import FileWatcherService
-from app.core.config import settings
+from app.domains.file_monitor.services.file_watcher import FileWatcherService
+from app.infrastructure.config.settings import settings
 import logging
 
 file_watcher_service = None

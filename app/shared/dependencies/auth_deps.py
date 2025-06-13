@@ -74,6 +74,24 @@ def get_current_superuser(current_user: User = Depends(get_current_user)) -> Use
         )
     return current_user
 
+def get_current_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Dependency untuk mendapatkan current admin user"""
+    if not (current_user.is_superuser or getattr(current_user, 'is_admin', False)):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required"
+        )
+    return current_user
+
+def get_current_super_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Dependency untuk mendapatkan current super admin"""
+    if not current_user.is_superuser:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Super admin access required"
+        )
+    return current_user
+
 # Repository dependencies
 def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
     """Dependency untuk mendapatkan UserRepository"""

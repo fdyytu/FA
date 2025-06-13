@@ -8,7 +8,7 @@ import logging.config
 import sys
 from pathlib import Path
 from typing import Dict, Any
-from .config import settings
+from app.infrastructure.config.settings import settings
 
 def setup_logging() -> None:
     """

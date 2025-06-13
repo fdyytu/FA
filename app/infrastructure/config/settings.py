@@ -58,5 +58,10 @@ class Settings(BaseSettings):
     # Admin settings
     ADMIN_USERNAME: str = "admin"
     ADMIN_PASSWORD: str = "admin123"
+    
+    # Redis settings (optional - untuk caching)
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_PASSWORD: Optional[str] = None
+    REDIS_DB: str = "0"
 
 settings = Settings()

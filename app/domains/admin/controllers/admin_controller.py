@@ -484,3 +484,25 @@ class MarginManagementController:
             )
             
             return MarginConfigResponse.from_orm(config)
+
+
+# Main router yang menggabungkan semua controller
+router = APIRouter()
+
+# Initialize controllers
+auth_controller = AdminAuthController()
+admin_controller = AdminManagementController()
+config_controller = ConfigurationController()
+user_controller = UserManagementController()
+product_controller = ProductManagementController()
+dashboard_controller = DashboardController()
+margin_controller = MarginManagementController()
+
+# Include all routes
+router.include_router(auth_controller.router, prefix="/auth", tags=["Admin Auth"])
+router.include_router(admin_controller.router, prefix="/admins", tags=["Admin Management"])
+router.include_router(config_controller.router, prefix="/config", tags=["Configuration"])
+router.include_router(user_controller.router, prefix="/users", tags=["User Management"])
+router.include_router(product_controller.router, prefix="/products", tags=["Product Management"])
+router.include_router(dashboard_controller.router, prefix="/dashboard", tags=["Dashboard"])
+router.include_router(margin_controller.router, prefix="/margins", tags=["Margin Management"])

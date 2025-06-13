@@ -9,7 +9,7 @@ from typing import Any, Optional, Union, Dict
 from datetime import timedelta
 import logging
 from app.cache.interfaces.cache_interfaces import ICacheService, ICacheSerializer
-from app.core.config import settings
+from app.infrastructure.config.settings import settings
 
 logger = logging.getLogger(__name__)
 

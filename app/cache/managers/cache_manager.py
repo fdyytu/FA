@@ -8,7 +8,7 @@ from typing import Dict, Any, Optional
 from app.cache.interfaces.cache_interfaces import ICacheService, ICacheManager, ICacheKeyGenerator
 from app.cache.implementations.redis_cache import RedisCacheService
 from app.cache.implementations.memory_cache import MemoryCacheService
-from app.core.config import settings
+from app.infrastructure.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
