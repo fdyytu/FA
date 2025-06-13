@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.shared.base_classes.base_repository import BaseRepository
 from app.domains.auth.models.user import User
 
-class UserRepository(BaseRepository[User]):
+class UserRepository(BaseRepository[User, dict, dict]):
     """
     User repository yang mengimplementasikan Dependency Inversion Principle.
     Memisahkan logic data access dari business logic.

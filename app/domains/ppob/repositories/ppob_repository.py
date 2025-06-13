@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from app.shared.base_classes.base_repository import BaseRepository
 from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBCategory, TransactionStatus
 
-class PPOBRepository(BaseRepository[PPOBTransaction]):
+class PPOBRepository(BaseRepository[PPOBTransaction, dict, dict]):
     """
     Repository untuk PPOB yang mengimplementasikan Repository Pattern.
     Menangani semua operasi database terkait PPOB.

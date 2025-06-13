@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import Optional
 
 class AuthConfig(BaseSettings):
@@ -6,6 +7,12 @@ class AuthConfig(BaseSettings):
     Konfigurasi khusus untuk domain authentication.
     Mengimplementasikan Single Responsibility Principle.
     """
+    
+    model_config = ConfigDict(
+        env_prefix="AUTH_",
+        env_file=".env",
+        extra="ignore"  # Ignore extra fields from .env
+    )
     
     # Security settings
     SECRET_KEY: str = "your-secret-key-here-change-in-production"
@@ -27,9 +34,5 @@ class AuthConfig(BaseSettings):
     # Registration settings
     ALLOW_REGISTRATION: bool = True
     REQUIRE_EMAIL_VERIFICATION: bool = False
-    
-    class Config:
-        env_prefix = "AUTH_"
-        env_file = ".env"
 
 auth_config = AuthConfig()

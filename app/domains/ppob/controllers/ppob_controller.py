@@ -13,16 +13,16 @@ from app.domains.ppob.schemas.ppob_schemas import (
 )
 from app.domains.ppob.models.ppob import PPOBTransaction, PPOBCategory, TransactionStatus
 from app.api.deps import get_db, get_current_user
-from app.models.user import User
+from app.domains.auth.models.user import User
 
-class PPOBController(BaseController[PPOBTransaction, PPOBService, PPOBTransactionCreate, PPOBTransactionUpdate, PPOBTransactionResponse]):
+class PPOBController:
     """
     PPOB Controller yang mengimplementasikan Single Responsibility Principle.
     Menangani semua endpoint terkait PPOB (Payment Point Online Bank).
     """
     
     def __init__(self):
-        super().__init__(None, "/ppob", ["PPOB"])
+        self.router = APIRouter(prefix="/ppob", tags=["PPOB"])
         self._setup_ppob_routes()
     
     def _setup_ppob_routes(self):

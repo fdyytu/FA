@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import Optional
 from pathlib import Path
 from app.infrastructure.config.auth_config import auth_config
@@ -8,6 +9,12 @@ class Settings(BaseSettings):
     Main application settings yang mengintegrasikan semua domain configs.
     Mengimplementasikan Single Responsibility Principle dengan memisahkan config per domain.
     """
+    
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"  # Ignore extra fields from .env
+    )
     
     # Application settings
     APP_NAME: str = "FA Application"
@@ -51,9 +58,5 @@ class Settings(BaseSettings):
     # Admin settings
     ADMIN_USERNAME: str = "admin"
     ADMIN_PASSWORD: str = "admin123"
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings()

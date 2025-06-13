@@ -1,6 +1,6 @@
 """Models package."""
-from app.models.base import Base, BaseModel
-from app.models.file_event import FileEvent
+from app.shared.base_classes.base import Base, BaseModel
+from app.domains.file_monitor.models.file_event import FileEvent
 
 # Import models from domains that exist
 try:

@@ -10,7 +10,7 @@ from app.domains.wallet.models.wallet import (
     TransactionType, TransactionStatus, TopUpStatus, PaymentMethod
 )
 
-class WalletRepository(BaseRepository[WalletTransaction]):
+class WalletRepository(BaseRepository[WalletTransaction, dict, dict]):
     """
     Repository untuk Wallet yang mengimplementasikan Repository Pattern.
     Menangani semua operasi database terkait wallet dan transaksi keuangan.

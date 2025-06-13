@@ -13,11 +13,11 @@ from app.domains.wallet.schemas.wallet_schemas import (
     WalletTransactionCreate, WalletTransactionUpdate, TransferRequest,
     TopUpManualRequest, TopUpMidtransRequest, TopUpApprovalRequest
 )
-from app.models.user import User
+from app.domains.auth.models.user import User
 
-from app.utils.exceptions import ValidationError, NotFoundError, InsufficientBalanceError
+from app.shared.utils.exceptions import ValidationError, NotFoundError, InsufficientBalanceError
 
-class WalletService(BaseService[WalletTransaction, WalletRepository, WalletTransactionCreate, WalletTransactionUpdate]):
+class WalletService(BaseService):
     """
     Service untuk menangani transaksi wallet.
     Mengimplementasikan Single Responsibility Principle - hanya menangani logika bisnis wallet.

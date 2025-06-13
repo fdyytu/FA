@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from sqlalchemy.orm import Session
-from app.services.file_watcher import FileWatcherService
+from app.domains.file_monitor.services.file_watcher import FileWatcherService
 from app.core.config import settings
 from app.core import security
 from app.core.database import get_db
@@ -16,13 +16,13 @@ except ImportError:
 
 # Try to import services
 try:
-    from app.services.auth_service import AuthService
+    from app.domains.auth.services.auth_service import AuthService
 except ImportError:
     AuthService = None
 
 # Try to import schemas
 try:
-    from app.schemas.auth import TokenData
+    from app.domains.auth.schemas.auth_schemas import TokenData
 except ImportError:
     TokenData = None
 

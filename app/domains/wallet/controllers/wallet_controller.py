@@ -13,19 +13,19 @@ from app.domains.wallet.schemas.wallet_schemas import (
 )
 from app.domains.wallet.models.wallet import WalletTransaction
 from app.api.deps import get_db, get_current_user
-from app.models.user import User
+from app.domains.auth.models.user import User
 import os
 import uuid
 from datetime import datetime
 
-class WalletController(BaseController[WalletTransaction, WalletService, WalletTransactionCreate, WalletTransactionUpdate, WalletTransactionResponse]):
+class WalletController:
     """
     Wallet Controller yang mengimplementasikan Single Responsibility Principle.
     Menangani semua endpoint terkait wallet dan transaksi keuangan.
     """
     
     def __init__(self):
-        super().__init__(None, "/wallet", ["Wallet"])
+        self.router = APIRouter(prefix="/wallet", tags=["Wallet"])
         self._setup_wallet_routes()
     
     def _setup_wallet_routes(self):

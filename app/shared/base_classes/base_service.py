@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from sqlalchemy.orm import Session
 from typing import Any, Dict, List, Optional, Type, TypeVar, Generic
-from app.utils.exceptions import HTTPException
+from app.shared.utils.exceptions import HTTPException
 import logging
 
 logger = logging.getLogger(__name__)
