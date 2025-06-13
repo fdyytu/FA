@@ -7,7 +7,7 @@
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 120",
+    "startCommand": "python run.py",
     "healthcheckPath": "/health",
     "sleepApplication": false,
     "healthcheckTimeout": 600,

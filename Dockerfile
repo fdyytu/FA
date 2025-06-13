@@ -26,11 +26,11 @@ RUN useradd --create-home --shell /bin/bash app
 RUN chown -R app:app /app
 USER app
 
-# Expose port
-EXPOSE $PORT
+# Expose port (Railway akan set PORT secara otomatis)
+EXPOSE 8000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3     CMD curl -f http://localhost:$PORT/health || exit 1
+# Health check - gunakan port 8000 sebagai default atau PORT dari env
+HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3     CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Start command with better timeout settings
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 120 --access-log"]
+# Start command menggunakan run.py yang sudah menangani PORT dengan benar
+CMD ["python", "run.py"]
