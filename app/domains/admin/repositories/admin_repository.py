@@ -8,7 +8,7 @@ from app.domains.admin.models.admin import (
     Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog, AdminNotificationSetting
 )
 from app.domains.auth.models.user import User
-from app.models.ppob import PPOBProduct, PPOBTransaction
+from app.domains.ppob.models.ppob import PPOBProduct, PPOBTransaction
 from app.models.transaction import Transaction
 
 

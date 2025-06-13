@@ -7,7 +7,7 @@ from app.schemas.ppob import (
     PPOBInquiryRequest, PPOBInquiryResponse, PPOBPaymentRequest,
     PPOBTransactionResponse, PPOBProductResponse, PPOBCategoryResponse
 )
-from app.models.ppob import PPOBCategory
+from app.domains.ppob.models.ppob import PPOBCategory
 from app.api.deps import get_current_active_user
 from app.models.user import User
 from app.utils.responses import create_success_response, create_paginated_response
@@ -152,7 +152,7 @@ async def get_transaction_history(
         )
         
         # Hitung total transaksi untuk pagination
-        from app.models.ppob import PPOBTransaction
+        from app.domains.ppob.models.ppob import PPOBTransaction
         total = db.query(PPOBTransaction).filter(
             PPOBTransaction.user_id == current_user.id
         ).count()

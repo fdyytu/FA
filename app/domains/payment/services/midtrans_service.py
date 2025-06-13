@@ -1,10 +1,17 @@
+"""
+Midtrans Payment Service - Mengikuti prinsip Single Responsibility
+Hanya menangani integrasi dengan Midtrans API
+"""
 import midtransclient
 from app.core.config import settings
 from typing import Dict, Any
 import uuid
 from decimal import Decimal
 
+
 class MidtransService:
+    """Service khusus untuk integrasi Midtrans - mengikuti SRP"""
+    
     def __init__(self):
         self.snap = midtransclient.Snap(
             is_production=settings.MIDTRANS_IS_PRODUCTION,
@@ -115,6 +122,7 @@ class MidtransService:
                 'success': False,
                 'error': str(e)
             }
+
 
 # Singleton instance
 midtrans_service = MidtransService()

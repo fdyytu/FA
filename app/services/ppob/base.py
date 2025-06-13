@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 from app.schemas.ppob import PPOBInquiryResponse, PPOBInquiryRequest
-from app.models.ppob import PPOBCategory
+from app.domains.ppob.models.ppob import PPOBCategory
 
 class PPOBProviderInterface(ABC):
     """Interface untuk PPOB Provider (Interface Segregation Principle)"""

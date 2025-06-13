@@ -90,7 +90,7 @@ async def clear_ppob_product_cache(
     Clear PPOB product cache
     """
     try:
-        from app.models.ppob import PPOBCategory
+        from app.domains.ppob.models.ppob import PPOBCategory
         
         cat_enum = None
         if category:
@@ -137,7 +137,7 @@ async def clear_ppob_inquiry_cache(
     Clear PPOB inquiry cache
     """
     try:
-        from app.models.ppob import PPOBCategory
+        from app.domains.ppob.models.ppob import PPOBCategory
         
         cat_enum = None
         if category:

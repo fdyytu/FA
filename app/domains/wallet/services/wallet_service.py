@@ -14,7 +14,7 @@ from app.domains.wallet.schemas.wallet_schemas import (
     TopUpManualRequest, TopUpMidtransRequest, TopUpApprovalRequest
 )
 from app.models.user import User
-from app.services.midtrans_service import MidtransService
+
 from app.utils.exceptions import ValidationError, NotFoundError, InsufficientBalanceError
 
 class WalletService(BaseService[WalletTransaction, WalletRepository, WalletTransactionCreate, WalletTransactionUpdate]):
@@ -25,7 +25,6 @@ class WalletService(BaseService[WalletTransaction, WalletRepository, WalletTrans
     
     def __init__(self, repository: WalletRepository):
         super().__init__(repository)
-        self.midtrans_service = MidtransService()
     
     def get_user_balance(self, user_id: int) -> Decimal:
         """Ambil saldo user saat ini"""
