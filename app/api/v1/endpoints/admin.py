@@ -1,5 +1,6 @@
 from typing import Annotated, List
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.services.admin_service import AdminConfigService, PPOBMarginService
@@ -12,6 +13,7 @@ from app.api.deps import get_current_active_user
 from app.models.user import User
 from app.utils.responses import create_success_response, create_paginated_response
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -422,4 +424,34 @@ async def get_digiflazz_price_list(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Gagal ambil price list: {str(e)}"
+        )
+
+# ===== DISCORD DASHBOARD =====
+
+@router.get("/discord-dashboard")
+async def get_discord_dashboard(
+    admin_user: Annotated[User, Depends(get_admin_user)]
+):
+    """Serve Discord Bot Admin Dashboard"""
+    try:
+        dashboard_path = os.path.join("static", "admin", "discord-dashboard.html")
+        if not os.path.exists(dashboard_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Discord dashboard tidak ditemukan"
+            )
+        
+        return FileResponse(
+            path=dashboard_path,
+            media_type="text/html",
+            filename="discord-dashboard.html"
+        )
+        
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error serving Discord dashboard: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Gagal memuat Discord dashboard: {str(e)}"
         )

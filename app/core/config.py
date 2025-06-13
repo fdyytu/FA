@@ -14,9 +14,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Application
+    APP_NAME: str = "Discord Bot Admin Dashboard"
     DEBUG: bool = True
     ENVIRONMENT: str = "development"
     ALLOWED_HOSTS: str = '["localhost", "127.0.0.1", "0.0.0.0"]'
+    WATCH_PATH: str = "/tmp/watch"
     
     # External Services
     DIGIFLAZZ_USERNAME: str = ""

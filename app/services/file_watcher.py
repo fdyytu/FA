@@ -2,7 +2,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from pathlib import Path
 import asyncio
-from typing import Optional
+from typing import Optional, Union
 import logging
 from app.models.file_event import FileEvent
 from app.core.config import settings
@@ -35,8 +35,8 @@ class FileEventHandler(FileSystemEventHandler):
             asyncio.create_task(self.process_file_event("deleted", event.src_path))
 
 class FileWatcherService:
-    def __init__(self, watch_path: Path):
-        self.watch_path = watch_path
+    def __init__(self, watch_path: Union[str, Path]):
+        self.watch_path = Path(watch_path) if isinstance(watch_path, str) else watch_path
         self.observer: Optional[Observer] = None
         self.event_handler = FileEventHandler()
 

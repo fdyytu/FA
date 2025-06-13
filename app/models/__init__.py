@@ -49,3 +49,6 @@ __all__ = [
     "ProductStock"
 ]
 
+
+# Discord Models
+from .discord import *

@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import file_monitor, auth, ppob, wallet, admin, user_profile, transaction, notification, product_admin
+from app.api.v1.endpoints import file_monitor, auth, ppob, wallet, admin, user_profile, transaction, notification, product_admin, discord_admin
 
 api_router = APIRouter()
 api_router.include_router(file_monitor.router, prefix="/file-monitor", tags=["file-monitor"])
@@ -11,3 +11,4 @@ api_router.include_router(product_admin.router, prefix="/product-admin", tags=["
 api_router.include_router(user_profile.router, prefix="/users", tags=["user-profile"])
 api_router.include_router(transaction.router, prefix="/transactions", tags=["transactions"])
 api_router.include_router(notification.router, prefix="/notifications", tags=["notifications"])
+api_router.include_router(discord_admin.router, prefix="/discord", tags=["discord-admin"])

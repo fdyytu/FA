@@ -45,3 +45,6 @@ mypy==1.7.1
 # Documentation
 mkdocs==1.5.3
 mkdocs-material==9.4.8
+
+# Discord Bot
+discord.py==2.3.2

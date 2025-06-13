@@ -129,3 +129,247 @@
 2025-06-12 14:14:17 - main - INFO - main - lifespan:72 - Application shutdown completed
 2025-06-12 14:14:17 - uvicorn.error - INFO - on - shutdown:76 - Application shutdown complete.
 2025-06-12 14:14:17 - uvicorn.error - INFO - server - _serve:93 - Finished server process [1324]
+2025-06-13 01:06:46,267 - server - INFO - Logging system initialized
+2025-06-13 01:06:46,267 - server - INFO - Log level: DEBUG
+2025-06-13 01:06:46,267 - server - INFO - Logging system initialized
+2025-06-13 01:06:46,267 - server - INFO - Log level: DEBUG
+2025-06-13 01:06:46,267 - server - INFO - Starting FA Application...
+2025-06-13 01:06:46,267 - server - INFO - Starting FA Application...
+2025-06-13 01:06:46,304 - server - INFO - Logging system initialized
+2025-06-13 01:06:46,305 - server - INFO - Log level: DEBUG
+2025-06-13 01:06:46,305 - server - INFO - Starting FA Application...
+2025-06-13 01:06:57,959 - server - INFO - Logging system initialized
+2025-06-13 01:06:57,960 - server - INFO - Log level: DEBUG
+2025-06-13 01:06:57,960 - server - INFO - Starting FA Application...
+2025-06-13 01:06:57,981 - server - INFO - Logging system initialized
+2025-06-13 01:06:57,982 - server - INFO - Log level: DEBUG
+2025-06-13 01:06:57,982 - server - INFO - Starting FA Application...
+2025-06-13 01:06:58,047 - server - INFO - Logging system initialized
+2025-06-13 01:06:58,048 - server - INFO - Log level: DEBUG
+2025-06-13 01:06:58,048 - server - INFO - Starting FA Application...
+2025-06-13 01:07:08,920 - server - INFO - Logging system initialized
+2025-06-13 01:07:08,920 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:08,920 - server - INFO - Starting FA Application...
+2025-06-13 01:07:08,923 - server - INFO - Logging system initialized
+2025-06-13 01:07:08,924 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:08,924 - server - INFO - Starting FA Application...
+2025-06-13 01:07:08,995 - server - INFO - Logging system initialized
+2025-06-13 01:07:08,996 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:08,996 - server - INFO - Starting FA Application...
+2025-06-13 01:07:16,421 - server - INFO - Logging system initialized
+2025-06-13 01:07:16,422 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:16,422 - server - INFO - Starting FA Application...
+2025-06-13 01:07:48,851 - server - INFO - Logging system initialized
+2025-06-13 01:07:48,852 - server - INFO - Logging system initialized
+2025-06-13 01:07:48,852 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:48,852 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:48,852 - server - INFO - Starting FA Application...
+2025-06-13 01:07:48,852 - server - INFO - Starting FA Application...
+2025-06-13 01:07:48,866 - server - INFO - Logging system initialized
+2025-06-13 01:07:48,867 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:48,867 - server - INFO - Starting FA Application...
+2025-06-13 01:07:48,915 - server - INFO - Logging system initialized
+2025-06-13 01:07:48,916 - server - INFO - Log level: DEBUG
+2025-06-13 01:07:48,916 - server - INFO - Starting FA Application...
+2025-06-13 01:07:49,028 - server - INFO - Database tables created/verified
+2025-06-13 01:07:49,142 - server - INFO - API routes registered
+2025-06-13 01:07:49,142 - server - INFO - Static files mounted
+2025-06-13 01:07:49,142 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:00,463 - server - INFO - Logging system initialized
+2025-06-13 01:08:00,463 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:00,463 - server - INFO - Starting FA Application...
+2025-06-13 01:08:00,470 - server - INFO - Database tables created/verified
+2025-06-13 01:08:00,582 - server - INFO - API routes registered
+2025-06-13 01:08:00,583 - server - INFO - Static files mounted
+2025-06-13 01:08:00,583 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:21,340 - server - INFO - Logging system initialized
+2025-06-13 01:08:21,340 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:21,340 - server - INFO - Starting FA Application...
+2025-06-13 01:08:21,347 - server - INFO - Database tables created/verified
+2025-06-13 01:08:21,380 - server - INFO - Logging system initialized
+2025-06-13 01:08:21,380 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:21,380 - server - INFO - Starting FA Application...
+2025-06-13 01:08:21,387 - server - INFO - Database tables created/verified
+2025-06-13 01:08:21,388 - server - INFO - Logging system initialized
+2025-06-13 01:08:21,388 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:21,388 - server - INFO - Starting FA Application...
+2025-06-13 01:08:21,395 - server - INFO - Database tables created/verified
+2025-06-13 01:08:21,421 - server - INFO - Logging system initialized
+2025-06-13 01:08:21,421 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:21,421 - server - INFO - Starting FA Application...
+2025-06-13 01:08:21,429 - server - INFO - Logging system initialized
+2025-06-13 01:08:21,430 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:21,430 - server - INFO - Starting FA Application...
+2025-06-13 01:08:21,432 - server - INFO - Database tables created/verified
+2025-06-13 01:08:21,436 - server - INFO - Database tables created/verified
+2025-06-13 01:08:21,468 - server - INFO - API routes registered
+2025-06-13 01:08:21,469 - server - INFO - Static files mounted
+2025-06-13 01:08:21,469 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:21,508 - server - INFO - API routes registered
+2025-06-13 01:08:21,508 - server - INFO - Static files mounted
+2025-06-13 01:08:21,508 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:21,512 - server - INFO - API routes registered
+2025-06-13 01:08:21,512 - server - INFO - Static files mounted
+2025-06-13 01:08:21,513 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:21,554 - server - INFO - API routes registered
+2025-06-13 01:08:21,554 - server - INFO - Static files mounted
+2025-06-13 01:08:21,554 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:21,596 - server - INFO - API routes registered
+2025-06-13 01:08:21,596 - server - INFO - Static files mounted
+2025-06-13 01:08:21,596 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:32,869 - server - INFO - Logging system initialized
+2025-06-13 01:08:32,870 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:32,870 - server - INFO - Starting FA Application...
+2025-06-13 01:08:32,877 - server - INFO - Database tables created/verified
+2025-06-13 01:08:32,993 - server - INFO - API routes registered
+2025-06-13 01:08:32,994 - server - INFO - Static files mounted
+2025-06-13 01:08:32,995 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:58,734 - server - INFO - Logging system initialized
+2025-06-13 01:08:58,735 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:58,735 - server - INFO - Starting FA Application...
+2025-06-13 01:08:58,735 - server - INFO - Logging system initialized
+2025-06-13 01:08:58,735 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:58,736 - server - INFO - Starting FA Application...
+2025-06-13 01:08:58,739 - server - INFO - Logging system initialized
+2025-06-13 01:08:58,739 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:58,739 - server - INFO - Starting FA Application...
+2025-06-13 01:08:58,741 - server - INFO - Database tables created/verified
+2025-06-13 01:08:58,742 - server - INFO - Database tables created/verified
+2025-06-13 01:08:58,746 - server - INFO - Database tables created/verified
+2025-06-13 01:08:58,746 - server - INFO - Logging system initialized
+2025-06-13 01:08:58,747 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:58,747 - server - INFO - Starting FA Application...
+2025-06-13 01:08:58,753 - server - INFO - Database tables created/verified
+2025-06-13 01:08:58,756 - server - INFO - Logging system initialized
+2025-06-13 01:08:58,757 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:58,757 - server - INFO - Starting FA Application...
+2025-06-13 01:08:58,763 - server - INFO - Database tables created/verified
+2025-06-13 01:08:58,786 - server - INFO - Logging system initialized
+2025-06-13 01:08:58,787 - server - INFO - Log level: DEBUG
+2025-06-13 01:08:58,787 - server - INFO - Starting FA Application...
+2025-06-13 01:08:58,796 - server - INFO - Database tables created/verified
+2025-06-13 01:08:58,858 - server - INFO - API routes registered
+2025-06-13 01:08:58,858 - server - INFO - Static files mounted
+2025-06-13 01:08:58,859 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:58,859 - server - INFO - API routes registered
+2025-06-13 01:08:58,859 - server - INFO - Static files mounted
+2025-06-13 01:08:58,859 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:58,864 - server - INFO - API routes registered
+2025-06-13 01:08:58,864 - server - INFO - Static files mounted
+2025-06-13 01:08:58,865 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:58,869 - server - INFO - API routes registered
+2025-06-13 01:08:58,870 - server - INFO - Static files mounted
+2025-06-13 01:08:58,870 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:58,909 - server - INFO - API routes registered
+2025-06-13 01:08:58,910 - server - INFO - Static files mounted
+2025-06-13 01:08:58,910 - server - INFO - FA Application initialized successfully
+2025-06-13 01:08:58,917 - server - INFO - API routes registered
+2025-06-13 01:08:58,918 - server - INFO - Static files mounted
+2025-06-13 01:08:58,918 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,736 - server - INFO - Logging system initialized
+2025-06-13 01:09:07,736 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:07,736 - server - INFO - Starting FA Application...
+2025-06-13 01:09:07,743 - server - INFO - Database tables created/verified
+2025-06-13 01:09:07,745 - server - INFO - Logging system initialized
+2025-06-13 01:09:07,745 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:07,745 - server - INFO - Starting FA Application...
+2025-06-13 01:09:07,752 - server - INFO - Database tables created/verified
+2025-06-13 01:09:07,759 - server - INFO - Logging system initialized
+2025-06-13 01:09:07,759 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:07,759 - server - INFO - Starting FA Application...
+2025-06-13 01:09:07,759 - server - INFO - Logging system initialized
+2025-06-13 01:09:07,760 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:07,760 - server - INFO - Starting FA Application...
+2025-06-13 01:09:07,766 - server - INFO - Database tables created/verified
+2025-06-13 01:09:07,766 - server - INFO - Database tables created/verified
+2025-06-13 01:09:07,769 - server - INFO - Logging system initialized
+2025-06-13 01:09:07,769 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:07,769 - server - INFO - Starting FA Application...
+2025-06-13 01:09:07,777 - server - INFO - Database tables created/verified
+2025-06-13 01:09:07,797 - server - INFO - Logging system initialized
+2025-06-13 01:09:07,798 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:07,798 - server - INFO - Starting FA Application...
+2025-06-13 01:09:07,805 - server - INFO - Database tables created/verified
+2025-06-13 01:09:07,861 - server - INFO - API routes registered
+2025-06-13 01:09:07,862 - server - INFO - Static files mounted
+2025-06-13 01:09:07,862 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,864 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,865 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,866 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:09:07,872 - server - INFO - API routes registered
+2025-06-13 01:09:07,873 - server - INFO - Static files mounted
+2025-06-13 01:09:07,873 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,875 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,875 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,875 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,876 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,877 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:09:07,884 - server - INFO - API routes registered
+2025-06-13 01:09:07,884 - server - INFO - Static files mounted
+2025-06-13 01:09:07,885 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,885 - server - INFO - API routes registered
+2025-06-13 01:09:07,885 - server - INFO - Static files mounted
+2025-06-13 01:09:07,886 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,887 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,887 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,887 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,887 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,887 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,888 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,888 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,888 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,888 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,888 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:09:07,888 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,888 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,889 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,889 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,890 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,890 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:09:07,900 - server - INFO - API routes registered
+2025-06-13 01:09:07,901 - server - INFO - Static files mounted
+2025-06-13 01:09:07,902 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,904 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,905 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,906 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:09:07,920 - server - INFO - API routes registered
+2025-06-13 01:09:07,921 - server - INFO - Static files mounted
+2025-06-13 01:09:07,921 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:07,923 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,923 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,924 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,925 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:07,925 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:09:36,019 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-13 01:09:36,059 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-13 01:09:36,064 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-13 01:09:36,068 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-13 01:09:36,069 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-13 01:09:36,088 - app.services.file_watcher - INFO - Stopped file watching service
+2025-06-13 01:09:44,959 - server - INFO - Logging system initialized
+2025-06-13 01:09:44,959 - server - INFO - Log level: DEBUG
+2025-06-13 01:09:44,960 - server - INFO - Starting FA Application...
+2025-06-13 01:09:44,966 - server - INFO - Database tables created/verified
+2025-06-13 01:09:45,082 - server - INFO - API routes registered
+2025-06-13 01:09:45,083 - server - INFO - Static files mounted
+2025-06-13 01:09:45,083 - server - INFO - FA Application initialized successfully
+2025-06-13 01:09:45,085 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
+2025-06-13 01:09:45,085 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
+2025-06-13 01:09:45,086 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
+2025-06-13 01:10:33,128 - app.api.v1.endpoints.discord_admin - ERROR - Error getting Discord stats: Could not determine join condition between parent/child tables on relationship User.topup_requests - there are multiple foreign key paths linking the tables.  Specify the 'foreign_keys' argument, providing a list of those columns which should be counted as containing a foreign key reference to the parent table.
