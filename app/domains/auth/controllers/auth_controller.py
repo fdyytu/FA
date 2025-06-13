@@ -65,8 +65,20 @@ class AuthController(BaseController[User, AuthService, UserCreate, UserUpdate, U
             service = AuthService(repository)
             
             user = service.create(item_data.dict())
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "full_name": user.full_name,
+                "phone_number": user.phone_number,
+                "is_active": user.is_active,
+                "is_superuser": user.is_superuser,
+                "balance": user.balance,
+                "created_at": user.created_at,
+                "updated_at": user.updated_at
+            }
             return APIResponse.success_response(
-                data=UserResponse.from_orm(user),
+                data=UserResponse(**user_data),
                 message="User berhasil didaftarkan"
             )
         except HTTPException as e:
@@ -84,8 +96,20 @@ class AuthController(BaseController[User, AuthService, UserCreate, UserUpdate, U
             service = AuthService(repository)
             
             user = service.get_by_id(item_id)
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "full_name": user.full_name,
+                "phone_number": user.phone_number,
+                "is_active": user.is_active,
+                "is_superuser": user.is_superuser,
+                "balance": user.balance,
+                "created_at": user.created_at,
+                "updated_at": user.updated_at
+            }
             return APIResponse.success_response(
-                data=UserResponse.from_orm(user),
+                data=UserResponse(**user_data),
                 message="User berhasil diambil"
             )
         except HTTPException as e:
@@ -105,7 +129,21 @@ class AuthController(BaseController[User, AuthService, UserCreate, UserUpdate, U
             users = service.get_all(skip, limit)
             total = repository.count_total_users()
             
-            user_responses = [UserResponse.from_orm(user) for user in users]
+            user_responses = []
+            for user in users:
+                user_data = {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "full_name": user.full_name,
+                    "phone_number": user.phone_number,
+                    "is_active": user.is_active,
+                    "is_superuser": user.is_superuser,
+                    "balance": user.balance,
+                    "created_at": user.created_at,
+                    "updated_at": user.updated_at
+                }
+                user_responses.append(UserResponse(**user_data))
             
             return APIResponse.paginated_response(
                 data=user_responses,
@@ -127,8 +165,20 @@ class AuthController(BaseController[User, AuthService, UserCreate, UserUpdate, U
             service = AuthService(repository)
             
             user = service.update(item_id, item_data.dict(exclude_unset=True))
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "full_name": user.full_name,
+                "phone_number": user.phone_number,
+                "is_active": user.is_active,
+                "is_superuser": user.is_superuser,
+                "balance": user.balance,
+                "created_at": user.created_at,
+                "updated_at": user.updated_at
+            }
             return APIResponse.success_response(
-                data=UserResponse.from_orm(user),
+                data=UserResponse(**user_data),
                 message="User berhasil diupdate"
             )
         except HTTPException as e:
@@ -216,8 +266,20 @@ class AuthController(BaseController[User, AuthService, UserCreate, UserUpdate, U
     
     async def get_current_user_profile(self, current_user: User = Depends(get_current_user)) -> APIResponse[UserResponse]:
         """Ambil profil user yang sedang login"""
+        user_data = {
+            "id": current_user.id,
+            "username": current_user.username,
+            "email": current_user.email,
+            "full_name": current_user.full_name,
+            "phone_number": current_user.phone_number,
+            "is_active": current_user.is_active,
+            "is_superuser": current_user.is_superuser,
+            "balance": current_user.balance,
+            "created_at": current_user.created_at,
+            "updated_at": current_user.updated_at
+        }
         return APIResponse.success_response(
-            data=UserResponse.from_orm(current_user),
+            data=UserResponse(**user_data),
             message="Profil user berhasil diambil"
         )
     

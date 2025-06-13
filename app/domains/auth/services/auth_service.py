@@ -1,21 +1,20 @@
 from typing import Optional, List
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from app.shared.base_classes.base_service import BaseService
 from app.domains.auth.repositories.user_repository import UserRepository
 from app.domains.auth.models.user import User
 from app.domains.auth.schemas.auth_schemas import UserCreate, UserUpdate, PasswordChange
 from app.infrastructure.security.password_handler import PasswordHandler
 from app.infrastructure.security.token_handler import TokenHandler
 
-class AuthService(BaseService):
+class AuthService:
     """
     Authentication service yang mengimplementasikan Single Responsibility Principle.
     Fokus hanya pada business logic authentication dan user management.
     """
     
     def __init__(self, repository: UserRepository):
-        super().__init__(repository)
+        self.repository = repository
         self.password_handler = PasswordHandler()
         self.token_handler = TokenHandler()
     

@@ -1,21 +1,24 @@
 from typing import Optional, List
 from sqlalchemy.orm import Session
-from app.shared.base_classes.base_repository import BaseRepository
 from app.domains.auth.models.user import User
 
-class UserRepository(BaseRepository[User, dict, dict]):
+class UserRepository:
     """
     User repository yang mengimplementasikan Dependency Inversion Principle.
     Memisahkan logic data access dari business logic.
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, User)
+        self.db = db
+        self.model = User
     
     def create(self, obj_data: dict) -> User:
         """Buat user baru"""
-        user = self._create_instance(**obj_data)
-        return self._save_and_refresh(user)
+        user = User(**obj_data)
+        self.db.add(user)
+        self.db.commit()
+        self.db.refresh(user)
+        return user
     
     def get_by_id(self, user_id: int) -> Optional[User]:
         """Ambil user berdasarkan ID"""
@@ -31,7 +34,9 @@ class UserRepository(BaseRepository[User, dict, dict]):
         if user:
             for key, value in obj_data.items():
                 setattr(user, key, value)
-            return self._save_and_refresh(user)
+            self.db.commit()
+            self.db.refresh(user)
+            return user
         return None
     
     def delete(self, user_id: int) -> bool:
