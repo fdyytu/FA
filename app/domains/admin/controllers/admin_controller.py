@@ -17,7 +17,7 @@ from app.domains.admin.schemas.admin_schemas import (
 )
 from app.shared.dependencies.auth_deps import get_current_admin, get_current_super_admin
 from app.domains.admin.models.admin import Admin
-from app.core.security import create_access_token
+from app.common.security.auth_security import create_access_token
 from app.shared.responses.api_response import APIResponse
 
 

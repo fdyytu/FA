@@ -6,7 +6,7 @@ from app.schemas.user_profile import (
 )
 from app.utils.exceptions import HTTPException
 from app.shared.base_classes.base_service import BaseService
-from app.core.security import verify_password, get_password_hash
+from app.common.security.auth_security import verify_password, get_password_hash
 import logging
 import pyotp
 import qrcode

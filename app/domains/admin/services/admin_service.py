@@ -18,7 +18,7 @@ from app.domains.admin.schemas.admin_schemas import (
     MarginConfigCreate, MarginConfigUpdate, UserUpdateByAdmin,
     ProductCreate, ProductUpdate, DashboardResponse, PaginationParams
 )
-from app.core.security import get_password_hash, verify_password
+from app.common.security.auth_security import get_password_hash, verify_password
 from app.domains.ppob.models.ppob import PPOBProduct
 from app.domains.auth.models.user import User
 

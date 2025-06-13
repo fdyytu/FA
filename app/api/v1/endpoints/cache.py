@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from typing import Dict, Any, Optional
 from app.cache.managers.cache_manager import cache_manager
 from app.cache.managers.ppob_cache_manager import ppob_cache_manager
-from app.middleware.security import require_admin
+from app.common.security.middleware_security import require_admin
 
 router = APIRouter()
 

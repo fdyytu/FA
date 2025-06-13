@@ -6,9 +6,9 @@ from app.models.transaction import Transaction, UserProfile
 from app.schemas.user_profile import (
     UserDetailResponse, UserListResponse, UserProfileResponse
 )
-from app.utils.exceptions import HTTPException
+from app.common.exceptions.custom_exceptions import HTTPException
 from app.shared.base_classes.base_service import BaseService
-from app.core.security import get_password_hash
+from app.common.security.auth_security import get_password_hash
 import logging
 import secrets
 import string
