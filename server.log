@@ -1,21 +1,6 @@
-INFO:     Will watch for changes in these directories: ['/home/user/workspace']
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [1867] using WatchFiles
-2025-06-13 01:09:44,959 - server - INFO - Logging system initialized
-2025-06-13 01:09:44,959 - server - INFO - Log level: DEBUG
-2025-06-13 01:09:44,960 - server - INFO - Starting FA Application...
-2025-06-13 01:09:44,966 - server - INFO - Database tables created/verified
-2025-06-13 01:09:45,082 - server - INFO - API routes registered
-2025-06-13 01:09:45,083 - server - INFO - Static files mounted
-2025-06-13 01:09:45,083 - server - INFO - FA Application initialized successfully
-INFO:     Started server process [1869]
-INFO:     Waiting for application startup.
-2025-06-13 01:09:45,085 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_ISDIR|IN_OPEN, cookie=0, name=''>
-2025-06-13 01:09:45,085 - watchdog.observers.inotify_buffer - DEBUG - in-event <InotifyEvent: src_path=b'/tmp/watch', wd=1, mask=IN_CLOSE_NOWRITE|IN_ISDIR, cookie=0, name=''>
-2025-06-13 01:09:45,086 - app.services.file_watcher - INFO - Started watching directory: /tmp/watch
-INFO:     Application startup complete.
-INFO:     34.168.201.141:0 - "HEAD /api/v1/admin/discord-dashboard HTTP/1.1" 405 Method Not Allowed
-INFO:     34.168.201.141:0 - "GET /api/v1/admin/discord-dashboard HTTP/1.1" 401 Unauthorized
-INFO:     34.168.201.141:0 - "GET /admin/discord-dashboard.html HTTP/1.1" 200 OK
-2025-06-13 01:10:33,128 - app.api.v1.endpoints.discord_admin - ERROR - Error getting Discord stats: Could not determine join condition between parent/child tables on relationship User.topup_requests - there are multiple foreign key paths linking the tables.  Specify the 'foreign_keys' argument, providing a list of those columns which should be counted as containing a foreign key reference to the parent table.
-INFO:     34.168.201.141:0 - "GET /api/v1/discord/stats HTTP/1.1" 500 Internal Server Error
+Traceback (most recent call last):
+  File "/home/user/workspace/main.py", line 34, in <module>
+    from app.api.v1.endpoints.cache import router as cache_router
+  File "/home/user/workspace/app/api/v1/endpoints/cache.py", line 10, in <module>
+    from app.core.security import get_current_admin_user  # Assuming admin auth exists
+ImportError: cannot import name 'get_current_admin_user' from 'app.core.security' (/home/user/workspace/app/core/security.py)
