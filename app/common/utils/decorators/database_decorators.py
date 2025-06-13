@@ -22,7 +22,7 @@ def transaction_required(func: Callable) -> Callable:
         if not db:
             # Try to get from dependency injection
             try:
-                from app.core.database import get_db
+                from app.infrastructure.database.database_manager import get_db
                 db = next(get_db())
                 kwargs['db'] = db
             except Exception as e:
@@ -77,7 +77,7 @@ def read_only_transaction(func: Callable) -> Callable:
         
         if not db:
             try:
-                from app.core.database import get_db
+                from app.infrastructure.database.database_manager import get_db
                 db = next(get_db())
                 kwargs['db'] = db
             except Exception as e:
@@ -111,7 +111,7 @@ def with_database_session(func: Callable) -> Callable:
         
         if not db_provided:
             try:
-                from app.core.database import get_db
+                from app.infrastructure.database.database_manager import get_db
                 db = next(get_db())
                 kwargs['db'] = db
             except Exception as e:

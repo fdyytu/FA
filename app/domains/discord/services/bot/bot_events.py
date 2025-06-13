@@ -8,7 +8,7 @@ from discord.ext import commands, tasks
 import logging
 from typing import Optional
 
-from app.core.database import get_db
+from app.infrastructure.database.database_manager import get_db
 from app.models.discord import LiveStock
 
 logger = logging.getLogger(__name__)

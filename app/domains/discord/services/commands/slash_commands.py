@@ -10,7 +10,7 @@ import logging
 from typing import Optional
 from decimal import Decimal
 
-from app.core.database import get_db
+from app.infrastructure.database.database_manager import get_db
 from app.models.discord import (
     DiscordUser, DiscordWallet, LiveStock, 
     AdminWorldConfig, CurrencyType

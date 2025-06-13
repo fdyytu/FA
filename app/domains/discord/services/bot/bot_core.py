@@ -10,7 +10,7 @@ import logging
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.core.database import get_db
+from app.infrastructure.database.database_manager import get_db
 from app.models.discord import DiscordBot
 
 logger = logging.getLogger(__name__)
