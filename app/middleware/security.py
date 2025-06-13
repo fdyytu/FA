@@ -186,3 +186,20 @@ admin_ip_whitelist = IPWhitelist([
     "10.0.0.",  # Internal network
     "192.168."  # Local network
 ])
+
+class SecurityMiddleware:
+    """Security middleware untuk FastAPI"""
+    
+    def __init__(self, app, csrf_protection: bool = True, security_headers: bool = True, max_request_size: int = 10 * 1024 * 1024):
+        self.app = app
+        self.csrf_protection = csrf_protection
+        self.security_headers = security_headers
+        self.max_request_size = max_request_size
+    
+    async def __call__(self, scope, receive, send):
+        """ASGI middleware implementation"""
+        if scope["type"] == "http":
+            # Add security processing here
+            pass
+        
+        await self.app(scope, receive, send)

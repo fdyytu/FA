@@ -37,6 +37,14 @@ from app.api.v1.endpoints.cache import router as cache_router
 setup_logging()
 logger = logging.getLogger(__name__)
 
+# Import domain routers (new architecture)
+try:
+    from app.api.v1.domain_router import api_router as domain_router
+    DOMAIN_ROUTER_AVAILABLE = True
+except ImportError:
+    DOMAIN_ROUTER_AVAILABLE = False
+    logger.warning("Domain router not available, using legacy routers only")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -186,49 +194,58 @@ def include_routers(app: FastAPI):
     # API v1 routes
     api_prefix = "/api/v1"
     
-    app.include_router(
-        auth_router,
-        prefix=f"{api_prefix}/auth",
-        tags=["Authentication"]
-    )
-    
-    app.include_router(
-        users_router,
-        prefix=f"{api_prefix}/users",
-        tags=["Users"]
-    )
-    
-    app.include_router(
-        wallet_router,
-        prefix=f"{api_prefix}/wallet",
-        tags=["Wallet"]
-    )
-    
-    app.include_router(
-        transactions_router,
-        prefix=f"{api_prefix}/transactions",
-        tags=["Transactions"]
-    )
-    
-    app.include_router(
-        ppob_router,
-        prefix=f"{api_prefix}/ppob",
-        tags=["PPOB"]
-    )
-    
-    app.include_router(
-        admin_router,
-        prefix=f"{api_prefix}/admin",
-        tags=["Admin"]
-    )
-    
-    app.include_router(
-        cache_router,
-        prefix=f"{api_prefix}/cache",
-        tags=["Cache Management"]
-    )
-    
-    logger.info("API routes configured successfully")
+    # Include domain router if available (new architecture)
+    if DOMAIN_ROUTER_AVAILABLE:
+        app.include_router(
+            domain_router,
+            prefix=api_prefix
+        )
+        logger.info("Domain-based routes configured successfully")
+    else:
+        # Fallback to legacy routers
+        app.include_router(
+            auth_router,
+            prefix=f"{api_prefix}/auth",
+            tags=["Authentication"]
+        )
+        
+        app.include_router(
+            users_router,
+            prefix=f"{api_prefix}/users",
+            tags=["Users"]
+        )
+        
+        app.include_router(
+            wallet_router,
+            prefix=f"{api_prefix}/wallet",
+            tags=["Wallet"]
+        )
+        
+        app.include_router(
+            transactions_router,
+            prefix=f"{api_prefix}/transactions",
+            tags=["Transactions"]
+        )
+        
+        app.include_router(
+            ppob_router,
+            prefix=f"{api_prefix}/ppob",
+            tags=["PPOB"]
+        )
+        
+        app.include_router(
+            admin_router,
+            prefix=f"{api_prefix}/admin",
+            tags=["Admin"]
+        )
+        
+        app.include_router(
+            cache_router,
+            prefix=f"{api_prefix}/cache",
+            tags=["Cache Management"]
+        )
+        
+        logger.info("Legacy API routes configured successfully")
 
 
 def add_health_check(app: FastAPI):
