@@ -9,7 +9,6 @@ class AuthConfig(BaseSettings):
     """
     
     model_config = ConfigDict(
-        env_prefix="AUTH_",
         env_file=".env",
         extra="ignore"  # Ignore extra fields from .env
     )
