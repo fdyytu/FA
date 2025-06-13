@@ -1,7 +1,7 @@
 from typing import Dict, Any
 from app.services.ppob.base import BasePPOBProvider
 from app.schemas.ppob import PPOBInquiryResponse, PPOBInquiryRequest
-from app.models.ppob import PPOBCategory
+from app.domains.ppob.models.ppob import PPOBCategory
 import asyncio
 
 class DefaultPPOBProvider(BasePPOBProvider):

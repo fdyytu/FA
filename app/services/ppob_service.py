@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from typing import List, Optional
 from decimal import Decimal
-from app.models.ppob import PPOBTransaction, PPOBProduct, TransactionStatus, PPOBCategory
+from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, TransactionStatus, PPOBCategory
 from app.models.user import User
 from app.schemas.ppob import (
     PPOBInquiryRequest, PPOBInquiryResponse, PPOBPaymentRequest,

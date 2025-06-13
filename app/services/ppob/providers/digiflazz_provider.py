@@ -3,7 +3,7 @@ import asyncio
 from typing import Dict, Any, List
 from app.services.ppob.base import BasePPOBProvider
 from app.schemas.ppob import PPOBInquiryResponse, PPOBInquiryRequest
-from app.models.ppob import PPOBCategory
+from app.domains.ppob.models.ppob import PPOBCategory
 from app.core.config import settings
 import logging
 

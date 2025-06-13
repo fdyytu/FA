@@ -2,7 +2,7 @@ from pydantic import BaseModel, validator
 from typing import Optional, List
 from datetime import datetime
 from decimal import Decimal
-from app.models.ppob import PPOBCategory, TransactionStatus
+from app.domains.ppob.models.ppob import PPOBCategory, TransactionStatus
 
 class PPOBProductBase(BaseModel):
     product_code: str

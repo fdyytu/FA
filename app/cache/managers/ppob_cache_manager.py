@@ -9,7 +9,7 @@ from typing import List, Optional, Dict, Any
 from datetime import timedelta
 from app.cache.managers.cache_manager import cache_manager
 from app.cache.decorators.cache_decorators import cache_result, cache_invalidate, CacheHelper
-from app.models.ppob import PPOBProduct, PPOBCategory
+from app.domains.ppob.models.ppob import PPOBProduct, PPOBCategory
 
 logger = logging.getLogger(__name__)
 
