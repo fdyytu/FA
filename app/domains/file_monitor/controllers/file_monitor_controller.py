@@ -1,8 +1,7 @@
 from fastapi import APIRouter, WebSocket, HTTPException, Depends
-from app.services.file_watcher import FileWatcherService
+from app.domains.file_monitor.services.file_watcher import FileWatcherService
 from app.api.deps import get_file_watcher
-from typing import List
-from app.models.file_event import FileEvent
+from app.domains.file_monitor.models.file_event import FileEvent
 
 router = APIRouter()
 

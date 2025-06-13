@@ -11,7 +11,7 @@ except ImportError:
 
 # Try to import services
 try:
-    from app.services.notification_service import (
+    from app.domains.notification.services.notification_service import (
         NotificationService, AdminNotificationService, WebhookService
     )
 except ImportError:

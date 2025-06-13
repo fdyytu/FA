@@ -1,6 +1,6 @@
 from typing import List, Callable, Dict
 import asyncio
-from app.models.file_event import FileEvent
+from app.domains.file_monitor.models.file_event import FileEvent
 
 class EventBus:
     def __init__(self):

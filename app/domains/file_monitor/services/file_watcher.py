@@ -4,7 +4,7 @@ from pathlib import Path
 import asyncio
 from typing import Optional, Union
 import logging
-from app.models.file_event import FileEvent
+from app.domains.file_monitor.models.file_event import FileEvent
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
