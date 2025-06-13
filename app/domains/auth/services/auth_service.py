@@ -8,7 +8,7 @@ from app.domains.auth.schemas.auth_schemas import UserCreate, UserUpdate, Passwo
 from app.infrastructure.security.password_handler import PasswordHandler
 from app.infrastructure.security.token_handler import TokenHandler
 
-class AuthService(BaseService[User, UserRepository]):
+class AuthService(BaseService):
     """
     Authentication service yang mengimplementasikan Single Responsibility Principle.
     Fokus hanya pada business logic authentication dan user management.

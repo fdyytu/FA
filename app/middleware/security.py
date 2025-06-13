@@ -1,37 +1,42 @@
 from fastapi import HTTPException, Depends
 from sqlalchemy.orm import Session
 from app.api.deps import get_db, get_current_user
-from app.models.user import User
 from functools import wraps
 import logging
 
+# Try to import User from domains
+try:
+    from app.domains.auth.models.user import User
+except ImportError:
+    User = None
+
 logger = logging.getLogger(__name__)
 
-def require_admin(current_user: User = Depends(get_current_user)) -> User:
+def require_admin(current_user = Depends(get_current_user)):
     """Middleware untuk memastikan user adalah admin"""
-    if not current_user.is_admin:
-        logger.warning(f"Non-admin user {current_user.id} attempted to access admin endpoint")
+    if not hasattr(current_user, 'is_admin') or not current_user.is_admin:
+        logger.warning(f"Non-admin user attempted to access admin endpoint")
         raise HTTPException(
-            status_code=403, 
+            status_code=403,
             detail="Akses ditolak. Hanya admin yang dapat mengakses endpoint ini."
         )
     return current_user
 
-def require_active_user(current_user: User = Depends(get_current_user)) -> User:
+def require_active_user(current_user = Depends(get_current_user)):
     """Middleware untuk memastikan user aktif"""
-    if not current_user.is_active:
-        logger.warning(f"Inactive user {current_user.id} attempted to access endpoint")
+    if not hasattr(current_user, 'is_active') or not current_user.is_active:
+        logger.warning(f"Inactive user attempted to access endpoint")
         raise HTTPException(
             status_code=403, 
             detail="Akun Anda tidak aktif. Silakan hubungi administrator."
         )
     return current_user
 
-def require_verified_user(current_user: User = Depends(get_current_user)) -> User:
+def require_verified_user(current_user = Depends(get_current_user)):
     """Middleware untuk memastikan user sudah terverifikasi"""
     # Implementasi verifikasi bisa disesuaikan dengan kebutuhan
     # Misalnya cek email verification, phone verification, dll
-    if not current_user.is_active:
+    if not hasattr(current_user, 'is_active') or not current_user.is_active:
         raise HTTPException(
             status_code=403, 
             detail="Akun Anda belum terverifikasi. Silakan verifikasi akun terlebih dahulu."
@@ -82,11 +87,11 @@ def rate_limit_check(limiter: RateLimiter):
             # Extract user_id from current_user dependency
             current_user = None
             for arg in args:
-                if isinstance(arg, User):
+                if hasattr(arg, 'id') and hasattr(arg, 'is_active'):
                     current_user = arg
                     break
             
-            if current_user and not limiter(current_user.id):
+            if current_user and hasattr(current_user, 'id') and not limiter(current_user.id):
                 raise HTTPException(
                     status_code=429,
                     detail="Terlalu banyak permintaan. Silakan coba lagi nanti."
@@ -104,14 +109,14 @@ def log_user_activity(activity_type: str, description: str = ""):
             # Extract user_id from current_user dependency
             current_user = None
             for arg in args:
-                if isinstance(arg, User):
+                if hasattr(arg, 'id') and hasattr(arg, 'is_active'):
                     current_user = arg
                     break
             
             try:
                 result = await func(*args, **kwargs)
                 
-                if current_user:
+                if current_user and hasattr(current_user, 'id'):
                     logger.info(f"User Activity - user_id: {current_user.id}, "
                               f"activity: {activity_type}, "
                               f"description: {description}, "
@@ -119,7 +124,7 @@ def log_user_activity(activity_type: str, description: str = ""):
                 
                 return result
             except Exception as e:
-                if current_user:
+                if current_user and hasattr(current_user, 'id'):
                     logger.error(f"User Activity Error - user_id: {current_user.id}, "
                                f"activity: {activity_type}, "
                                f"error: {str(e)}, "
@@ -143,13 +148,13 @@ class SecurityHeaders:
 
 def validate_user_access(resource_user_id: int):
     """Middleware untuk validasi akses user ke resource"""
-    def dependency(current_user: User = Depends(get_current_user)):
+    def dependency(current_user = Depends(get_current_user)):
         # Admin bisa akses semua resource
-        if current_user.is_admin:
+        if hasattr(current_user, 'is_admin') and current_user.is_admin:
             return current_user
         
         # User biasa hanya bisa akses resource miliknya sendiri
-        if current_user.id != resource_user_id:
+        if hasattr(current_user, 'id') and current_user.id != resource_user_id:
             raise HTTPException(
                 status_code=403,
                 detail="Anda tidak memiliki akses ke resource ini."

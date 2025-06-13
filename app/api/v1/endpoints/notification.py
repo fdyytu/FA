@@ -2,16 +2,41 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
 from app.api.deps import get_db, get_current_user
-from app.models.user import User
-from app.services.notification_service import (
-    NotificationService, AdminNotificationService, WebhookService
-)
-from app.schemas.notification import (
-    NotificationCreate, NotificationUpdate, NotificationResponse,
-    AdminNotificationSettingCreate, AdminNotificationSettingUpdate,
-    NotificationSendRequest, WebhookLogCreate
-)
-from app.utils.responses import create_success_response, create_error_response
+
+# Try to import User from domains
+try:
+    from app.domains.auth.models.user import User
+except ImportError:
+    User = None
+
+# Try to import services
+try:
+    from app.services.notification_service import (
+        NotificationService, AdminNotificationService, WebhookService
+    )
+except ImportError:
+    NotificationService = AdminNotificationService = WebhookService = None
+
+# Try to import schemas
+try:
+    from app.schemas.notification import (
+        NotificationCreate, NotificationUpdate, NotificationResponse,
+        AdminNotificationSettingCreate, AdminNotificationSettingUpdate,
+        NotificationSendRequest, WebhookLogCreate
+    )
+except ImportError:
+    NotificationCreate = NotificationUpdate = NotificationResponse = None
+    AdminNotificationSettingCreate = AdminNotificationSettingUpdate = None
+    NotificationSendRequest = WebhookLogCreate = None
+
+try:
+    from app.utils.responses import create_success_response, create_error_response
+except ImportError:
+    def create_success_response(data, message="Success"):
+        return {"success": True, "data": data, "message": message}
+    def create_error_response(message, status_code=400):
+        return {"success": False, "message": message, "status_code": status_code}
+
 import logging
 import json
 

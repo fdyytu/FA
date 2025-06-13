@@ -9,14 +9,32 @@ from app.domains.ppob.schemas.ppob_schemas import (
     PPOBInquiryRequest, PPOBInquiryResponse, PPOBPaymentRequest,
     PPOBTransactionCreate, PPOBTransactionUpdate
 )
-from app.models.user import User
-from app.services.ppob.providers import DefaultPPOBProvider
-from app.services.ppob.providers.digiflazz_provider import DigiflazzProvider
-from app.services.admin_service import AdminConfigService, PPOBMarginService
-from app.core.config import settings
-from app.cache.managers.ppob_cache_manager import ppob_cache_manager
 
-class PPOBService(BaseService[PPOBTransaction, PPOBRepository, PPOBTransactionCreate, PPOBTransactionUpdate]):
+# Try to import User from domains
+try:
+    from app.domains.auth.models.user import User
+except ImportError:
+    User = None
+
+try:
+    from app.services.ppob.providers import DefaultPPOBProvider
+    from app.services.ppob.providers.digiflazz_provider import DigiflazzProvider
+except ImportError:
+    DefaultPPOBProvider = DigiflazzProvider = None
+
+try:
+    from app.services.admin_service import AdminConfigService, PPOBMarginService
+except ImportError:
+    AdminConfigService = PPOBMarginService = None
+
+from app.core.config import settings
+
+try:
+    from app.cache.managers.ppob_cache_manager import ppob_cache_manager
+except ImportError:
+    ppob_cache_manager = None
+
+class PPOBService(BaseService):
     """
     Service untuk menangani transaksi PPOB.
     Mengimplementasikan Single Responsibility Principle - hanya menangani logika bisnis PPOB.

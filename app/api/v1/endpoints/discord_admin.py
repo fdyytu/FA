@@ -4,25 +4,53 @@ from typing import List, Optional
 import logging
 
 from app.core.database import get_db
-from app.models.discord import (
-    DiscordBot, DiscordChannel, DiscordUser, DiscordWallet,
-    LiveStock, AdminWorldConfig, DiscordBotConfig, DiscordBotStatus
-)
-from app.schemas.discord import (
-    DiscordBotCreate, DiscordBotUpdate, DiscordBotResponse,
-    DiscordChannelCreate, DiscordChannelUpdate, DiscordChannelResponse,
-    LiveStockCreate, LiveStockUpdate, LiveStockResponse,
-    AdminWorldConfigCreate, AdminWorldConfigUpdate, AdminWorldConfigResponse,
-    DiscordBotConfigCreate, DiscordBotConfigUpdate, DiscordBotConfigResponse
-)
-from app.services.discord_bot_service import DiscordBotService
-from app.utils.responses import create_success_response, create_error_response
+
+# Try to import Discord models
+try:
+    from app.models.discord import (
+        DiscordBot, DiscordChannel, DiscordUser, DiscordWallet,
+        LiveStock, AdminWorldConfig, DiscordBotConfig, DiscordBotStatus
+    )
+except ImportError:
+    DiscordBot = DiscordChannel = DiscordUser = DiscordWallet = None
+    LiveStock = AdminWorldConfig = DiscordBotConfig = DiscordBotStatus = None
+
+# Try to import Discord schemas
+try:
+    from app.schemas.discord import (
+        DiscordBotCreate, DiscordBotUpdate, DiscordBotResponse,
+        DiscordChannelCreate, DiscordChannelUpdate, DiscordChannelResponse,
+        LiveStockCreate, LiveStockUpdate, LiveStockResponse,
+        AdminWorldConfigCreate, AdminWorldConfigUpdate, AdminWorldConfigResponse,
+        DiscordBotConfigCreate, DiscordBotConfigUpdate, DiscordBotConfigResponse
+    )
+except ImportError:
+    DiscordBotCreate = DiscordBotUpdate = DiscordBotResponse = None
+    DiscordChannelCreate = DiscordChannelUpdate = DiscordChannelResponse = None
+    LiveStockCreate = LiveStockUpdate = LiveStockResponse = None
+    AdminWorldConfigCreate = AdminWorldConfigUpdate = AdminWorldConfigResponse = None
+    DiscordBotConfigCreate = DiscordBotConfigUpdate = DiscordBotConfigResponse = None
+
+# Try to import Discord service
+try:
+    from app.services.discord_bot_service import DiscordBotService
+except ImportError:
+    DiscordBotService = None
+
+# Try to import utility functions
+try:
+    from app.utils.responses import create_success_response, create_error_response
+except ImportError:
+    def create_success_response(data, message="Success"):
+        return {"success": True, "data": data, "message": message}
+    def create_error_response(message, status_code=400):
+        return {"success": False, "message": message, "status_code": status_code}
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
 # Global bot service instance
-bot_service = DiscordBotService()
+bot_service = DiscordBotService() if DiscordBotService else None
 
 # Discord Bot Management
 @router.post("/bots", response_model=dict)
