@@ -6,7 +6,7 @@ import logging
 from app.core.database import get_db
 from app.models.discord import (
     DiscordBot, DiscordChannel, DiscordUser, DiscordWallet,
-    LiveStock, AdminWorldConfig, DiscordBotConfig
+    LiveStock, AdminWorldConfig, DiscordBotConfig, DiscordBotStatus
 )
 from app.schemas.discord import (
     DiscordBotCreate, DiscordBotUpdate, DiscordBotResponse,
@@ -49,7 +49,7 @@ async def create_discord_bot(
         db.commit()
         db.refresh(new_bot)
         
-        return create_create_success_response(
+        return create_success_response(
             data=DiscordBotResponse.from_orm(new_bot),
             message="Discord Bot berhasil dibuat"
         )
@@ -180,7 +180,7 @@ async def stop_discord_bot(
         await bot_service.stop_bot()
         
         # Update status
-        bot.status = "inactive"
+        bot.status = DiscordBotStatus.INACTIVE
         db.commit()
         
         return create_success_response(
