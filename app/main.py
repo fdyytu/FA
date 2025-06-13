@@ -45,6 +45,14 @@ def create_application() -> FastAPI:
     application.add_event_handler("startup", startup_event_handler)
     application.add_event_handler("shutdown", shutdown_event_handler)
     
+    # Add root health endpoint for Railway healthcheck
+    @application.get("/health")
+    async def root_health_check():
+        """
+        Root health check endpoint for Railway deployment
+        """
+        return {"status": "healthy", "service": "FA API"}
+    
     # Include routers dengan struktur baru
     application.include_router(api_router, prefix="/api/v1")
     server_logger.info("API routes registered with new domain structure")
