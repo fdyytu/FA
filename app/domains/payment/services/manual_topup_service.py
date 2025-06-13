@@ -8,7 +8,7 @@ from datetime import datetime
 import uuid
 from sqlalchemy.orm import Session
 
-from app.models.wallet import TopUpRequest, TopUpStatus, PaymentMethod
+from app.domains.wallet.models.wallet import TopUpRequest, TopUpStatus, PaymentMethod
 from app.models.user import User
 from app.utils.exceptions import NotFoundError, ValidationError
 

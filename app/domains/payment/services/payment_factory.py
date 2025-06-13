@@ -9,7 +9,7 @@ import uuid
 
 from app.domains.payment.services.midtrans_service import MidtransService
 from app.domains.payment.services.manual_topup_service import ManualTopUpService
-from app.models.wallet import PaymentMethod, TopUpRequest, TopUpStatus
+from app.domains.wallet.models.wallet import PaymentMethod, TopUpRequest, TopUpStatus
 from app.models.user import User
 from app.utils.exceptions import ValidationError, NotFoundError
 

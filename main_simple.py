@@ -43,6 +43,18 @@ def create_application() -> FastAPI:
     except ImportError as e:
         logger.warning(f"Could not import user routes: {e}")
     
+    # Include wallet test routes
+    try:
+        from app.api.v1.endpoints.wallet_test import router as wallet_router
+        app.include_router(
+            wallet_router,
+            prefix="/api/v1/wallet",
+            tags=["Wallet"]
+        )
+        logger.info("Wallet test routes configured successfully")
+    except ImportError as e:
+        logger.warning(f"Could not import wallet test routes: {e}")
+    
     # Add health check endpoint
     @app.get("/health", tags=["Health"])
     async def health_check():
