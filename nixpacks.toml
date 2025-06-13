@@ -1,8 +1,13 @@
 [phases.setup]
-nixPkgs = ["python311", "postgresql"]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.setuptools", "python311Packages.wheel", "postgresql", "gcc", "pkg-config"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+  "python --version",
+  "python -m pip --version", 
+  "python -m pip install --upgrade pip setuptools wheel",
+  "python -m pip install -r requirements.txt --no-cache-dir"
+]
 
 [phases.build]
 cmds = ["echo 'Build completed'"]
@@ -13,3 +18,5 @@ cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1"
 [variables]
 PYTHONPATH = "/app"
 PYTHONUNBUFFERED = "1"
+PIP_NO_CACHE_DIR = "1"
+PIP_DISABLE_PIP_VERSION_CHECK = "1"
