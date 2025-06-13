@@ -1,6 +1,0 @@
-Traceback (most recent call last):
-  File "/home/user/workspace/main.py", line 34, in <module>
-    from app.api.v1.endpoints.cache import router as cache_router
-  File "/home/user/workspace/app/api/v1/endpoints/cache.py", line 10, in <module>
-    from app.core.security import get_current_admin_user  # Assuming admin auth exists
-ImportError: cannot import name 'get_current_admin_user' from 'app.core.security' (/home/user/workspace/app/core/security.py)
