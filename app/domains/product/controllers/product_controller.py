@@ -1,305 +1,379 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse
+from typing import List, Annotated, Optional
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from decimal import Decimal
-
-from app.domains.product.services.product_service import ProductService, VoucherService
+from app.shared.responses.api_response import APIResponse
+from app.domains.product.services.product_service import ProductService
+from app.domains.product.repositories.product_repository import ProductRepository
 from app.domains.product.schemas.product_schemas import (
-    ProductCreate, ProductUpdate, ProductResponse, ProductListResponse, ProductFilter,
-    VoucherCreate, VoucherUpdate, VoucherResponse, VoucherFilter,
-    VoucherValidationRequest, VoucherValidationResponse, VoucherUsageCreate
+    ProductCreate, ProductUpdate, ProductResponse, ProductListResponse, ProductStatsResponse
 )
-from app.infrastructure.database.database_manager import get_db
-from app.shared.responses.api_response import create_response
-import logging
+from app.domains.product.models.product import ProductStatus
+from app.api.deps import get_db, get_current_user
+from app.domains.auth.models.user import User
 
-logger = logging.getLogger(__name__)
-
-router = APIRouter()
-
-def get_product_service(db: Session = Depends(get_db)) -> ProductService:
-    """Dependency untuk mendapatkan ProductService"""
-    return ProductService(db)
-
-def get_voucher_service(db: Session = Depends(get_db)) -> VoucherService:
-    """Dependency untuk mendapatkan VoucherService"""
-    return VoucherService(db)
-
-# ===== PRODUCT ENDPOINTS =====
-
-@router.post("/products", response_model=dict, summary="Create Product")
-async def create_product(
-    product_data: ProductCreate,
-    service: ProductService = Depends(get_product_service)
-):
+class ProductController:
     """
-    Membuat produk baru.
+    Product Controller - mengikuti SRP.
+    Menangani semua endpoint terkait manajemen produk.
+    """
     
-    - **name**: Nama produk
-    - **slug**: URL slug produk (harus unik)
-    - **category**: Kategori produk
-    - **price**: Harga produk
-    - **stock_quantity**: Jumlah stok
-    """
-    try:
-        product = await service.create_product(product_data)
-        
-        return create_response(
-            success=True,
-            message="Produk berhasil dibuat",
-            data={"product_id": product.id, "slug": product.slug}
-        )
-        
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error creating product: {e}")
-        raise HTTPException(status_code=500, detail="Gagal membuat produk")
-
-@router.get("/products", response_model=dict, summary="Get Products")
-async def get_products(
-    category: Optional[str] = Query(None, description="Filter berdasarkan kategori"),
-    subcategory: Optional[str] = Query(None, description="Filter berdasarkan sub-kategori"),
-    min_price: Optional[Decimal] = Query(None, ge=0, description="Harga minimum"),
-    max_price: Optional[Decimal] = Query(None, ge=0, description="Harga maksimum"),
-    is_featured: Optional[bool] = Query(None, description="Filter produk unggulan"),
-    status: Optional[str] = Query("active", description="Filter berdasarkan status"),
-    search: Optional[str] = Query(None, description="Pencarian produk"),
-    sort_by: Optional[str] = Query("created_at", description="Urutkan berdasarkan"),
-    sort_order: Optional[str] = Query("desc", pattern="^(asc|desc)$", description="Urutan sort"),
-    limit: int = Query(20, ge=1, le=100, description="Jumlah maksimal data"),
-    offset: int = Query(0, ge=0, description="Offset untuk pagination"),
-    service: ProductService = Depends(get_product_service)
-):
-    """
-    Mendapatkan daftar produk dengan filtering dan pagination.
+    def __init__(self):
+        self.router = APIRouter(prefix="/products", tags=["Products"])
+        self._setup_routes()
     
-    Mendukung filtering berdasarkan:
-    - Kategori dan sub-kategori
-    - Range harga
-    - Status produk
-    - Pencarian teks
-    - Produk unggulan
-    """
-    try:
-        filter_params = ProductFilter(
-            category=category,
-            subcategory=subcategory,
-            min_price=min_price,
-            max_price=max_price,
-            is_featured=is_featured,
-            status=status,
-            search=search,
-            sort_by=sort_by,
-            sort_order=sort_order
+    def _setup_routes(self):
+        """Setup routes untuk produk"""
+        # CRUD routes
+        self.router.add_api_route(
+            "/",
+            self.create_product,
+            methods=["POST"],
+            response_model=APIResponse[ProductResponse]
+        )
+        self.router.add_api_route(
+            "/",
+            self.get_products,
+            methods=["GET"],
+            response_model=APIResponse[ProductListResponse]
+        )
+        self.router.add_api_route(
+            "/{product_id}",
+            self.get_product,
+            methods=["GET"],
+            response_model=APIResponse[ProductResponse]
+        )
+        self.router.add_api_route(
+            "/{product_id}",
+            self.update_product,
+            methods=["PUT"],
+            response_model=APIResponse[ProductResponse]
+        )
+        self.router.add_api_route(
+            "/{product_id}",
+            self.delete_product,
+            methods=["DELETE"],
+            response_model=APIResponse[dict]
         )
         
-        products = await service.get_products(filter_params, limit, offset)
-        
-        # Convert to response format
-        products_data = []
-        for product in products:
-            products_data.append({
-                "id": product.id,
-                "name": product.name,
-                "slug": product.slug,
-                "short_description": product.short_description,
-                "category": product.category,
-                "subcategory": product.subcategory,
-                "price": float(product.price),
-                "compare_at_price": float(product.compare_at_price) if product.compare_at_price else None,
-                "featured_image": product.featured_image,
-                "status": product.status,
-                "is_featured": product.is_featured,
-                "stock_quantity": product.stock_quantity,
-                "rating_average": float(product.rating_average),
-                "rating_count": product.rating_count,
-                "view_count": product.view_count,
-                "created_at": product.created_at.isoformat()
-            })
-        
-        return create_response(
-            success=True,
-            message="Data produk berhasil diambil",
-            data={
-                "products": products_data,
-                "total": len(products_data),
-                "limit": limit,
-                "offset": offset
-            }
+        # Search and filter routes
+        self.router.add_api_route(
+            "/search",
+            self.search_products,
+            methods=["GET"],
+            response_model=APIResponse[List[ProductResponse]]
+        )
+        self.router.add_api_route(
+            "/category/{category}",
+            self.get_products_by_category,
+            methods=["GET"],
+            response_model=APIResponse[List[ProductResponse]]
+        )
+        self.router.add_api_route(
+            "/code/{code}",
+            self.get_product_by_code,
+            methods=["GET"],
+            response_model=APIResponse[ProductResponse]
         )
         
-    except Exception as e:
-        logger.error(f"Error getting products: {e}")
-        raise HTTPException(status_code=500, detail="Gagal mengambil data produk")
-
-@router.get("/products/{product_id}", response_model=dict, summary="Get Product by ID")
-async def get_product_by_id(
-    product_id: int,
-    track_view: bool = Query(True, description="Track view untuk analytics"),
-    service: ProductService = Depends(get_product_service)
-):
-    """
-    Mendapatkan detail produk berdasarkan ID.
+        # Management routes
+        self.router.add_api_route(
+            "/{product_id}/toggle-status",
+            self.toggle_product_status,
+            methods=["PUT"],
+            response_model=APIResponse[ProductResponse]
+        )
+        self.router.add_api_route(
+            "/stats",
+            self.get_product_stats,
+            methods=["GET"],
+            response_model=APIResponse[ProductStatsResponse]
+        )
     
-    - **product_id**: ID produk
-    - **track_view**: Apakah view akan ditrack untuk analytics
-    """
-    try:
-        product = await service.get_product_by_id(product_id, track_view)
+    async def create_product(
+        self,
+        product_data: ProductCreate,
+        current_user: Annotated[User, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+    ) -> APIResponse[ProductResponse]:
+        """Buat produk baru (Admin only)"""
+        if not current_user.is_superuser:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Akses admin diperlukan"
+            )
         
-        if not product:
-            raise HTTPException(status_code=404, detail="Produk tidak ditemukan")
-        
-        # Parse JSON fields
-        import json
-        tags = json.loads(product.tags) if product.tags else []
-        gallery_images = json.loads(product.gallery_images) if product.gallery_images else []
-        
-        product_data = {
-            "id": product.id,
-            "name": product.name,
-            "slug": product.slug,
-            "description": product.description,
-            "short_description": product.short_description,
-            "category": product.category,
-            "subcategory": product.subcategory,
-            "tags": tags,
-            "price": float(product.price),
-            "cost_price": float(product.cost_price) if product.cost_price else None,
-            "compare_at_price": float(product.compare_at_price) if product.compare_at_price else None,
-            "sku": product.sku,
-            "stock_quantity": product.stock_quantity,
-            "track_inventory": product.track_inventory,
-            "allow_backorder": product.allow_backorder,
-            "weight": float(product.weight) if product.weight else None,
-            "dimensions": product.dimensions,
-            "meta_title": product.meta_title,
-            "meta_description": product.meta_description,
-            "featured_image": product.featured_image,
-            "gallery_images": gallery_images,
-            "status": product.status,
-            "is_featured": product.is_featured,
-            "is_digital": product.is_digital,
-            "requires_shipping": product.requires_shipping,
-            "view_count": product.view_count,
-            "purchase_count": product.purchase_count,
-            "rating_average": float(product.rating_average),
-            "rating_count": product.rating_count,
-            "published_at": product.published_at.isoformat() if product.published_at else None,
-            "created_at": product.created_at.isoformat(),
-            "updated_at": product.updated_at.isoformat()
-        }
-        
-        return create_response(
-            success=True,
-            message="Detail produk berhasil diambil",
-            data=product_data
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error getting product by ID: {e}")
-        raise HTTPException(status_code=500, detail="Gagal mengambil detail produk")
-
-@router.get("/products/featured", response_model=dict, summary="Get Featured Products")
-async def get_featured_products(
-    limit: int = Query(10, ge=1, le=50, description="Jumlah produk unggulan"),
-    service: ProductService = Depends(get_product_service)
-):
-    """
-    Mendapatkan daftar produk unggulan.
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            product = await service.create_product(product_data)
+            
+            return APIResponse.success_response(
+                data=product,
+                message="Produk berhasil dibuat"
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal membuat produk: {str(e)}"
+            )
     
-    - **limit**: Jumlah maksimal produk yang dikembalikan
-    """
-    try:
-        products = await service.get_featured_products(limit)
-        
-        products_data = []
-        for product in products:
-            products_data.append({
-                "id": product.id,
-                "name": product.name,
-                "slug": product.slug,
-                "short_description": product.short_description,
-                "category": product.category,
-                "price": float(product.price),
-                "compare_at_price": float(product.compare_at_price) if product.compare_at_price else None,
-                "featured_image": product.featured_image,
-                "rating_average": float(product.rating_average),
-                "rating_count": product.rating_count
-            })
-        
-        return create_response(
-            success=True,
-            message="Produk unggulan berhasil diambil",
-            data={"products": products_data}
-        )
-        
-    except Exception as e:
-        logger.error(f"Error getting featured products: {e}")
-        raise HTTPException(status_code=500, detail="Gagal mengambil produk unggulan")
-
-@router.post("/vouchers", response_model=dict, summary="Create Voucher")
-async def create_voucher(
-    voucher_data: VoucherCreate,
-    service: VoucherService = Depends(get_voucher_service)
-):
-    """
-    Membuat voucher baru.
+    async def get_products(
+        self,
+        db: Session = Depends(get_db),
+        page: int = Query(1, ge=1),
+        size: int = Query(20, ge=1, le=100),
+        category: Optional[str] = Query(None),
+        provider: Optional[str] = Query(None),
+        status: Optional[ProductStatus] = Query(None)
+    ) -> APIResponse[ProductListResponse]:
+        """Ambil daftar produk dengan pagination"""
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            result = await service.get_products_paginated(
+                page=page, size=size, category=category, provider=provider, status=status
+            )
+            
+            return APIResponse.success_response(
+                data=result,
+                message="Daftar produk berhasil diambil"
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mengambil produk: {str(e)}"
+            )
     
-    - **code**: Kode voucher (harus unik)
-    - **name**: Nama voucher
-    - **voucher_type**: Tipe voucher (percentage, fixed_amount, etc.)
-    - **discount_value**: Nilai diskon
-    - **valid_from**: Tanggal mulai berlaku
-    - **valid_until**: Tanggal berakhir
-    """
-    try:
-        voucher = await service.create_voucher(voucher_data)
-        
-        return create_response(
-            success=True,
-            message="Voucher berhasil dibuat",
-            data={"voucher_id": voucher.id, "code": voucher.code}
-        )
-        
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        logger.error(f"Error creating voucher: {e}")
-        raise HTTPException(status_code=500, detail="Gagal membuat voucher")
-
-@router.post("/vouchers/validate", response_model=dict, summary="Validate Voucher")
-async def validate_voucher(
-    validation_request: VoucherValidationRequest,
-    service: VoucherService = Depends(get_voucher_service)
-):
-    """
-    Validasi voucher sebelum digunakan.
+    async def get_product(
+        self,
+        product_id: int,
+        db: Session = Depends(get_db)
+    ) -> APIResponse[ProductResponse]:
+        """Ambil detail produk"""
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            product = repository.get_by_id(product_id)
+            if not product:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Produk tidak ditemukan"
+                )
+            
+            return APIResponse.success_response(
+                data=product,
+                message="Detail produk berhasil diambil"
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mengambil produk: {str(e)}"
+            )
     
-    - **code**: Kode voucher
-    - **user_id**: ID user
-    - **order_amount**: Total order
-    - **product_ids**: ID produk dalam order (optional)
-    """
-    try:
-        validation_result = await service.validate_voucher(validation_request)
+    async def update_product(
+        self,
+        product_id: int,
+        product_data: ProductUpdate,
+        current_user: Annotated[User, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+    ) -> APIResponse[ProductResponse]:
+        """Update produk (Admin only)"""
+        if not current_user.is_superuser:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Akses admin diperlukan"
+            )
         
-        return create_response(
-            success=True,
-            message="Validasi voucher selesai",
-            data={
-                "is_valid": validation_result.is_valid,
-                "discount_amount": float(validation_result.discount_amount),
-                "message": validation_result.message,
-                "voucher_id": validation_result.voucher_id,
-                "voucher_name": validation_result.voucher_name
-            }
-        )
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            product = await service.update_product(product_id, product_data)
+            
+            return APIResponse.success_response(
+                data=product,
+                message="Produk berhasil diupdate"
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal update produk: {str(e)}"
+            )
+    
+    async def delete_product(
+        self,
+        product_id: int,
+        current_user: Annotated[User, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+    ) -> APIResponse[dict]:
+        """Hapus produk (Admin only)"""
+        if not current_user.is_superuser:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Akses admin diperlukan"
+            )
         
-    except Exception as e:
-        logger.error(f"Error validating voucher: {e}")
-        raise HTTPException(status_code=500, detail="Gagal melakukan validasi voucher")
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            await service.delete_product(product_id)
+            
+            return APIResponse.success_response(
+                data={"deleted": True},
+                message="Produk berhasil dihapus"
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal hapus produk: {str(e)}"
+            )
+    
+    async def search_products(
+        self,
+        q: str = Query(..., description="Search term"),
+        limit: int = Query(20, ge=1, le=50),
+        db: Session = Depends(get_db)
+    ) -> APIResponse[List[ProductResponse]]:
+        """Cari produk"""
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            products = await service.search_products(q, limit)
+            
+            return APIResponse.success_response(
+                data=products,
+                message="Pencarian produk berhasil"
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mencari produk: {str(e)}"
+            )
+    
+    async def get_products_by_category(
+        self,
+        category: str,
+        active_only: bool = Query(True),
+        db: Session = Depends(get_db)
+    ) -> APIResponse[List[ProductResponse]]:
+        """Ambil produk berdasarkan kategori"""
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            products = await service.get_products_by_category(category, active_only)
+            
+            return APIResponse.success_response(
+                data=products,
+                message=f"Produk kategori {category} berhasil diambil"
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mengambil produk: {str(e)}"
+            )
+    
+    async def get_product_by_code(
+        self,
+        code: str,
+        db: Session = Depends(get_db)
+    ) -> APIResponse[ProductResponse]:
+        """Ambil produk berdasarkan kode"""
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            product = await service.get_product_by_code(code)
+            if not product:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Produk tidak ditemukan"
+                )
+            
+            return APIResponse.success_response(
+                data=product,
+                message="Produk berhasil diambil"
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mengambil produk: {str(e)}"
+            )
+    
+    async def toggle_product_status(
+        self,
+        product_id: int,
+        current_user: Annotated[User, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+    ) -> APIResponse[ProductResponse]:
+        """Toggle status produk (Admin only)"""
+        if not current_user.is_superuser:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Akses admin diperlukan"
+            )
+        
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            product = await service.toggle_product_status(product_id)
+            
+            return APIResponse.success_response(
+                data=product,
+                message="Status produk berhasil diubah"
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mengubah status: {str(e)}"
+            )
+    
+    async def get_product_stats(
+        self,
+        current_user: Annotated[User, Depends(get_current_user)],
+        db: Session = Depends(get_db)
+    ) -> APIResponse[ProductStatsResponse]:
+        """Ambil statistik produk (Admin only)"""
+        if not current_user.is_superuser:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Akses admin diperlukan"
+            )
+        
+        try:
+            repository = ProductRepository(db)
+            service = ProductService(repository)
+            
+            stats = await service.get_product_stats()
+            
+            return APIResponse.success_response(
+                data=stats,
+                message="Statistik produk berhasil diambil"
+            )
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Gagal mengambil statistik: {str(e)}"
+            )
+
+# Instance controller
+product_controller = ProductController()
+router = product_controller.router

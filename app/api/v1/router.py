@@ -8,6 +8,7 @@ from app.domains.notification.controllers.notification_controller import router 
 from app.domains.file_monitor.controllers.file_monitor_controller import router as file_monitor_router
 from app.domains.analytics.controllers.analytics_controller import router as analytics_router
 from app.domains.product.controllers.product_controller import router as product_router
+from app.domains.voucher.controllers.voucher_controller import router as voucher_router
 
 # Import remaining endpoints
 from app.api.v1.endpoints import cache, health
@@ -24,6 +25,7 @@ api_router.include_router(notification_router, prefix="/notifications", tags=["n
 api_router.include_router(file_monitor_router, prefix="/file-monitor", tags=["file-monitor"])
 api_router.include_router(analytics_router, prefix="/analytics", tags=["analytics"])
 api_router.include_router(product_router, prefix="/products", tags=["products"])
+api_router.include_router(voucher_router, prefix="/vouchers", tags=["vouchers"])
 
 # Utility endpoints
 api_router.include_router(health.router, prefix="/health", tags=["health"])
