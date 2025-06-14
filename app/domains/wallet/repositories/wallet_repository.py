@@ -10,14 +10,14 @@ from app.domains.wallet.models.wallet import (
     TransactionType, TransactionStatus, TopUpStatus, PaymentMethod
 )
 
-class WalletRepository(BaseRepository[WalletTransaction, dict, dict]):
+class WalletRepository(BaseRepository[WalletTransaction]):
     """
     Repository untuk Wallet yang mengimplementasikan Repository Pattern.
     Menangani semua operasi database terkait wallet dan transaksi keuangan.
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, WalletTransaction)
+        super().__init__(WalletTransaction, db)
     
     def get_user_balance(self, user_id: int) -> Decimal:
         """Ambil saldo user saat ini"""

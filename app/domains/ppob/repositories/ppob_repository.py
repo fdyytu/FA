@@ -6,14 +6,14 @@ from datetime import datetime, timedelta
 from app.shared.base_classes.base_repository import BaseRepository
 from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBCategory, TransactionStatus
 
-class PPOBRepository(BaseRepository[PPOBTransaction, dict, dict]):
+class PPOBRepository(BaseRepository[PPOBTransaction]):
     """
     Repository untuk PPOB yang mengimplementasikan Repository Pattern.
     Menangani semua operasi database terkait PPOB.
     """
     
     def __init__(self, db: Session):
-        super().__init__(db, PPOBTransaction)
+        super().__init__(PPOBTransaction, db)
     
     def get_products_by_category(self, category: PPOBCategory) -> List[PPOBProduct]:
         """Ambil produk berdasarkan kategori"""
