@@ -1,32 +1,22 @@
 from fastapi import APIRouter
-from app.domains.auth.controllers.auth_controller import router as auth_router
-from app.domains.ppob.controllers.ppob_controller import router as ppob_router
-from app.domains.wallet.controllers.wallet_controller import router as wallet_router
-from app.domains.admin.controllers.admin_controller import router as admin_router
-from app.domains.discord.controllers.discord_controller import router as discord_router
-from app.domains.notification.controllers.notification_controller import router as notification_router
-from app.domains.file_monitor.controllers.file_monitor_controller import router as file_monitor_router
-from app.domains.analytics.controllers.analytics_controller import router as analytics_router
-from app.domains.product.controllers.product_controller import router as product_router
-from app.domains.voucher.controllers.voucher_controller import router as voucher_router
-
-# Import remaining endpoints
-from app.api.v1.endpoints import cache, health
+from app.api.v1.endpoints import health, cache
 
 api_router = APIRouter()
 
-# Domain-based routes
-api_router.include_router(auth_router, prefix="/auth", tags=["authentication"])
-api_router.include_router(ppob_router, prefix="/ppob", tags=["ppob"])
-api_router.include_router(wallet_router, prefix="/wallet", tags=["wallet"])
-api_router.include_router(admin_router, prefix="/admin", tags=["admin"])
-api_router.include_router(discord_router, prefix="/discord", tags=["discord"])
-api_router.include_router(notification_router, prefix="/notifications", tags=["notifications"])
-api_router.include_router(file_monitor_router, prefix="/file-monitor", tags=["file-monitor"])
-api_router.include_router(analytics_router, prefix="/analytics", tags=["analytics"])
-api_router.include_router(product_router, prefix="/products", tags=["products"])
-api_router.include_router(voucher_router, prefix="/vouchers", tags=["vouchers"])
-
-# Utility endpoints
+# Include endpoint routers
 api_router.include_router(health.router, prefix="/health", tags=["health"])
 api_router.include_router(cache.router, prefix="/cache", tags=["cache"])
+
+# Include Discord router
+try:
+    from app.domains.discord.controllers.discord_controller import router as discord_router
+    api_router.include_router(discord_router, prefix="/discord", tags=["discord"])
+except ImportError:
+    pass
+
+# Include Discord bot management endpoints
+try:
+    from app.api.v1.endpoints.discord_bot import router as discord_bot_router
+    api_router.include_router(discord_bot_router, prefix="/bot", tags=["discord-bot"])
+except ImportError:
+    pass
