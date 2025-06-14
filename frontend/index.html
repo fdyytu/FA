@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FA PPOB - Payment Point Online Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">FA PPOB</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#features" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Fitur</a>
+                    <a href="#services" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Layanan</a>
+                    <a href="login.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium">Masuk</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg pt-20 pb-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+                    Bayar Tagihan <span class="text-yellow-300">Lebih Mudah</span>
+                </h1>
+                <p class="text-xl text-indigo-100 mb-8 max-w-3xl mx-auto">
+                    Platform PPOB terpercaya untuk semua kebutuhan pembayaran Anda. 
+                    Pulsa, listrik, PDAM, internet, dan banyak lagi dalam satu aplikasi.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="login.html" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-8 py-3 rounded-lg text-lg font-semibold transition duration-300">
+                        Mulai Sekarang
+                    </a>
+                    <a href="#services" class="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-3 rounded-lg text-lg font-semibold transition duration-300">
+                        Lihat Layanan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Mengapa Pilih FA PPOB?</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Kami menyediakan solusi pembayaran yang aman, cepat, dan terpercaya untuk semua kebutuhan Anda.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 card-hover bg-gray-50 rounded-xl">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Aman & Terpercaya</h3>
+                    <p class="text-gray-600">Transaksi Anda dilindungi dengan enkripsi tingkat bank dan sistem keamanan berlapis.</p>
+                </div>
+                
+                <div class="text-center p-6 card-hover bg-gray-50 rounded-xl">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Proses Cepat</h3>
+                    <p class="text-gray-600">Pembayaran diproses dalam hitungan detik dengan konfirmasi real-time.</p>
+                </div>
+                
+                <div class="text-center p-6 card-hover bg-gray-50 rounded-xl">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-clock text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">24/7 Available</h3>
+                    <p class="text-gray-600">Layanan tersedia 24 jam sehari, 7 hari seminggu untuk kemudahan Anda.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Layanan Kami</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Berbagai layanan pembayaran untuk memenuhi kebutuhan sehari-hari Anda.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-mobile-alt text-xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Pulsa & Data</h3>
+                    <p class="text-gray-600 mb-4">Isi pulsa dan paket data untuk semua operator dengan harga terbaik.</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Telkomsel, XL, Indosat, Tri</li>
+                        <li>• Paket data unlimited</li>
+                        <li>• Proses instan</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-lightbulb text-xl text-yellow-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Listrik PLN</h3>
+                    <p class="text-gray-600 mb-4">Bayar tagihan listrik dan beli token PLN dengan mudah.</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Tagihan bulanan</li>
+                        <li>• Token listrik prabayar</li>
+                        <li>• Cek tagihan real-time</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-tint text-xl text-cyan-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">PDAM</h3>
+                    <p class="text-gray-600 mb-4">Bayar tagihan air PDAM di seluruh Indonesia.</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Semua wilayah Indonesia</li>
+                        <li>• Cek tagihan otomatis</li>
+                        <li>• Notifikasi jatuh tempo</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-wifi text-xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Internet & TV</h3>
+                    <p class="text-gray-600 mb-4">Bayar tagihan internet dan TV kabel dari berbagai provider.</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• IndiHome, First Media, MNC</li>
+                        <li>• Paket bundling</li>
+                        <li>• Reminder otomatis</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-heartbeat text-xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">BPJS Kesehatan</h3>
+                    <p class="text-gray-600 mb-4">Bayar iuran BPJS Kesehatan untuk perlindungan keluarga.</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• Iuran bulanan</li>
+                        <li>• Cek status kepesertaan</li>
+                        <li>• Denda otomatis</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md card-hover">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-car text-xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Multifinance</h3>
+                    <p class="text-gray-600 mb-4">Bayar cicilan kendaraan dan kredit lainnya.</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>• BAF, FIF, WOM Finance</li>
+                        <li>• Cicilan motor & mobil</li>
+                        <li>• Riwayat pembayaran</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 gradient-bg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                Siap Memulai Pembayaran yang Lebih Mudah?
+            </h2>
+            <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+                Bergabunglah dengan ribuan pengguna yang sudah merasakan kemudahan bertransaksi dengan FA PPOB.
+            </p>
+            <a href="login.html" class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-8 py-3 rounded-lg text-lg font-semibold transition duration-300 inline-block">
+                Daftar Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">FA PPOB</h3>
+                    <p class="text-gray-400">Platform pembayaran online terpercaya untuk semua kebutuhan Anda.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Layanan</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Pulsa & Data</li>
+                        <li>Listrik PLN</li>
+                        <li>PDAM</li>
+                        <li>Internet & TV</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Bantuan</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>FAQ</li>
+                        <li>Cara Pembayaran</li>
+                        <li>Hubungi Kami</li>
+                        <li>Syarat & Ketentuan</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Kontak</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-phone mr-2"></i> 0800-1234-5678</li>
+                        <li><i class="fas fa-envelope mr-2"></i> support@fappob.com</li>
+                        <li><i class="fas fa-clock mr-2"></i> 24/7 Customer Service</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 FA PPOB. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

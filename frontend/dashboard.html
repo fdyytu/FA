@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FA PPOB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .balance-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-indigo-600">FA PPOB</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notificationBtn" class="p-2 text-gray-400 hover:text-gray-600 relative">
+                            <i class="fas fa-bell text-xl"></i>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">3</span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <button id="profileDropdown" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                            <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <span id="userName" class="font-medium">Loading...</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+                            <a href="profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-user mr-2"></i>Profil
+                            </a>
+                            <a href="wallet.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-wallet mr-2"></i>Wallet
+                            </a>
+                            <a href="history.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-history mr-2"></i>Riwayat
+                            </a>
+                            <hr class="my-1">
+                            <button id="logoutBtn" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Selamat Datang!</h2>
+            <p class="text-gray-600">Kelola semua kebutuhan pembayaran Anda dengan mudah</p>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-card rounded-xl p-6 text-white mb-8 card-hover">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-indigo-100 mb-2">Saldo Anda</p>
+                    <h3 id="userBalance" class="text-3xl font-bold mb-4">Rp 0</h3>
+                    <div class="flex space-x-4">
+                        <button onclick="window.location.href='wallet.html'" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg text-sm font-medium transition duration-300">
+                            <i class="fas fa-plus mr-2"></i>Top Up
+                        </button>
+                        <button onclick="window.location.href='wallet.html'" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg text-sm font-medium transition duration-300">
+                            <i class="fas fa-exchange-alt mr-2"></i>Transfer
+                        </button>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <i class="fas fa-wallet text-4xl text-white text-opacity-50"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-check-circle text-xl text-green-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Transaksi Berhasil</p>
+                        <p id="successTransactions" class="text-2xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-clock text-xl text-blue-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Transaksi Pending</p>
+                        <p id="pendingTransactions" class="text-2xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-line text-xl text-purple-600"></i>
+                    </div>
+                    <div>
+                        <p class="text-gray-600 text-sm">Total Transaksi</p>
+                        <p id="totalTransactions" class="text-2xl font-bold text-gray-900">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="mb-8">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Layanan PPOB</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <button onclick="openPPOBService('pulsa')" class="bg-white rounded-xl p-6 shadow-md card-hover text-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-mobile-alt text-xl text-blue-600"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">Pulsa</p>
+                </button>
+                
+                <button onclick="openPPOBService('listrik')" class="bg-white rounded-xl p-6 shadow-md card-hover text-center">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-lightbulb text-xl text-yellow-600"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">Listrik</p>
+                </button>
+                
+                <button onclick="openPPOBService('pdam')" class="bg-white rounded-xl p-6 shadow-md card-hover text-center">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-tint text-xl text-cyan-600"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">PDAM</p>
+                </button>
+                
+                <button onclick="openPPOBService('internet')" class="bg-white rounded-xl p-6 shadow-md card-hover text-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-wifi text-xl text-purple-600"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">Internet</p>
+                </button>
+                
+                <button onclick="openPPOBService('bpjs')" class="bg-white rounded-xl p-6 shadow-md card-hover text-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-heartbeat text-xl text-green-600"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">BPJS</p>
+                </button>
+                
+                <button onclick="openPPOBService('multifinance')" class="bg-white rounded-xl p-6 shadow-md card-hover text-center">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-car text-xl text-red-600"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-900">Multifinance</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Transaksi Terbaru</h3>
+                <a href="history.html" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                    Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+            
+            <div id="recentTransactions" class="space-y-4">
+                <!-- Transactions will be loaded here -->
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Memuat transaksi...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PPOB Service Modal -->
+    <div id="ppobModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modalTitle" class="text-lg font-medium text-gray-900"></h3>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="ppobForm" class="space-y-4">
+                    <div>
+                        <label for="customerNumber" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nomor Pelanggan
+                        </label>
+                        <input id="customerNumber" name="customer_number" type="text" required 
+                               class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               placeholder="Masukkan nomor pelanggan">
+                    </div>
+                    
+                    <div id="productSelection" class="hidden">
+                        <label for="productCode" class="block text-sm font-medium text-gray-700 mb-2">
+                            Pilih Produk
+                        </label>
+                        <select id="productCode" name="product_code" class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="">Pilih produk...</option>
+                        </select>
+                    </div>
+                    
+                    <div id="inquiryResult" class="hidden bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-2">Detail Tagihan</h4>
+                        <div id="inquiryDetails"></div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button type="button" id="inquiryBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md font-medium transition duration-300">
+                            Cek Tagihan
+                        </button>
+                        <button type="submit" id="payBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-medium transition duration-300 hidden">
+                            Bayar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>
