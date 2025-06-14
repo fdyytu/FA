@@ -9,8 +9,8 @@ from typing import Dict, Optional, Callable
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.core.constants import RateLimits, StatusMessages
-from app.core.config import settings
+from app.config.constants import RateLimits, StatusMessages
+from app.infrastructure.config.settings import settings
 import logging
 
 logger = logging.getLogger(__name__)

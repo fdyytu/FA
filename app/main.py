@@ -75,8 +75,13 @@ def create_application() -> FastAPI:
     server_logger.info("API routes registered with new domain structure")
     
     # Mount static files
-    application.mount("/static", StaticFiles(directory="static"), name="static")
-    server_logger.info("Static files mounted")
+    import os
+    static_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static")
+    if os.path.exists(static_dir):
+        application.mount("/static", StaticFiles(directory=static_dir), name="static")
+        server_logger.info("Static files mounted")
+    else:
+        server_logger.warning(f"Static directory not found: {static_dir}")
     
     server_logger.info("FA Application initialized successfully with new architecture")
     return application
