@@ -35,12 +35,12 @@ async def start_bot() -> Dict[str, Any]:
         from app.domains.discord.services.bot_manager import bot_manager
         
         if not bot_manager.is_initialized:
-            # Try to initialize first
-            success = await bot_manager.initialize_from_env()
+            # Try to initialize first (database then env)
+            success = await bot_manager.auto_initialize()
             if not success:
                 raise HTTPException(
                     status_code=400, 
-                    detail="Bot tidak dapat diinisialisasi. Periksa DISCORD_TOKEN."
+                    detail="Bot tidak dapat diinisialisasi. Periksa konfigurasi Discord di database atau DISCORD_TOKEN di environment."
                 )
         
         success = await bot_manager.start_bot()

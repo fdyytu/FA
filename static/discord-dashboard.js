@@ -14,6 +14,7 @@ let isLoading = false;
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Discord Bot Dashboard initialized');
     refreshData();
+    loadActiveConfig();
     startAutoRefresh();
 });
 
@@ -210,6 +211,166 @@ async function restartBot() {
     } finally {
         hideLoading();
     }
+}
+
+/**
+ * Test Discord configuration
+ */
+async function testDiscordConfig() {
+    const token = document.getElementById('discordToken').value;
+    const guildId = document.getElementById('guildId').value;
+    
+    if (!token) {
+        showToast('Discord token harus diisi', 'warning');
+        return;
+    }
+    
+    try {
+        showLoading('Testing Discord configuration...');
+        
+        const response = await fetch(`${API_BASE}/discord/config/test`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                guild_id: guildId || null
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showConfigStatus('success', 'Token valid dan bot berhasil terhubung!');
+            showToast('Konfigurasi Discord valid', 'success');
+        } else {
+            showConfigStatus('error', data.message || 'Token tidak valid');
+            showToast('Konfigurasi Discord tidak valid: ' + (data.message || 'Unknown error'), 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error testing Discord config:', error);
+        showConfigStatus('error', 'Error testing configuration');
+        showToast('Error testing configuration: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Save Discord configuration
+ */
+async function saveDiscordConfig() {
+    const name = document.getElementById('configName').value;
+    const token = document.getElementById('discordToken').value;
+    const guildId = document.getElementById('guildId').value;
+    const commandPrefix = document.getElementById('commandPrefix').value;
+    
+    if (!name || !token) {
+        showToast('Nama konfigurasi dan token harus diisi', 'warning');
+        return;
+    }
+    
+    try {
+        showLoading('Menyimpan konfigurasi...');
+        
+        const response = await fetch(`${API_BASE}/discord/config`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                token: token,
+                guild_id: guildId || null,
+                command_prefix: commandPrefix || '!',
+                is_active: true
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showConfigStatus('success', 'Konfigurasi berhasil disimpan!');
+            showToast('Konfigurasi Discord berhasil disimpan', 'success');
+            
+            // Clear sensitive data
+            document.getElementById('discordToken').value = '';
+            
+            // Refresh bot status
+            setTimeout(refreshData, 1000);
+        } else {
+            throw new Error(data.detail || data.message || 'Gagal menyimpan konfigurasi');
+        }
+        
+    } catch (error) {
+        console.error('Error saving Discord config:', error);
+        showConfigStatus('error', 'Gagal menyimpan konfigurasi');
+        showToast('Gagal menyimpan konfigurasi: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Load active Discord configuration
+ */
+async function loadActiveConfig() {
+    try {
+        const response = await fetch(`${API_BASE}/discord/config/active`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            const config = data.data;
+            document.getElementById('configName').value = config.name || '';
+            document.getElementById('guildId').value = config.guild_id || '';
+            document.getElementById('commandPrefix').value = config.command_prefix || '!';
+            
+            showConfigStatus('info', `Konfigurasi aktif: ${config.name}`);
+        }
+        
+    } catch (error) {
+        console.error('Error loading active config:', error);
+    }
+}
+
+/**
+ * Show configuration status
+ */
+function showConfigStatus(type, message) {
+    const statusDiv = document.getElementById('configStatus');
+    const statusIcon = document.getElementById('configStatusIcon');
+    const statusText = document.getElementById('configStatusText');
+    
+    // Reset classes
+    statusDiv.className = 'rounded-md p-4';
+    statusIcon.className = 'fas';
+    
+    switch (type) {
+        case 'success':
+            statusDiv.classList.add('bg-green-50');
+            statusIcon.classList.add('fa-check-circle', 'text-green-400');
+            statusText.className = 'text-sm font-medium text-green-800';
+            break;
+        case 'error':
+            statusDiv.classList.add('bg-red-50');
+            statusIcon.classList.add('fa-exclamation-circle', 'text-red-400');
+            statusText.className = 'text-sm font-medium text-red-800';
+            break;
+        case 'info':
+            statusDiv.classList.add('bg-blue-50');
+            statusIcon.classList.add('fa-info-circle', 'text-blue-400');
+            statusText.className = 'text-sm font-medium text-blue-800';
+            break;
+        default:
+            statusDiv.classList.add('bg-gray-50');
+            statusIcon.classList.add('fa-info-circle', 'text-gray-400');
+            statusText.className = 'text-sm font-medium text-gray-800';
+    }
+    
+    statusText.textContent = message;
+    statusDiv.classList.remove('hidden');
 }
 
 /**

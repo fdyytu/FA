@@ -20,3 +20,10 @@ try:
     api_router.include_router(discord_bot_router, prefix="/bot", tags=["discord-bot"])
 except ImportError:
     pass
+
+# Include Discord configuration endpoints
+try:
+    from app.api.v1.endpoints.discord_config import router as discord_config_router
+    api_router.include_router(discord_config_router, prefix="/discord", tags=["discord-config"])
+except ImportError:
+    pass

@@ -147,6 +147,59 @@
             </div>
         </div>
 
+        <!-- Discord Configuration Panel -->
+        <div class="bg-white shadow rounded-lg mb-8">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">
+                    <i class="fas fa-cog mr-2"></i>
+                    Konfigurasi Discord Token
+                </h3>
+                <p class="mt-1 text-sm text-gray-500">Kelola token Discord Bot melalui dashboard</p>
+            </div>
+            <div class="px-6 py-4">
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <label for="configName" class="block text-sm font-medium text-gray-700">Nama Konfigurasi</label>
+                        <input type="text" id="configName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Masukkan nama konfigurasi" value="Default Config">
+                    </div>
+                    <div>
+                        <label for="discordToken" class="block text-sm font-medium text-gray-700">Discord Bot Token</label>
+                        <input type="password" id="discordToken" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Masukkan Discord Bot Token">
+                    </div>
+                    <div>
+                        <label for="guildId" class="block text-sm font-medium text-gray-700">Guild ID (Opsional)</label>
+                        <input type="text" id="guildId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Masukkan Guild ID">
+                    </div>
+                    <div>
+                        <label for="commandPrefix" class="block text-sm font-medium text-gray-700">Command Prefix</label>
+                        <input type="text" id="commandPrefix" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="!" value="!">
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="testDiscordConfig()" id="testConfigBtn" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Test Koneksi
+                        </button>
+                        <button onclick="saveDiscordConfig()" id="saveConfigBtn" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-save mr-2"></i>
+                            Simpan Konfigurasi
+                        </button>
+                    </div>
+                    <div id="configStatus" class="hidden">
+                        <div class="rounded-md p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i id="configStatusIcon" class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p id="configStatusText" class="text-sm font-medium"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Send Message Panel -->
         <div class="bg-white shadow rounded-lg mb-8">
             <div class="px-6 py-4 border-b border-gray-200">

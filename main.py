@@ -5,6 +5,12 @@ from app.api.v1.router import api_router
 import logging
 import os
 
+# Import models to register them with SQLAlchemy Base
+try:
+    from app.domains.discord.models.discord_config import DiscordConfig
+except ImportError:
+    pass
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
