@@ -67,7 +67,7 @@ async def get_products(
     status: Optional[str] = Query("active", description="Filter berdasarkan status"),
     search: Optional[str] = Query(None, description="Pencarian produk"),
     sort_by: Optional[str] = Query("created_at", description="Urutkan berdasarkan"),
-    sort_order: Optional[str] = Query("desc", regex="^(asc|desc)$", description="Urutan sort"),
+    sort_order: Optional[str] = Query("desc", pattern="^(asc|desc)$", description="Urutan sort"),
     limit: int = Query(20, ge=1, le=100, description="Jumlah maksimal data"),
     offset: int = Query(0, ge=0, description="Offset untuk pagination"),
     service: ProductService = Depends(get_product_service)

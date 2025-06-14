@@ -204,7 +204,7 @@ class ProductFilter(BaseModel):
     status: Optional[str] = Field(None, description="Filter berdasarkan status")
     search: Optional[str] = Field(None, description="Pencarian berdasarkan nama/deskripsi")
     sort_by: Optional[str] = Field("created_at", description="Urutkan berdasarkan")
-    sort_order: Optional[str] = Field("desc", regex="^(asc|desc)$", description="Urutan sort")
+    sort_order: Optional[str] = Field("desc", pattern="^(asc|desc)$", description="Urutan sort")
 
 class VoucherFilter(BaseModel):
     """Schema untuk filter voucher"""
@@ -214,4 +214,4 @@ class VoucherFilter(BaseModel):
     valid_now: Optional[bool] = Field(None, description="Filter voucher yang berlaku sekarang")
     search: Optional[str] = Field(None, description="Pencarian berdasarkan kode/nama")
     sort_by: Optional[str] = Field("created_at", description="Urutkan berdasarkan")
-    sort_order: Optional[str] = Field("desc", regex="^(asc|desc)$", description="Urutan sort")
+    sort_order: Optional[str] = Field("desc", pattern="^(asc|desc)$", description="Urutan sort")

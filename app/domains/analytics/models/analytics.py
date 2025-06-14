@@ -119,7 +119,7 @@ class DashboardMetrics(BaseModel):
     percentage_change = Column(Numeric(10, 4), nullable=True)
     
     # Additional data
-    metadata = Column(Text, nullable=True)  # JSON string untuk data tambahan
+    metric_metadata = Column(Text, nullable=True)  # JSON string untuk data tambahan
     
     # Unique constraint
     __table_args__ = (
