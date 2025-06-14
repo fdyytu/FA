@@ -6,6 +6,7 @@ from app.api.v1.router import api_router
 from app.core.events import startup_event_handler, shutdown_event_handler
 from app.infrastructure.database.database_manager import db_manager
 from app.common.logging.logging_config import setup_logging
+from app.common.middleware.rate_limiter import RateLimiterMiddleware
 import logging
 
 def create_application() -> FastAPI:
@@ -36,6 +37,10 @@ def create_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    
+    # Add Rate Limiting middleware
+    application.add_middleware(RateLimiterMiddleware)
+    server_logger.info("Rate limiting middleware added")
     
     # Create database tables with error handling
     try:
