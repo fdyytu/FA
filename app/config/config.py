@@ -5,7 +5,7 @@ from pathlib import Path
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "sqlite:///./ppob_api.db"
+    DATABASE_URL: str = "${{ Postgres.DATABASE_URL }}"
     DATABASE_TEST_URL: Optional[str] = None
     
     # Security
