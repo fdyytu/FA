@@ -27,3 +27,10 @@ try:
     api_router.include_router(discord_config_router, prefix="/discord", tags=["discord-config"])
 except ImportError:
     pass
+
+# Include Admin endpoints
+try:
+    from app.domains.admin.controllers.admin_controller import router as admin_router
+    api_router.include_router(admin_router, prefix="/admin", tags=["admin"])
+except ImportError:
+    pass

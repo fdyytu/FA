@@ -13,7 +13,8 @@ from app.domains.admin.schemas.admin_schemas import (
     ConfigCreate, ConfigUpdate, ConfigResponse, MarginConfigCreate, 
     MarginConfigUpdate, MarginConfigResponse, UserManagementResponse,
     UserUpdateByAdmin, ProductCreate, ProductUpdate, ProductResponse,
-    DashboardResponse, PaginationParams, PaginatedResponse, AuditLogResponse
+    DashboardResponse, PaginationParams, PaginatedResponse, AuditLogResponse,
+    DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse
 )
 from app.shared.dependencies.auth_deps import get_current_admin, get_current_super_admin
 from app.domains.admin.models.admin import Admin
@@ -486,6 +487,212 @@ class MarginManagementController:
             return MarginConfigResponse.from_orm(config)
 
 
+class DiscordConfigController:
+    """
+    Controller untuk manajemen konfigurasi Discord - Single Responsibility: Discord config management endpoints
+    """
+    
+    def __init__(self):
+        self.router = APIRouter()
+        self._setup_routes()
+    
+    def _setup_routes(self):
+        """Setup routes untuk manajemen konfigurasi Discord"""
+        
+        @self.router.get("/", response_model=PaginatedResponse)
+        async def get_discord_configs(
+            page: int = 1,
+            size: int = 10,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil daftar konfigurasi Discord"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            
+            skip = (page - 1) * size
+            configs = discord_config_service.get_all_configs(db, skip=skip, limit=size)
+            
+            # Get total count
+            total_configs = discord_config_service.get_all_configs(db, skip=0, limit=1000)
+            total = len(total_configs)
+            
+            return PaginatedResponse(
+                items=[DiscordConfigResponse.from_orm(config) for config in configs],
+                total=total,
+                page=page,
+                size=size,
+                pages=(total + size - 1) // size
+            )
+        
+        @self.router.post("/", response_model=DiscordConfigResponse)
+        async def create_discord_config(
+            config_data: DiscordConfigCreate,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Buat konfigurasi Discord baru"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            from app.domains.discord.schemas.discord_config_schemas import DiscordConfigCreate as OriginalDiscordConfigCreate
+            
+            # Convert admin schema to discord schema
+            original_config_data = OriginalDiscordConfigCreate(
+                name=config_data.name,
+                token=config_data.token,
+                guild_id=config_data.guild_id,
+                command_prefix=config_data.command_prefix,
+                is_active=config_data.is_active
+            )
+            
+            config = discord_config_service.create_config(db, original_config_data)
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="CREATE",
+                resource="discord_config",
+                resource_id=str(config.id)
+            )
+            
+            return DiscordConfigResponse.from_orm(config)
+        
+        @self.router.get("/active", response_model=Optional[DiscordConfigResponse])
+        async def get_active_discord_config(
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil konfigurasi Discord yang aktif"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            
+            config = discord_config_service.get_active_config(db)
+            
+            if not config:
+                return None
+            
+            return DiscordConfigResponse.from_orm(config)
+        
+        @self.router.get("/{config_id}", response_model=DiscordConfigResponse)
+        async def get_discord_config(
+            config_id: int,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil konfigurasi Discord berdasarkan ID"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            
+            config = discord_config_service.get_config(db, config_id)
+            
+            if not config:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Konfigurasi Discord tidak ditemukan"
+                )
+            
+            return DiscordConfigResponse.from_orm(config)
+        
+        @self.router.put("/{config_id}", response_model=DiscordConfigResponse)
+        async def update_discord_config(
+            config_id: int,
+            config_data: DiscordConfigUpdate,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Update konfigurasi Discord"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            from app.domains.discord.schemas.discord_config_schemas import DiscordConfigUpdate as OriginalDiscordConfigUpdate
+            
+            # Convert admin schema to discord schema
+            original_config_data = OriginalDiscordConfigUpdate(
+                name=config_data.name,
+                token=config_data.token,
+                guild_id=config_data.guild_id,
+                command_prefix=config_data.command_prefix,
+                is_active=config_data.is_active
+            )
+            
+            config = discord_config_service.update_config(db, config_id, original_config_data)
+            
+            if not config:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Konfigurasi Discord tidak ditemukan"
+                )
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="UPDATE",
+                resource="discord_config",
+                resource_id=str(config.id)
+            )
+            
+            return DiscordConfigResponse.from_orm(config)
+        
+        @self.router.delete("/{config_id}")
+        async def delete_discord_config(
+            config_id: int,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Hapus konfigurasi Discord"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            
+            success = discord_config_service.delete_config(db, config_id)
+            
+            if not success:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Konfigurasi Discord tidak ditemukan"
+                )
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="DELETE",
+                resource="discord_config",
+                resource_id=str(config_id)
+            )
+            
+            return APIResponse.success(message="Konfigurasi Discord berhasil dihapus")
+        
+        @self.router.post("/{config_id}/activate", response_model=DiscordConfigResponse)
+        async def activate_discord_config(
+            config_id: int,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Aktifkan konfigurasi Discord"""
+            from app.domains.discord.services.discord_config_service import discord_config_service
+            from app.domains.discord.schemas.discord_config_schemas import DiscordConfigUpdate as OriginalDiscordConfigUpdate
+            
+            # Update config to active
+            config_data = OriginalDiscordConfigUpdate(is_active=True)
+            config = discord_config_service.update_config(db, config_id, config_data)
+            
+            if not config:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="Konfigurasi Discord tidak ditemukan"
+                )
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="ACTIVATE",
+                resource="discord_config",
+                resource_id=str(config.id)
+            )
+            
+            return DiscordConfigResponse.from_orm(config)
+
+
 # Main router yang menggabungkan semua controller
 router = APIRouter()
 
@@ -497,6 +704,7 @@ user_controller = UserManagementController()
 product_controller = ProductManagementController()
 dashboard_controller = DashboardController()
 margin_controller = MarginManagementController()
+discord_config_controller = DiscordConfigController()
 
 # Include all routes
 router.include_router(auth_controller.router, prefix="/auth", tags=["Admin Auth"])
@@ -506,3 +714,4 @@ router.include_router(user_controller.router, prefix="/users", tags=["User Manag
 router.include_router(product_controller.router, prefix="/products", tags=["Product Management"])
 router.include_router(dashboard_controller.router, prefix="/dashboard", tags=["Dashboard"])
 router.include_router(margin_controller.router, prefix="/margins", tags=["Margin Management"])
+router.include_router(discord_config_controller.router, prefix="/discord-config", tags=["Discord Configuration"])
