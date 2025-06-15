@@ -41,14 +41,17 @@ app.include_router(api_router, prefix="/api/v1")
 
 @app.on_event("startup")
 async def startup_event():
-    """Startup event - Initialize and start Discord bot"""
+    """Startup event - Initialize database and start Discord bot"""
     try:
-        from app.domains.discord.services.bot_manager import bot_manager
-        
         logger.info("Starting FA API Service...")
+        
+        # Auto-create database tables
+        logger.info("Initializing database tables...")
+        await auto_create_database_tables()
         
         # Initialize Discord bot (try database first, then environment)
         logger.info("Initializing Discord bot...")
+        from app.domains.discord.services.bot_manager import bot_manager
         success = await bot_manager.auto_initialize()
         
         if success:
@@ -62,6 +65,85 @@ async def startup_event():
         
     except Exception as e:
         logger.error(f"Error during startup: {e}")
+
+async def auto_create_database_tables():
+    """Auto-create database tables if they don't exist"""
+    try:
+        from app.core.database import engine, Base
+        from app.infrastructure.config.settings import settings
+        
+        # Import all models to register them with SQLAlchemy
+        logger.info("Importing database models...")
+        
+        # Import models (ignore import errors for missing models)
+        models_imported = []
+        
+        try:
+            from app.domains.discord.models.discord_config import DiscordConfig
+            models_imported.append("DiscordConfig")
+        except ImportError:
+            pass
+            
+        try:
+            from app.domains.wallet.models.wallet import Wallet
+            models_imported.append("Wallet")
+        except ImportError:
+            pass
+            
+        try:
+            from app.domains.admin.models.admin import Admin
+            models_imported.append("Admin")
+        except ImportError:
+            pass
+            
+        try:
+            from app.domains.product.models.product import Product
+            models_imported.append("Product")
+        except ImportError:
+            pass
+            
+        try:
+            from app.domains.auth.models.user import User
+            models_imported.append("User")
+        except ImportError:
+            pass
+            
+        try:
+            from app.domains.voucher.models.voucher import Voucher
+            models_imported.append("Voucher")
+        except ImportError:
+            pass
+            
+        try:
+            from app.domains.analytics.models.analytics import Analytics
+            models_imported.append("Analytics")
+        except ImportError:
+            pass
+        
+        logger.info(f"Models imported: {models_imported}")
+        
+        # Create all tables
+        logger.info("Creating database tables...")
+        Base.metadata.create_all(bind=engine)
+        
+        # Verify tables created
+        from sqlalchemy import inspect
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        
+        if settings.is_postgresql:
+            logger.info(f"PostgreSQL tables created: {len(tables)} tables")
+        else:
+            logger.info(f"SQLite tables created: {len(tables)} tables")
+            
+        for table in tables:
+            logger.debug(f"  - {table}")
+            
+        logger.info("Database initialization completed successfully")
+        
+    except Exception as e:
+        logger.error(f"Error during database initialization: {e}")
+        # Don't raise exception to allow app to continue running
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -98,12 +180,20 @@ async def health_check():
     """Health check endpoint"""
     try:
         from app.domains.discord.services.bot_manager import bot_manager
+        from app.core.database import engine
+        from app.infrastructure.config.settings import settings
+        from sqlalchemy import text, inspect
         
+        # Check database connection
+        db_status = await check_database_health()
+        
+        # Check Discord bot
         bot_status = bot_manager.get_bot_status()
         
         return {
             "status": "healthy", 
             "service": "FA API",
+            "database": db_status,
             "discord_bot": {
                 "status": bot_status.get("status", "unknown"),
                 "is_running": bot_status.get("is_running", False),
@@ -113,12 +203,42 @@ async def health_check():
     except Exception as e:
         logger.error(f"Error in health check: {e}")
         return {
-            "status": "healthy", 
+            "status": "error", 
             "service": "FA API",
-            "discord_bot": {
-                "status": "error",
-                "error": str(e)
+            "error": str(e)
+        }
+
+async def check_database_health():
+    """Check database connection and return status"""
+    try:
+        from app.core.database import engine
+        from app.infrastructure.config.settings import settings
+        from sqlalchemy import text, inspect
+        
+        # Test database connection
+        with engine.connect() as connection:
+            # Simple query to test connection
+            result = connection.execute(text("SELECT 1"))
+            result.fetchone()
+            
+            # Get table count
+            inspector = inspect(engine)
+            tables = inspector.get_table_names()
+            
+            return {
+                "status": "healthy",
+                "type": "PostgreSQL" if settings.is_postgresql else "SQLite",
+                "url": settings.DATABASE_URL[:50] + "..." if len(settings.DATABASE_URL) > 50 else settings.DATABASE_URL,
+                "tables_count": len(tables),
+                "connection": "ok"
             }
+            
+    except Exception as e:
+        logger.error(f"Database health check failed: {e}")
+        return {
+            "status": "error",
+            "error": str(e),
+            "connection": "failed"
         }
 
 if __name__ == "__main__":
