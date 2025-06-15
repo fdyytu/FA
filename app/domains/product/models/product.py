@@ -39,5 +39,5 @@ class Product(BaseModel):
     daily_limit = Column(Integer, nullable=True)
     monthly_limit = Column(Integer, nullable=True)
     
-    # Relationships
-    transactions = relationship("PPOBTransaction", back_populates="product")
+    # Relationships will be added when related models are properly configured
+    # transactions = relationship("PPOBTransaction", back_populates="product")

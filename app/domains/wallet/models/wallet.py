@@ -50,8 +50,8 @@ class WalletTransaction(BaseModel):
     reference_id = Column(String(100), nullable=True)  # For external references
     meta_data = Column(Text, nullable=True)  # JSON string for additional data
     
-    # Relationship
-    user = relationship("User", back_populates="wallet_transactions")
+    # Relationship will be added when User model is properly configured
+    # user = relationship("User", back_populates="wallet_transactions")
 
 class Transfer(BaseModel):
     """
@@ -69,9 +69,9 @@ class Transfer(BaseModel):
     sender_transaction_id = Column(Integer, ForeignKey("wallet_transactions.id"), nullable=True)
     receiver_transaction_id = Column(Integer, ForeignKey("wallet_transactions.id"), nullable=True)
     
-    # Relationships
-    sender = relationship("User", foreign_keys=[sender_id], back_populates="sent_transfers")
-    receiver = relationship("User", foreign_keys=[receiver_id], back_populates="received_transfers")
+    # Relationships will be added when User model is properly configured
+    # sender = relationship("User", foreign_keys=[sender_id], back_populates="sent_transfers")
+    # receiver = relationship("User", foreign_keys=[receiver_id], back_populates="received_transfers")
 
 class TopUpRequest(BaseModel):
     """
@@ -97,6 +97,6 @@ class TopUpRequest(BaseModel):
     midtrans_transaction_id = Column(String(100), nullable=True)
     wallet_transaction_id = Column(Integer, ForeignKey("wallet_transactions.id"), nullable=True)
     
-    # Relationships
-    user = relationship("User", foreign_keys=[user_id], back_populates="topup_requests")
-    processed_by_user = relationship("User", foreign_keys=[processed_by])
+    # Relationships will be added when User model is properly configured
+    # user = relationship("User", foreign_keys=[user_id], back_populates="topup_requests")
+    # processed_by_user = relationship("User", foreign_keys=[processed_by])

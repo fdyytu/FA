@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Numeric, Boolean, Text, Enum, DateTime
+from sqlalchemy import Column, String, Numeric, Boolean, Text, Enum, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from app.shared.base_classes.base import BaseModel
 import enum
@@ -65,7 +65,7 @@ class AdminAuditLog(BaseModel):
     """
     __tablename__ = "admin_audit_logs"
     
-    admin_id = Column(String, nullable=False)
+    admin_id = Column(String, ForeignKey("admins.id"), nullable=False)
     action = Column(String(100), nullable=False)
     resource = Column(String(100), nullable=False)
     resource_id = Column(String(50), nullable=True)
@@ -83,7 +83,7 @@ class AdminNotificationSetting(BaseModel):
     """
     __tablename__ = "admin_notification_settings"
     
-    admin_id = Column(String, nullable=False)
+    admin_id = Column(String, ForeignKey("admins.id"), nullable=False)
     notification_type = Column(String(50), nullable=False)
     is_enabled = Column(Boolean, default=True)
     
