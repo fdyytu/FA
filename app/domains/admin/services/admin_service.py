@@ -29,7 +29,7 @@ class AdminAuthService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.admin_repo = AdminRepository(db)
         self.audit_repo = AuditLogRepository(db)
     
@@ -107,7 +107,7 @@ class AdminManagementService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.admin_repo = AdminRepository(db)
         self.audit_repo = AuditLogRepository(db)
     
@@ -193,7 +193,7 @@ class ConfigurationService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.config_repo = AdminConfigRepository(db)
         self.audit_repo = AuditLogRepository(db)
     
@@ -275,7 +275,7 @@ class MarginManagementService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.margin_repo = PPOBMarginRepository(db)
         self.audit_repo = AuditLogRepository(db)
     
@@ -375,7 +375,7 @@ class UserManagementService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.user_repo = UserManagementRepository(db)
         self.audit_repo = AuditLogRepository(db)
     
@@ -443,7 +443,7 @@ class ProductManagementService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.product_repo = ProductManagementRepository(db)
         self.audit_repo = AuditLogRepository(db)
     
@@ -555,7 +555,7 @@ class DashboardService(BaseService):
     """
     
     def __init__(self, db: Session):
-        super().__init__(db)
+        self.db = db
         self.dashboard_repo = DashboardRepository(db)
     
     def get_dashboard_data(self) -> DashboardResponse:
