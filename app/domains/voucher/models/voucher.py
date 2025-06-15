@@ -39,8 +39,8 @@ class Voucher(BaseModel):
     applicable_categories = Column(Text, nullable=True)  # JSON string
     applicable_products = Column(Text, nullable=True)  # JSON string
     
-    # Relationships
-    usages = relationship("VoucherUsage", back_populates="voucher")
+    # Relationships will be added when related models are properly configured
+    # usages = relationship("VoucherUsage", back_populates="voucher")
 
 class VoucherUsage(BaseModel):
     """
@@ -56,7 +56,7 @@ class VoucherUsage(BaseModel):
     original_amount = Column(Numeric(15, 2), nullable=False)
     final_amount = Column(Numeric(15, 2), nullable=False)
     
-    # Relationships
-    voucher = relationship("Voucher", back_populates="usages")
-    user = relationship("User", back_populates="voucher_usages")
-    transaction = relationship("PPOBTransaction", back_populates="voucher_usage")
+    # Relationships will be added when related models are properly configured
+    # voucher = relationship("Voucher", back_populates="usages")
+    # user = relationship("User", back_populates="voucher_usages")
+    # transaction = relationship("PPOBTransaction", back_populates="voucher_usage")
