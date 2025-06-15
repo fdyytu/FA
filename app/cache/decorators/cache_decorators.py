@@ -1,6 +1,7 @@
 """
-Cache Decorators
+Cache Decorators - Unified Implementation
 Decorator untuk caching yang dapat digunakan kembali (DRY Principle)
+Menggabungkan implementasi dari cache/decorators dan common/utils/decorators
 """
 
 import functools
@@ -8,7 +9,6 @@ import inspect
 import logging
 from typing import Any, Optional, Union, Callable, Dict
 from datetime import timedelta
-from app.cache.managers.cache_manager import cache_manager
 
 logger = logging.getLogger(__name__)
 
@@ -17,55 +17,96 @@ def cache_result(
     ttl: Optional[Union[int, timedelta]] = None,
     key_prefix: str = None,
     cache_type: str = "default",
-    skip_cache_on_error: bool = True
+    skip_cache_on_error: bool = True,
+    key_template: str = None,  # Backward compatibility
+    expire_seconds: int = 300  # Backward compatibility
 ):
     """
-    Decorator untuk cache hasil function
+    Unified decorator untuk cache hasil function
+    Mendukung kedua interface untuk backward compatibility
     
     Args:
-        ttl: Time to live untuk cache
-        key_prefix: Prefix untuk cache key
+        ttl: Time to live untuk cache (new interface)
+        key_prefix: Prefix untuk cache key (new interface)
         cache_type: Tipe cache yang digunakan
         skip_cache_on_error: Skip cache jika ada error
+        key_template: Template untuk cache key (legacy interface)
+        expire_seconds: Cache expiration time (legacy interface)
     """
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
             try:
-                # Generate cache key
-                cache_service = await cache_manager.get_cache_service(cache_type)
-                key_generator = cache_manager.get_key_generator()
+                # Determine which cache implementation to use
+                use_legacy = key_template is not None
                 
-                # Gunakan function name sebagai prefix jika tidak ada key_prefix
-                prefix = key_prefix or f"func:{func.__name__}"
-                cache_key = key_generator.generate_key(prefix, *args, **kwargs)
+                if use_legacy:
+                    # Legacy implementation
+                    try:
+                        key_data = {
+                            'args': args,
+                            'kwargs': kwargs,
+                            'func_name': func.__name__
+                        }
+                        cache_key = key_template.format(**key_data, **kwargs)
+                    except (KeyError, ValueError):
+                        cache_key = f"{func.__name__}:{hash(str(args) + str(kwargs))}"
+                    
+                    try:
+                        from app.core.container import get_service
+                        from app.core.interfaces import ICacheService
+                        
+                        cache_service = get_service(ICacheService)
+                        cached_result = await cache_service.get(cache_key)
+                        
+                        if cached_result is not None:
+                            logger.debug(f"Cache hit for {func.__name__}: {cache_key}")
+                            return cached_result
+                            
+                    except Exception as e:
+                        logger.warning(f"Cache get failed for {func.__name__}: {e}")
+                    
+                    result = await func(*args, **kwargs)
+                    
+                    try:
+                        await cache_service.set(cache_key, result, expire_seconds)
+                        logger.debug(f"Cached result for {func.__name__}: {cache_key}")
+                    except Exception as e:
+                        logger.warning(f"Cache set failed for {func.__name__}: {e}")
+                    
+                    return result
                 
-                # Coba ambil dari cache
-                cached_result = await cache_service.get(cache_key)
-                if cached_result is not None:
-                    logger.debug(f"Cache hit for key: {cache_key}")
-                    return cached_result
-                
-                # Jika tidak ada di cache, execute function
-                logger.debug(f"Cache miss for key: {cache_key}")
-                result = await func(*args, **kwargs)
-                
-                # Simpan hasil ke cache
-                await cache_service.set(cache_key, result, ttl)
-                logger.debug(f"Cached result for key: {cache_key}")
-                
-                return result
-                
+                else:
+                    # New implementation
+                    from app.cache.managers.cache_manager import cache_manager
+                    
+                    cache_service = await cache_manager.get_cache_service(cache_type)
+                    key_generator = cache_manager.get_key_generator()
+                    
+                    prefix = key_prefix or f"func:{func.__name__}"
+                    cache_key = key_generator.generate_key(prefix, *args, **kwargs)
+                    
+                    cached_result = await cache_service.get(cache_key)
+                    if cached_result is not None:
+                        logger.debug(f"Cache hit for key: {cache_key}")
+                        return cached_result
+                    
+                    logger.debug(f"Cache miss for key: {cache_key}")
+                    result = await func(*args, **kwargs)
+                    
+                    await cache_service.set(cache_key, result, ttl)
+                    logger.debug(f"Cached result for key: {cache_key}")
+                    
+                    return result
+                    
             except Exception as e:
                 logger.error(f"Cache error in {func.__name__}: {e}")
                 if skip_cache_on_error:
-                    # Jika ada error cache, tetap execute function
                     return await func(*args, **kwargs)
                 raise
         
         @functools.wraps(func)
         def sync_wrapper(*args, **kwargs):
-            # Untuk function synchronous, convert ke async
             import asyncio
             
             async def async_func(*args, **kwargs):
@@ -73,7 +114,6 @@ def cache_result(
             
             return asyncio.run(async_wrapper(*args, **kwargs))
         
-        # Return wrapper yang sesuai berdasarkan function type
         if inspect.iscoroutinefunction(func):
             return async_wrapper
         else:
@@ -84,44 +124,73 @@ def cache_result(
 
 def cache_invalidate(
     key_patterns: Union[str, list],
-    cache_type: str = "default"
+    cache_type: str = "default",
+    key_pattern: str = None  # Backward compatibility
 ):
     """
-    Decorator untuk invalidate cache setelah function execution
+    Unified decorator untuk invalidate cache setelah function execution
     
     Args:
-        key_patterns: Pattern atau list pattern untuk invalidate
+        key_patterns: Pattern atau list pattern untuk invalidate (new interface)
         cache_type: Tipe cache yang digunakan
+        key_pattern: Pattern untuk cache keys (legacy interface)
     """
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
             try:
-                # Execute function dulu
                 result = await func(*args, **kwargs)
                 
-                # Invalidate cache
-                cache_service = await cache_manager.get_cache_service(cache_type)
-                key_generator = cache_manager.get_key_generator()
+                # Determine which implementation to use
+                use_legacy = key_pattern is not None
                 
-                patterns = key_patterns if isinstance(key_patterns, list) else [key_patterns]
+                if use_legacy:
+                    # Legacy implementation
+                    try:
+                        from app.core.container import get_service
+                        from app.core.interfaces import ICacheService
+                        
+                        cache_service = get_service(ICacheService)
+                        
+                        try:
+                            key_data = {
+                                'args': args,
+                                'kwargs': kwargs,
+                                'func_name': func.__name__
+                            }
+                            invalidation_key = key_pattern.format(**key_data, **kwargs)
+                        except (KeyError, ValueError):
+                            invalidation_key = key_pattern
+                        
+                        await cache_service.delete_pattern(invalidation_key)
+                        logger.debug(f"Cache invalidated for pattern: {invalidation_key}")
+                        
+                    except Exception as e:
+                        logger.warning(f"Cache invalidation failed for {func.__name__}: {e}")
                 
-                for pattern in patterns:
-                    # Generate pattern dengan args/kwargs jika diperlukan
-                    if "{" in pattern:
-                        # Format pattern dengan args/kwargs
-                        formatted_pattern = pattern.format(*args, **kwargs)
-                    else:
-                        formatted_pattern = key_generator.generate_pattern(pattern)
+                else:
+                    # New implementation
+                    from app.cache.managers.cache_manager import cache_manager
                     
-                    await cache_service.clear(formatted_pattern)
-                    logger.debug(f"Invalidated cache pattern: {formatted_pattern}")
+                    cache_service = await cache_manager.get_cache_service(cache_type)
+                    key_generator = cache_manager.get_key_generator()
+                    
+                    patterns = key_patterns if isinstance(key_patterns, list) else [key_patterns]
+                    
+                    for pattern in patterns:
+                        if "{" in pattern:
+                            formatted_pattern = pattern.format(*args, **kwargs)
+                        else:
+                            formatted_pattern = key_generator.generate_pattern(pattern)
+                        
+                        await cache_service.clear(formatted_pattern)
+                        logger.debug(f"Invalidated cache pattern: {formatted_pattern}")
                 
                 return result
                 
             except Exception as e:
                 logger.error(f"Cache invalidation error in {func.__name__}: {e}")
-                raise
+                return await func(*args, **kwargs)
         
         @functools.wraps(func)
         def sync_wrapper(*args, **kwargs):
@@ -157,27 +226,23 @@ def cache_key_from_args(
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
             try:
+                from app.cache.managers.cache_manager import cache_manager
+                
                 cache_service = await cache_manager.get_cache_service(cache_type)
                 
-                # Generate key dari template
-                # Ambil parameter names dari function signature
                 sig = inspect.signature(func)
                 bound_args = sig.bind(*args, **kwargs)
                 bound_args.apply_defaults()
                 
-                # Format key template dengan arguments
                 cache_key = key_template.format(**bound_args.arguments)
                 
-                # Coba ambil dari cache
                 cached_result = await cache_service.get(cache_key)
                 if cached_result is not None:
                     logger.debug(f"Cache hit for key: {cache_key}")
                     return cached_result
                 
-                # Execute function
                 result = await func(*args, **kwargs)
                 
-                # Simpan ke cache
                 await cache_service.set(cache_key, result, ttl)
                 logger.debug(f"Cached result for key: {cache_key}")
                 
@@ -204,6 +269,49 @@ def cache_key_from_args(
     return decorator
 
 
+def memoize(maxsize: int = 128):
+    """
+    Simple memoization decorator untuk function results
+    
+    Args:
+        maxsize: Maximum cache size
+    """
+    def decorator(func: Callable) -> Callable:
+        cache = {}
+        cache_order = []
+        
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            key = str(args) + str(sorted(kwargs.items()))
+            
+            if key in cache:
+                cache_order.remove(key)
+                cache_order.append(key)
+                return cache[key]
+            
+            result = func(*args, **kwargs)
+            
+            cache[key] = result
+            cache_order.append(key)
+            
+            if len(cache) > maxsize:
+                oldest_key = cache_order.pop(0)
+                del cache[oldest_key]
+            
+            return result
+        
+        wrapper.cache_clear = lambda: cache.clear() or cache_order.clear()
+        wrapper.cache_info = lambda: {
+            'hits': len([k for k in cache_order if k in cache]),
+            'misses': len(cache_order) - len([k for k in cache_order if k in cache]),
+            'maxsize': maxsize,
+            'currsize': len(cache)
+        }
+        
+        return wrapper
+    return decorator
+
+
 class CacheHelper:
     """
     Helper class untuk cache operations yang tidak menggunakan decorator
@@ -217,31 +325,27 @@ class CacheHelper:
         ttl: Optional[Union[int, timedelta]] = None,
         cache_type: str = "default"
     ) -> Any:
-        """
-        Get dari cache, jika tidak ada execute factory_func dan cache hasilnya
-        """
+        """Get dari cache, jika tidak ada execute factory_func dan cache hasilnya"""
         try:
+            from app.cache.managers.cache_manager import cache_manager
+            
             cache_service = await cache_manager.get_cache_service(cache_type)
             
-            # Coba ambil dari cache
             cached_result = await cache_service.get(key)
             if cached_result is not None:
                 return cached_result
             
-            # Execute factory function
             if inspect.iscoroutinefunction(factory_func):
                 result = await factory_func()
             else:
                 result = factory_func()
             
-            # Cache hasil
             await cache_service.set(key, result, ttl)
             
             return result
             
         except Exception as e:
             logger.error(f"Cache helper error for key {key}: {e}")
-            # Fallback ke factory function
             if inspect.iscoroutinefunction(factory_func):
                 return await factory_func()
             else:
@@ -254,6 +358,8 @@ class CacheHelper:
     ) -> bool:
         """Invalidate cache berdasarkan pattern"""
         try:
+            from app.cache.managers.cache_manager import cache_manager
+            
             cache_service = await cache_manager.get_cache_service(cache_type)
             return await cache_service.clear(pattern)
         except Exception as e:
