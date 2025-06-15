@@ -24,6 +24,22 @@ class Settings(BaseSettings):
     # Database settings - Railway akan provide PostgreSQL URL otomatis
     DATABASE_URL: str = "sqlite:///./fa_database.db"  # Fallback untuk development
     
+    # PostgreSQL specific settings
+    DB_POOL_SIZE: int = 5
+    DB_MAX_OVERFLOW: int = 10
+    DB_POOL_TIMEOUT: int = 30
+    DB_POOL_RECYCLE: int = 3600
+    
+    @property
+    def is_postgresql(self) -> bool:
+        """Check if using PostgreSQL database"""
+        return "postgresql" in self.DATABASE_URL
+    
+    @property
+    def is_sqlite(self) -> bool:
+        """Check if using SQLite database"""
+        return "sqlite" in self.DATABASE_URL
+    
     # File monitoring settings
     WATCH_PATH: Path = Path("./monitored_files")
     
