@@ -17,12 +17,5 @@ class User(BaseModel):
     phone_number = Column(String(20), nullable=True)
     balance = Column(Numeric(15, 2), default=0, nullable=False)
     
-    # Relationships - commented out to avoid foreign key conflicts during testing
-    # ppob_transactions = relationship("PPOBTransaction", back_populates="user")
-    # wallet_transactions = relationship("WalletTransaction", back_populates="user")
-    # sent_transfers = relationship("Transfer", foreign_keys="Transfer.sender_id", back_populates="sender")
-    # received_transfers = relationship("Transfer", foreign_keys="Transfer.receiver_id", back_populates="receiver")
-    # topup_requests = relationship("TopUpRequest", back_populates="user")
-    # transactions = relationship("Transaction", back_populates="user")
-    # profile = relationship("UserProfile", back_populates="user", uselist=False)
-    # notifications = relationship("Notification", back_populates="user")
+    # Relationships will be added when related models are implemented
+    pass

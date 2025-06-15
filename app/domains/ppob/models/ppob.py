@@ -40,8 +40,8 @@ class PPOBTransaction(BaseModel):
     provider_ref = Column(String(100), nullable=True)
     notes = Column(Text, nullable=True)
     
-    # Relationship
-    user = relationship("User", back_populates="ppob_transactions")
+    # Relationship will be added when User model is properly configured
+    # user = relationship("User", back_populates="ppob_transactions")
 
 class PPOBProduct(BaseModel):
     """
