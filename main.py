@@ -47,19 +47,16 @@ async def startup_event():
         
         logger.info("Starting FA API Service...")
         
-        # Initialize Discord bot if token is available
-        if os.getenv("DISCORD_TOKEN"):
-            logger.info("Initializing Discord bot...")
-            success = await bot_manager.initialize_from_env()
-            
-            if success:
-                logger.info("Starting Discord bot...")
-                await bot_manager.start_bot()
-                logger.info("Discord bot started successfully")
-            else:
-                logger.warning("Failed to initialize Discord bot")
+        # Initialize Discord bot (try database first, then environment)
+        logger.info("Initializing Discord bot...")
+        success = await bot_manager.auto_initialize()
+        
+        if success:
+            logger.info("Starting Discord bot...")
+            await bot_manager.start_bot()
+            logger.info(f"Discord bot started successfully from {bot_manager.config_source}")
         else:
-            logger.info("Discord token not found, skipping bot initialization")
+            logger.warning("Failed to initialize Discord bot - no valid configuration found in database or environment")
             
         logger.info("FA API Service startup completed")
         

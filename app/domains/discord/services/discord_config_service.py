@@ -11,6 +11,7 @@ import base64
 import hashlib
 
 from app.domains.discord.models.discord_config import DiscordConfig
+from app.domains.discord.repositories.discord_config_repository import discord_config_repository
 from app.domains.discord.schemas.discord_config_schemas import (
     DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse
 )
@@ -66,24 +67,22 @@ class DiscordConfigService:
         try:
             # Deactivate other configs if this is set as active
             if config_data.is_active:
-                self._deactivate_all_configs(db)
+                discord_config_repository.deactivate_all(db)
             
             # Encrypt token
             encrypted_token = self._encrypt_token(config_data.token)
             
             # Create new config
-            db_config = DiscordConfig(
-                name=config_data.name,
-                token=encrypted_token,
-                guild_id=config_data.guild_id,
-                command_prefix=config_data.command_prefix,
-                is_active=config_data.is_active,
-                is_encrypted=bool(self._cipher)
-            )
+            config_dict = {
+                "name": config_data.name,
+                "token": encrypted_token,
+                "guild_id": config_data.guild_id,
+                "command_prefix": config_data.command_prefix,
+                "is_active": config_data.is_active,
+                "is_encrypted": bool(self._cipher)
+            }
             
-            db.add(db_config)
-            db.commit()
-            db.refresh(db_config)
+            db_config = discord_config_repository.create(db, config_dict)
             
             logger.info(f"Created Discord config: {db_config.name}")
             return db_config
@@ -95,15 +94,15 @@ class DiscordConfigService:
     
     def get_config(self, db: Session, config_id: int) -> Optional[DiscordConfig]:
         """Ambil konfigurasi berdasarkan ID"""
-        return db.query(DiscordConfig).filter(DiscordConfig.id == config_id).first()
+        return discord_config_repository.get_by_id(db, config_id)
     
     def get_active_config(self, db: Session) -> Optional[DiscordConfig]:
         """Ambil konfigurasi yang aktif"""
-        return db.query(DiscordConfig).filter(DiscordConfig.is_active == True).first()
+        return discord_config_repository.get_active_config(db)
     
     def get_all_configs(self, db: Session, skip: int = 0, limit: int = 100) -> List[DiscordConfig]:
         """Ambil semua konfigurasi"""
-        return db.query(DiscordConfig).offset(skip).limit(limit).all()
+        return discord_config_repository.get_all(db, skip=skip, limit=limit)
     
     def update_config(self, db: Session, config_id: int, config_data: DiscordConfigUpdate) -> Optional[DiscordConfig]:
         """Update konfigurasi Discord"""
@@ -122,13 +121,9 @@ class DiscordConfigService:
             
             # Handle active status
             if update_data.get('is_active', False):
-                self._deactivate_all_configs(db, exclude_id=config_id)
+                discord_config_repository.deactivate_all(db, exclude_id=config_id)
             
-            for field, value in update_data.items():
-                setattr(db_config, field, value)
-            
-            db.commit()
-            db.refresh(db_config)
+            db_config = discord_config_repository.update(db, config_id, update_data)
             
             logger.info(f"Updated Discord config: {db_config.name}")
             return db_config
@@ -145,11 +140,12 @@ class DiscordConfigService:
             if not db_config:
                 return False
             
-            db.delete(db_config)
-            db.commit()
+            success = discord_config_repository.delete(db, config_id)
             
-            logger.info(f"Deleted Discord config: {db_config.name}")
-            return True
+            if success:
+                logger.info(f"Deleted Discord config: {db_config.name}")
+            
+            return success
             
         except Exception as e:
             logger.error(f"Error deleting Discord config: {e}")
@@ -162,17 +158,7 @@ class DiscordConfigService:
             return self._decrypt_token(config.token)
         return config.token
     
-    def _deactivate_all_configs(self, db: Session, exclude_id: Optional[int] = None):
-        """Deactivate semua konfigurasi kecuali yang dikecualikan"""
-        query = db.query(DiscordConfig).filter(DiscordConfig.is_active == True)
-        if exclude_id:
-            query = query.filter(DiscordConfig.id != exclude_id)
-        
-        configs = query.all()
-        for config in configs:
-            config.is_active = False
-        
-        db.commit()
+
     
     async def test_token(self, token: str, guild_id: Optional[str] = None) -> dict:
         """Test validitas Discord token"""
