@@ -4,6 +4,10 @@ from fastapi.staticfiles import StaticFiles
 from app.api.v1.router import api_router
 import logging
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Import models to register them with SQLAlchemy Base
 try:

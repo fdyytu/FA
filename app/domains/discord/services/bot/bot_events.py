@@ -9,7 +9,7 @@ import logging
 from typing import Optional
 
 from app.infrastructure.database.database_manager import get_db
-from app.models.discord import LiveStock
+# from app.models.discord import LiveStock  # Commented out - model not found
 
 logger = logging.getLogger(__name__)
 
@@ -61,18 +61,8 @@ class DiscordBotEvents:
     async def update_live_stock(self):
         """Update live stock data periodically"""
         try:
-            db = next(get_db())
-            
-            # Get active live stock
-            live_stocks = db.query(LiveStock).filter(
-                LiveStock.is_active == True
-            ).all()
-            
-            for stock in live_stocks:
-                # Update stock logic here
-                pass
-                
-            logger.info(f"Updated {len(live_stocks)} live stock entries")
+            # TODO: Implement live stock update when model is available
+            logger.info("Live stock update task running (placeholder)")
             
         except Exception as e:
             logger.error(f"Error updating live stock: {e}")
