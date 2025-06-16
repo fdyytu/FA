@@ -5,9 +5,9 @@ from enum import Enum
 
 class AdminRole(str, Enum):
     """Admin role enum untuk API"""
-    SUPER_ADMIN = "super_admin"
-    ADMIN = "admin"
-    OPERATOR = "operator"
+    SUPER_ADMIN = "SUPER_ADMIN"
+    ADMIN = "ADMIN"
+    OPERATOR = "OPERATOR"
 
 class MarginType(str, Enum):
     """Margin type enum untuk API"""
