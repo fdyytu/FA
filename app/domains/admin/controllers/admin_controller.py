@@ -16,7 +16,7 @@ from app.domains.admin.schemas.admin_schemas import (
     DashboardResponse, PaginationParams, PaginatedResponse, AuditLogResponse,
     DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse
 )
-from app.shared.dependencies.auth_deps import get_current_admin, get_current_super_admin
+from app.shared.dependencies.admin_auth_deps import get_current_admin, get_current_super_admin
 from app.domains.admin.models.admin import Admin
 from app.common.security.auth_security import create_access_token
 from app.shared.responses.api_response import APIResponse
@@ -56,7 +56,7 @@ class AdminAuthController:
             
             # Create access token
             access_token = create_access_token(
-                data={"sub": admin.id, "type": "admin"}
+                data={"sub": str(admin.id), "type": "admin"}
             )
             
             return AdminLoginResponse(
