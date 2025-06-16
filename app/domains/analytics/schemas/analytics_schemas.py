@@ -124,3 +124,47 @@ class AnalyticsReport(BaseModel):
     summary: DashboardSummary
     charts: List[ChartData]
     raw_data: Optional[List[Dict[str, Any]]] = None
+
+# Admin Analytics Schemas
+class PerformanceMetricsResponse(BaseModel):
+    """Schema response untuk performance metrics admin"""
+    total_transactions: int
+    successful_transactions: int
+    failed_transactions: int
+    success_rate: float
+    total_revenue: Decimal
+    average_transaction_value: Decimal
+    peak_hour: str
+    peak_day: str
+    response_time_avg: float
+    uptime_percentage: float
+    period_days: int
+    generated_at: datetime
+    daily_metrics: List[Dict[str, Any]]
+
+class GeographicDataResponse(BaseModel):
+    """Schema response untuk data geografis admin"""
+    total_regions: int
+    top_regions: List[Dict[str, Any]]
+    country_distribution: List[Dict[str, Any]]
+    city_distribution: List[Dict[str, Any]]
+    revenue_by_region: List[Dict[str, Any]]
+    period_days: int
+    generated_at: datetime
+
+class RecentActivityItem(BaseModel):
+    """Schema untuk item aktivitas terbaru"""
+    id: int
+    activity_type: str
+    description: str
+    user_id: Optional[int]
+    admin_id: Optional[int]
+    timestamp: datetime
+    metadata: Optional[Dict[str, Any]]
+
+class RecentActivityResponse(BaseModel):
+    """Schema response untuk aktivitas terbaru admin"""
+    activities: List[RecentActivityItem]
+    total_count: int
+    limit: int
+    generated_at: datetime
