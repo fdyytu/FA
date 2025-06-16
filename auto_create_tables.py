@@ -29,17 +29,17 @@ def import_all_models():
         print(f"⚠️  Discord models import error: {e}")
     
     try:
-        # Wallet models
-        from app.domains.wallet.models.wallet import Wallet
-        models_imported.append("Wallet")
+        # Wallet models - perbaiki import yang salah
+        from app.domains.wallet.models.wallet import WalletTransaction, Transfer, TopUpRequest
+        models_imported.extend(["WalletTransaction", "Transfer", "TopUpRequest"])
         print("✅ Wallet models imported")
     except ImportError as e:
         print(f"⚠️  Wallet models import error: {e}")
     
     try:
-        # Admin models
-        from app.domains.admin.models.admin import Admin
-        models_imported.append("Admin")
+        # Admin models - import semua model admin
+        from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog, AdminNotificationSetting
+        models_imported.extend(["Admin", "AdminConfig", "PPOBMarginConfig", "AdminAuditLog", "AdminNotificationSetting"])
         print("✅ Admin models imported")
     except ImportError as e:
         print(f"⚠️  Admin models import error: {e}")
@@ -61,20 +61,28 @@ def import_all_models():
         print(f"⚠️  Auth/User models import error: {e}")
     
     try:
-        # Voucher models
-        from app.domains.voucher.models.voucher import Voucher
-        models_imported.append("Voucher")
+        # Voucher models - import semua model voucher
+        from app.domains.voucher.models.voucher import Voucher, VoucherUsage
+        models_imported.extend(["Voucher", "VoucherUsage"])
         print("✅ Voucher models imported")
     except ImportError as e:
         print(f"⚠️  Voucher models import error: {e}")
     
     try:
-        # Analytics models
-        from app.domains.analytics.models.analytics import Analytics
-        models_imported.append("Analytics")
+        # Analytics models - import semua model analytics
+        from app.domains.analytics.models.analytics import AnalyticsEvent, ProductAnalytics, VoucherAnalytics, DashboardMetrics
+        models_imported.extend(["AnalyticsEvent", "ProductAnalytics", "VoucherAnalytics", "DashboardMetrics"])
         print("✅ Analytics models imported")
     except ImportError as e:
         print(f"⚠️  Analytics models import error: {e}")
+    
+    try:
+        # PPOB models - tambahkan model PPOB yang hilang
+        from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct
+        models_imported.extend(["PPOBTransaction", "PPOBProduct"])
+        print("✅ PPOB models imported")
+    except ImportError as e:
+        print(f"⚠️  PPOB models import error: {e}")
     
     print(f"📊 Total models imported: {len(models_imported)}")
     for model in models_imported:

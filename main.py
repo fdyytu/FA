@@ -86,45 +86,59 @@ async def auto_create_database_tables():
         # Import models (ignore import errors for missing models)
         models_imported = []
         
+        # Discord models
         try:
             from app.domains.discord.models.discord_config import DiscordConfig
             models_imported.append("DiscordConfig")
         except ImportError:
             pass
             
+        # Wallet models - perbaiki import yang salah
         try:
-            from app.domains.wallet.models.wallet import Wallet
-            models_imported.append("Wallet")
+            from app.domains.wallet.models.wallet import WalletTransaction, Transfer, TopUpRequest
+            models_imported.extend(["WalletTransaction", "Transfer", "TopUpRequest"])
         except ImportError:
             pass
             
+        # Admin models - import semua model admin
         try:
-            from app.domains.admin.models.admin import Admin
-            models_imported.append("Admin")
+            from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog, AdminNotificationSetting
+            models_imported.extend(["Admin", "AdminConfig", "PPOBMarginConfig", "AdminAuditLog", "AdminNotificationSetting"])
         except ImportError:
             pass
             
+        # Product models
         try:
             from app.domains.product.models.product import Product
             models_imported.append("Product")
         except ImportError:
             pass
             
+        # Auth/User models
         try:
             from app.domains.auth.models.user import User
             models_imported.append("User")
         except ImportError:
             pass
             
+        # Voucher models - import semua model voucher
         try:
-            from app.domains.voucher.models.voucher import Voucher
-            models_imported.append("Voucher")
+            from app.domains.voucher.models.voucher import Voucher, VoucherUsage
+            models_imported.extend(["Voucher", "VoucherUsage"])
         except ImportError:
             pass
             
+        # Analytics models - import semua model analytics
         try:
-            from app.domains.analytics.models.analytics import Analytics
-            models_imported.append("Analytics")
+            from app.domains.analytics.models.analytics import AnalyticsEvent, ProductAnalytics, VoucherAnalytics, DashboardMetrics
+            models_imported.extend(["AnalyticsEvent", "ProductAnalytics", "VoucherAnalytics", "DashboardMetrics"])
+        except ImportError:
+            pass
+            
+        # PPOB models - tambahkan model PPOB yang hilang
+        try:
+            from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct
+            models_imported.extend(["PPOBTransaction", "PPOBProduct"])
         except ImportError:
             pass
         
