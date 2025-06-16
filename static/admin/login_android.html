@@ -252,7 +252,7 @@
                     
                     // Redirect to dashboard after 1.5 seconds
                     setTimeout(() => {
-                        window.location.href = 'dashboard_android.html';
+                        window.location.href = 'dashboard_main.html';
                     }, 1500);
                 } else {
                     showErrorMessage(data.detail || data.message || 'Login gagal. Periksa username dan password Anda.');
@@ -304,7 +304,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = 'dashboard_android.html';
+                        window.location.href = 'dashboard_main.html';
                     }
                 })
                 .catch(() => {
