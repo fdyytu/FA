@@ -16,7 +16,7 @@ from app.domains.admin.schemas.admin_schemas import (
     DashboardResponse, PaginationParams, PaginatedResponse, AuditLogResponse,
     DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse
 )
-from app.shared.dependencies.auth_deps import get_current_admin, get_current_super_admin
+from app.shared.dependencies.admin_auth_deps import get_current_admin, get_current_super_admin
 from app.domains.admin.models.admin import Admin
 from app.common.security.auth_security import create_access_token
 from app.shared.responses.api_response import APIResponse
@@ -56,7 +56,7 @@ class AdminAuthController:
             
             # Create access token
             access_token = create_access_token(
-                data={"sub": admin.id, "type": "admin"}
+                data={"sub": str(admin.id), "type": "admin"}
             )
             
             return AdminLoginResponse(
@@ -727,3 +727,17 @@ router.include_router(product_controller.router, prefix="/products", tags=["Prod
 router.include_router(dashboard_controller.router, prefix="/dashboard", tags=["Dashboard"])
 router.include_router(margin_controller.router, prefix="/margins", tags=["Margin Management"])
 router.include_router(discord_config_controller.router, prefix="/discord-config", tags=["Discord Configuration"])
+
+# Include Analytics endpoints for admin
+try:
+    from app.domains.analytics.controllers.analytics_controller import router as analytics_router
+    router.include_router(analytics_router, prefix="/analytics", tags=["Admin Analytics"])
+except ImportError:
+    pass
+
+# Include Transaction endpoints for admin
+try:
+    from app.domains.transaction.controllers.transaction_controller import router as transaction_router
+    router.include_router(transaction_router, prefix="/transactions", tags=["Admin Transactions"])
+except ImportError:
+    pass

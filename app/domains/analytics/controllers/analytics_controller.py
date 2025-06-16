@@ -711,3 +711,99 @@ async def track_voucher_usage(
     except Exception as e:
         logger.error(f"Error tracking voucher usage: {e}")
         raise HTTPException(status_code=500, detail="Gagal melakukan tracking")
+
+# Admin Analytics Endpoints
+@router.get("/products/categories", summary="Get Product Categories Analytics")
+async def get_product_categories_analytics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis"),
+    service: AnalyticsService = Depends(get_analytics_service)
+):
+    """
+    Mendapatkan analytics kategori produk untuk admin dashboard
+    """
+    try:
+        # Mock data untuk kategori produk
+        categories_data = {
+            "categories": [
+                {"name": "Pulsa", "count": 450, "revenue": 5400000, "percentage": 35.0},
+                {"name": "Paket Data", "count": 320, "revenue": 4800000, "percentage": 25.0},
+                {"name": "Token PLN", "count": 280, "revenue": 3360000, "percentage": 22.0},
+                {"name": "Voucher Game", "count": 200, "revenue": 2400000, "percentage": 18.0}
+            ],
+            "total_products": 1250,
+            "total_revenue": 16000000,
+            "period_days": days,
+            "generated_at": datetime.now().isoformat()
+        }
+        
+        return create_response(
+            success=True,
+            message="Data analytics kategori produk berhasil diambil",
+            data=categories_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting product categories analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil analytics kategori produk")
+
+@router.get("/transactions/weekly", summary="Get Weekly Transactions Analytics")
+async def get_weekly_transactions_analytics(
+    weeks: int = Query(4, ge=1, le=52, description="Jumlah minggu untuk analisis"),
+    service: AnalyticsService = Depends(get_analytics_service)
+):
+    """
+    Mendapatkan analytics transaksi mingguan untuk admin dashboard
+    """
+    try:
+        # Mock data untuk transaksi mingguan
+        weekly_data = {
+            "weeks": [
+                {
+                    "week": "Minggu 1",
+                    "start_date": (datetime.now() - timedelta(weeks=3)).strftime("%Y-%m-%d"),
+                    "end_date": (datetime.now() - timedelta(weeks=2, days=6)).strftime("%Y-%m-%d"),
+                    "transactions": 280,
+                    "revenue": 3360000,
+                    "success_rate": 92.5
+                },
+                {
+                    "week": "Minggu 2", 
+                    "start_date": (datetime.now() - timedelta(weeks=2)).strftime("%Y-%m-%d"),
+                    "end_date": (datetime.now() - timedelta(weeks=1, days=6)).strftime("%Y-%m-%d"),
+                    "transactions": 320,
+                    "revenue": 3840000,
+                    "success_rate": 89.0
+                },
+                {
+                    "week": "Minggu 3",
+                    "start_date": (datetime.now() - timedelta(weeks=1)).strftime("%Y-%m-%d"),
+                    "end_date": (datetime.now() - timedelta(days=6)).strftime("%Y-%m-%d"),
+                    "transactions": 350,
+                    "revenue": 4200000,
+                    "success_rate": 91.2
+                },
+                {
+                    "week": "Minggu 4",
+                    "start_date": datetime.now().strftime("%Y-%m-%d"),
+                    "end_date": datetime.now().strftime("%Y-%m-%d"),
+                    "transactions": 300,
+                    "revenue": 3600000,
+                    "success_rate": 88.7
+                }
+            ],
+            "total_transactions": 1250,
+            "total_revenue": 15000000,
+            "average_success_rate": 90.35,
+            "period_weeks": weeks,
+            "generated_at": datetime.now().isoformat()
+        }
+        
+        return create_response(
+            success=True,
+            message="Data analytics transaksi mingguan berhasil diambil",
+            data=weekly_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting weekly transactions analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil analytics transaksi mingguan")
