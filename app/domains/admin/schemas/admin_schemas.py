@@ -37,7 +37,7 @@ class AdminUpdate(BaseModel):
 
 class AdminResponse(AdminBase):
     """Schema response admin"""
-    id: str
+    id: int
     is_active: bool
     last_login: Optional[datetime]
     created_at: datetime
