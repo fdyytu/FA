@@ -109,13 +109,15 @@ class DiscordBotService:
     
     def get_status(self) -> Dict[str, Any]:
         """Get bot status"""
-        if not self.bot:
+        if not self.bot or not self.bot.user:
             return {
                 "status": "not_initialized",
                 "is_running": False,
                 "guilds": 0,
                 "users": 0,
-                "latency": 0
+                "latency": 0,
+                "user": None,
+                "id": None
             }
         
         return {
@@ -124,7 +126,8 @@ class DiscordBotService:
             "guilds": len(self.bot.guilds) if self.bot.guilds else 0,
             "users": len(self.bot.users) if self.bot.users else 0,
             "latency": round(self.bot.latency * 1000) if self.bot.latency else 0,
-            "user": str(self.bot.user) if self.bot.user else None
+            "user": str(self.bot.user) if self.bot.user else None,
+            "id": self.bot.user.id if self.bot.user else None
         }
     
     async def send_message(self, channel_id: int, message: str) -> bool:

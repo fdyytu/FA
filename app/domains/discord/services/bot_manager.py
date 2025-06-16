@@ -144,6 +144,14 @@ class DiscordBotManager:
     def get_bot_status(self) -> Dict[str, Any]:
         """Get comprehensive bot status"""
         try:
+            if not self.bot_service:
+                return {
+                    "status": "not_initialized",
+                    "is_running": False,
+                    "manager_initialized": False,
+                    "error": "Bot service not available"
+                }
+
             base_status = self.bot_service.get_status()
             
             # Check token configuration from both sources
