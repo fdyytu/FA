@@ -77,7 +77,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = '/api/v1/product-admin';
+        const API_BASE_URL = '/api/v1/admin';
         
         // Toggle password visibility
         document.getElementById('togglePassword').addEventListener('click', function() {
@@ -110,7 +110,7 @@
             hideMessages();
             
             try {
-                const response = await fetch(`${API_BASE_URL}/login`, {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -170,7 +170,7 @@
             const token = localStorage.getItem('adminToken');
             if (token) {
                 // Verify token is still valid
-                fetch(`${API_BASE_URL}/products`, {
+                fetch(`${API_BASE_URL}/dashboard/stats`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
