@@ -198,34 +198,21 @@ async def root():
     }
 
 @app.get("/health")
-async def health_check():
-    """Health check endpoint"""
+async def health_check_root():
+    """Simple health check endpoint for monitoring systems"""
     try:
-        from app.domains.discord.services.bot_manager import bot_manager
-        from app.core.database import engine
-        from app.infrastructure.config.settings import settings
-        from sqlalchemy import text, inspect
-        
-        # Check database connection
+        # Simple database check
         db_status = await check_database_health()
         
-        # Check Discord bot
-        bot_status = bot_manager.get_bot_status()
-        
         return {
-            "status": "healthy", 
+            "status": "healthy" if db_status.get("status") == "healthy" else "unhealthy",
             "service": "FA API",
-            "database": db_status,
-            "discord_bot": {
-                "status": bot_status.get("status", "unknown"),
-                "is_running": bot_status.get("is_running", False),
-                "healthy": bot_manager.is_bot_healthy()
-            }
+            "database": db_status.get("status", "unknown")
         }
     except Exception as e:
-        logger.error(f"Error in health check: {e}")
+        logger.error(f"Health check error: {e}")
         return {
-            "status": "error", 
+            "status": "unhealthy",
             "service": "FA API",
             "error": str(e)
         }
