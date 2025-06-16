@@ -14,33 +14,9 @@ def create_admin_simple():
     """Buat admin dengan cara sederhana"""
     try:
         # Import yang diperlukan
-        from app.core.database import SessionLocal, engine, Base
+        from app.core.database import SessionLocal
         from app.infrastructure.security.password_handler import PasswordHandler
-        from sqlalchemy import Column, String, Text, Boolean, Enum
-        import enum
-        
-        # Buat tabel admin secara manual
-        class AdminRole(enum.Enum):
-            SUPER_ADMIN = "super_admin"
-            ADMIN = "admin"
-            OPERATOR = "operator"
-        
-        class Admin(Base):
-            __tablename__ = "admins"
-            
-            id = Column(String, primary_key=True, default=lambda: str(__import__('uuid').uuid4()))
-            username = Column(String(50), unique=True, index=True, nullable=False)
-            email = Column(String(100), unique=True, index=True, nullable=False)
-            full_name = Column(String(100), nullable=False)
-            hashed_password = Column(Text, nullable=False)
-            is_active = Column(Boolean, default=True)
-            role = Column(Enum(AdminRole), default=AdminRole.ADMIN)
-            phone_number = Column(String(20), nullable=True)
-            created_at = Column(String, default=lambda: __import__('datetime').datetime.utcnow().isoformat())
-            updated_at = Column(String, default=lambda: __import__('datetime').datetime.utcnow().isoformat())
-        
-        # Buat tabel
-        Base.metadata.create_all(bind=engine)
+        from app.domains.admin.models.admin import Admin, AdminRole
         
         # Buat admin
         db = SessionLocal()
@@ -63,7 +39,7 @@ def create_admin_simple():
                 email="admin@example.com",
                 full_name="Super Admin",
                 hashed_password=hashed_pwd,
-                role=AdminRole.SUPER_ADMIN,
+                role=AdminRole.ADMIN,  # Gunakan ADMIN dulu, bisa diubah nanti
                 is_active=True
             )
             
