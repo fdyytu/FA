@@ -10,7 +10,7 @@ from app.shared.responses.api_response import APIResponse
 
 router = APIRouter()
 
-@router.get("/recent")
+@router.get("/recent", operation_id="get_admin_recent_transactions")
 async def list_recent_transactions(
     limit: int = Query(5, ge=1, le=50, description="Jumlah transaksi terbaru"),
     current_admin: Admin = Depends(get_current_admin),
@@ -89,7 +89,7 @@ async def list_recent_transactions(
             detail=f"Gagal mengambil transaksi terbaru: {str(e)}"
         )
 
-@router.get("/")
+@router.get("/", operation_id="get_admin_all_transactions")
 async def list_all_transactions(
     page: int = Query(1, ge=1, description="Halaman"),
     size: int = Query(10, ge=1, le=100, description="Jumlah per halaman"),
@@ -149,7 +149,7 @@ async def list_all_transactions(
             detail=f"Gagal mengambil transaksi: {str(e)}"
         )
 
-@router.get("/stats")
+@router.get("/stats", operation_id="get_admin_transaction_stats")
 async def list_transaction_stats(
     current_admin: Admin = Depends(get_current_admin),
     db: Session = Depends(get_db)

@@ -754,12 +754,8 @@ try:
 except ImportError:
     pass
 
-# Include Transaction endpoints for admin
-try:
-    from app.domains.transaction.controllers.transaction_controller import router as transaction_router
-    router.include_router(transaction_router, prefix="/transactions", tags=["Admin Transactions"])
-except ImportError:
-    pass
+# Transaction endpoints sudah dihandle oleh TransactionController di bawah
+# Tidak perlu import lagi untuk menghindari duplicate operation ID
 
 
 class DiscordAdminController:
@@ -1094,126 +1090,8 @@ class DiscordAdminController:
                 raise HTTPException(status_code=500, detail=str(e))
 
 
-class TransactionController:
-    """
-    Controller untuk manajemen transaksi - Single Responsibility: Transaction management endpoints
-    """
-    
-    def __init__(self):
-        self.router = APIRouter()
-        self._setup_routes()
-    
-    def _setup_routes(self):
-        """Setup routes untuk manajemen transaksi"""
-        
-        @self.router.get("/recent")
-        async def get_recent_transactions(
-            limit: int = 5,
-            current_admin: Admin = Depends(get_current_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Ambil transaksi terbaru"""
-            try:
-                # Mock data untuk recent transactions
-                recent_transactions = [
-                    {
-                        "id": f"TXN{i:03d}",
-                        "user_id": f"user_{i}",
-                        "amount": 10000 + (i * 5000),
-                        "status": "completed" if i % 2 == 0 else "pending",
-                        "type": "topup" if i % 3 == 0 else "purchase",
-                        "created_at": "2025-01-16T10:00:00Z"
-                    }
-                    for i in range(1, limit + 1)
-                ]
-                
-                # Log audit
-                from app.domains.admin.repositories.admin_repository import AuditLogRepository
-                audit_repo = AuditLogRepository(db)
-                audit_repo.create_log(
-                    admin_id=current_admin.id,
-                    action="VIEW",
-                    resource="transactions",
-                    resource_id=None,
-                    new_values=f"Viewed recent transactions (limit: {limit})"
-                )
-                
-                return APIResponse.success(data=recent_transactions)
-                
-            except Exception as e:
-                logger.error(f"Error getting recent transactions: {e}")
-                return APIResponse.success(data=[])
-        
-        @self.router.get("/")
-        async def get_transactions(
-            page: int = 1,
-            limit: int = 10,
-            status: Optional[str] = None,
-            type: Optional[str] = None,
-            current_admin: Admin = Depends(get_current_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Ambil daftar transaksi dengan filter"""
-            try:
-                # Mock data untuk transactions
-                total = 50
-                skip = (page - 1) * limit
-                
-                transactions = [
-                    {
-                        "id": f"TXN{i:03d}",
-                        "user_id": f"user_{i}",
-                        "amount": 10000 + (i * 1000),
-                        "status": "completed" if i % 3 == 0 else ("pending" if i % 3 == 1 else "failed"),
-                        "type": "topup" if i % 2 == 0 else "purchase",
-                        "created_at": "2025-01-16T10:00:00Z",
-                        "updated_at": "2025-01-16T10:05:00Z"
-                    }
-                    for i in range(skip + 1, skip + limit + 1)
-                ]
-                
-                # Apply filters if provided
-                if status:
-                    transactions = [t for t in transactions if t["status"] == status]
-                if type:
-                    transactions = [t for t in transactions if t["type"] == type]
-                
-                # Log audit
-                from app.domains.admin.repositories.admin_repository import AuditLogRepository
-                audit_repo = AuditLogRepository(db)
-                audit_repo.create_log(
-                    admin_id=current_admin.id,
-                    action="VIEW",
-                    resource="transactions",
-                    resource_id=None,
-                    new_values=f"Viewed transactions page {page}"
-                )
-                
-                return APIResponse.success(data={
-                    "items": transactions,
-                    "total": total,
-                    "page": page,
-                    "limit": limit,
-                    "pages": (total + limit - 1) // limit
-                })
-                
-            except Exception as e:
-                logger.error(f"Error getting transactions: {e}")
-                return APIResponse.success(data={
-                    "items": [],
-                    "total": 0,
-                    "page": page,
-                    "limit": limit,
-                    "pages": 0
-                })
-
-
 # Initialize controllers
 discord_admin_controller = DiscordAdminController()
-transaction_controller = TransactionController()
 
 # Include Discord admin routes
 router.include_router(discord_admin_controller.router, prefix="/discord", tags=["Discord Admin"])
-
-# Include Transaction routes
-router.include_router(transaction_controller.router, prefix="/transactions", tags=["Transactions"])
