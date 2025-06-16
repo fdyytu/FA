@@ -16,6 +16,10 @@ from app.domains.admin.schemas.admin_schemas import (
     DashboardResponse, PaginationParams, PaginatedResponse, AuditLogResponse,
     DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse
 )
+from app.domains.discord.schemas.discord_admin_schemas import (
+    DiscordLogResponse, DiscordCommandResponse, DiscordStatsResponse,
+    PaginatedDiscordLogsResponse, PaginatedDiscordCommandsResponse
+)
 from app.shared.dependencies.admin_auth_deps import get_current_admin, get_current_super_admin
 from app.domains.admin.models.admin import Admin
 from app.common.security.auth_security import create_access_token
@@ -741,3 +745,156 @@ try:
     router.include_router(transaction_router, prefix="/transactions", tags=["Admin Transactions"])
 except ImportError:
     pass
+
+
+class DiscordAdminController:
+    """
+    Controller untuk Discord Admin - Single Responsibility: Discord admin endpoints
+    """
+    
+    def __init__(self):
+        self.router = APIRouter()
+        self._setup_routes()
+    
+    def _setup_routes(self):
+        """Setup routes untuk Discord admin"""
+        
+        @self.router.get("/logs", response_model=PaginatedDiscordLogsResponse)
+        async def get_discord_logs(
+            page: int = 1,
+            limit: int = 10,
+            level: Optional[str] = None,
+            action: Optional[str] = None,
+            bot_id: Optional[int] = None,
+            user_id: Optional[int] = None,
+            guild_id: Optional[str] = None,
+            channel_id: Optional[str] = None,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil Discord logs dengan filter"""
+            from app.domains.discord.services.discord_admin_service import DiscordAdminService
+            from app.domains.discord.schemas.discord_admin_schemas import DiscordLogFilter
+            
+            # Create filter
+            filters = DiscordLogFilter(
+                level=level,
+                action=action,
+                bot_id=bot_id,
+                user_id=user_id,
+                guild_id=guild_id,
+                channel_id=channel_id
+            )
+            
+            discord_service = DiscordAdminService(db)
+            result = discord_service.get_discord_logs(page, limit, filters)
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="VIEW",
+                resource="discord_logs",
+                resource_id=None,
+                new_values=f"Viewed Discord logs page {page}"
+            )
+            
+            return result
+        
+        @self.router.get("/commands/recent", response_model=List[DiscordCommandResponse])
+        async def get_recent_discord_commands(
+            limit: int = 5,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil recent Discord commands"""
+            from app.domains.discord.services.discord_admin_service import DiscordAdminService
+            
+            discord_service = DiscordAdminService(db)
+            result = discord_service.get_recent_discord_commands(limit)
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="VIEW",
+                resource="discord_commands",
+                resource_id=None,
+                new_values=f"Viewed recent Discord commands (limit: {limit})"
+            )
+            
+            return result
+        
+        @self.router.get("/commands", response_model=PaginatedDiscordCommandsResponse)
+        async def get_discord_commands(
+            page: int = 1,
+            limit: int = 5,
+            command_name: Optional[str] = None,
+            success: Optional[bool] = None,
+            user_id: Optional[int] = None,
+            guild_id: Optional[str] = None,
+            channel_id: Optional[str] = None,
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil Discord commands dengan filter"""
+            from app.domains.discord.services.discord_admin_service import DiscordAdminService
+            from app.domains.discord.schemas.discord_admin_schemas import DiscordCommandFilter
+            
+            # Create filter
+            filters = DiscordCommandFilter(
+                command_name=command_name,
+                success=success,
+                user_id=user_id,
+                guild_id=guild_id,
+                channel_id=channel_id
+            )
+            
+            discord_service = DiscordAdminService(db)
+            result = discord_service.get_discord_commands(page, limit, filters)
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="VIEW",
+                resource="discord_commands",
+                resource_id=None,
+                new_values=f"Viewed Discord commands page {page}"
+            )
+            
+            return result
+        
+        @self.router.get("/stats", response_model=DiscordStatsResponse)
+        async def get_discord_stats(
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil statistik Discord"""
+            from app.domains.discord.services.discord_admin_service import DiscordAdminService
+            
+            discord_service = DiscordAdminService(db)
+            result = discord_service.get_discord_stats()
+            
+            # Log audit
+            from app.domains.admin.repositories.admin_repository import AuditLogRepository
+            audit_repo = AuditLogRepository(db)
+            audit_repo.create_log(
+                admin_id=current_admin.id,
+                action="VIEW",
+                resource="discord_stats",
+                resource_id=None,
+                new_values="Viewed Discord statistics"
+            )
+            
+            return result
+
+
+# Initialize Discord admin controller
+discord_admin_controller = DiscordAdminController()
+
+# Include Discord admin routes
+router.include_router(discord_admin_controller.router, prefix="/discord", tags=["Discord Admin"])
