@@ -4,7 +4,7 @@ from app.api.v1.endpoints import health, cache
 api_router = APIRouter()
 
 # Include endpoint routers
-api_router.include_router(health.router, prefix="/health", tags=["health"])
+api_router.include_router(health.router, tags=["health"])
 api_router.include_router(cache.router, prefix="/cache", tags=["cache"])
 
 # Include Discord router

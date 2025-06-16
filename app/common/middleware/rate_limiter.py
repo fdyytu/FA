@@ -56,7 +56,8 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
         try:
             # Skip rate limiting untuk health checks dan docs
             if self._should_skip_rate_limiting(request):
-                return await call_next(request)
+                response = await call_next(request)
+                return response
             
             # Generate rate limit key
             rate_key = self._generate_rate_key(request)
@@ -74,21 +75,36 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
             if not is_allowed:
                 return self._create_rate_limit_response(retry_after)
             
-            # Process request
-            response = await call_next(request)
+            # Process request dengan proper error handling
+            try:
+                response = await call_next(request)
+            except Exception as call_error:
+                logger.error(f"Error calling next middleware: {call_error}")
+                # Return error response instead of re-raising
+                return JSONResponse(
+                    status_code=500,
+                    content={"error": "Internal server error"}
+                )
             
             # Add rate limit headers
             self._add_rate_limit_headers(response, rate_key, config)
             
-            # Cleanup old entries periodically
-            await self._periodic_cleanup()
+            # Cleanup old entries periodically (non-blocking)
+            asyncio.create_task(self._periodic_cleanup())
             
             return response
             
         except Exception as e:
             logger.error(f"Error in rate limiter middleware: {e}")
             # Jangan blokir request jika rate limiter error
-            return await call_next(request)
+            try:
+                return await call_next(request)
+            except Exception as fallback_error:
+                logger.error(f"Fallback error: {fallback_error}")
+                return JSONResponse(
+                    status_code=500,
+                    content={"error": "Service temporarily unavailable"}
+                )
     
     def _should_skip_rate_limiting(self, request: Request) -> bool:
         """Check apakah request harus di-skip dari rate limiting"""
