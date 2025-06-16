@@ -34,3 +34,17 @@ try:
     api_router.include_router(admin_router, prefix="/admin", tags=["admin"])
 except ImportError:
     pass
+
+# Include Analytics endpoints
+try:
+    from app.domains.analytics.controllers.analytics_controller import router as analytics_router
+    api_router.include_router(analytics_router, prefix="/analytics", tags=["analytics"])
+except ImportError:
+    pass
+
+# Include Transaction endpoints
+try:
+    from app.domains.transaction.controllers.transaction_controller import router as transaction_router
+    api_router.include_router(transaction_router, prefix="/admin/transactions", tags=["admin-transactions"])
+except ImportError:
+    pass
