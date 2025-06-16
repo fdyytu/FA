@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Users - FA Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard_shared.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 mobile-menu-overlay z-40 hidden lg:hidden"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar sidebar-hidden lg:translate-x-0 fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl">
+        <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-white text-sm"></i>
+                </div>
+                <span class="ml-3 text-xl font-bold text-gray-800">FA Admin</span>
+            </div>
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="mt-6 px-3">
+            <a href="dashboard_main.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-home mr-3"></i>
+                Dashboard
+            </a>
+            <a href="dashboard_products.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-box mr-3"></i>
+                Produk
+            </a>
+            <a href="dashboard_discord.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fab fa-discord mr-3"></i>
+                Discord Bot
+            </a>
+            <a href="dashboard_users.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-users mr-3"></i>
+                Users
+            </a>
+            <a href="dashboard_analytics.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Analytics
+            </a>
+            <a href="dashboard_settings.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-cog mr-3"></i>
+                Settings
+            </a>
+            
+            <div class="border-t border-gray-200 mt-6 pt-6">
+                <button id="logoutBtn" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1 w-full text-left text-red-600 hover:bg-red-50">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Logout
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:pl-64">
+        <!-- Top Navigation -->
+        <div class="bg-white shadow-sm border-b border-gray-200">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <button id="openSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 class="ml-4 lg:ml-0 text-xl font-semibold text-gray-900">Manajemen Users</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="refreshBtn" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <button id="addUserBtn" class="btn-primary text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-plus mr-2"></i>
+                            Tambah User
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <main class="p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="android-card stat-card stat-card-blue p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-medium">Total Users</p>
+                            <p id="totalUsers" class="text-3xl font-bold text-white">1,250</p>
+                            <p class="text-blue-100 text-xs mt-1">Semua pengguna</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-users text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="android-card stat-card stat-card-green p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium">Active Users</p>
+                            <p id="activeUsers" class="text-3xl font-bold text-white">892</p>
+                            <p class="text-green-100 text-xs mt-1">User aktif</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-user-check text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="android-card stat-card stat-card-purple p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-100 text-sm font-medium">Premium Users</p>
+                            <p id="premiumUsers" class="text-3xl font-bold text-white">156</p>
+                            <p class="text-purple-100 text-xs mt-1">Member premium</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-crown text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="android-card stat-card stat-card-orange p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-orange-100 text-sm font-medium">New Today</p>
+                            <p id="newUsersToday" class="text-3xl font-bold text-white">23</p>
+                            <p class="text-orange-100 text-xs mt-1">Pendaftar hari ini</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-user-plus text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="android-card bg-white p-6 mb-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="Cari user..." 
+                                   class="form-input pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                        <select id="roleFilter" class="form-input px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Semua Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                            <option value="premium">Premium</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                        <select id="statusFilter" class="form-input px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Semua Status</option>
+                            <option value="active">Aktif</option>
+                            <option value="inactive">Tidak Aktif</option>
+                            <option value="banned">Banned</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="exportBtn" class="btn-secondary text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-download mr-2"></i>
+                            Export
+                        </button>
+                        <button id="bulkActionBtn" class="btn-secondary text-white px-4 py-2 rounded-lg">
+                            <i class="fas fa-tasks mr-2"></i>
+                            Bulk Action
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="android-card bg-white overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Daftar Users</h3>
+                </div>
+                
+                <div id="loadingUsers" class="text-center py-8 hidden">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-gray-500">Memuat data users...</p>
+                </div>
+
+                <div id="usersTableContainer" class="table-container">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" id="selectAll" class="rounded border-gray-300">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    User
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Role
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Balance
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Transaksi
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Aksi
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            Menampilkan <span id="showingFrom">1</span> sampai <span id="showingTo">10</span> dari <span id="totalItems">0</span> users
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevPage" class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div id="pageNumbers" class="flex space-x-1">
+                                <!-- Page numbers will be generated here -->
+                            </div>
+                            <button id="nextPage" class="px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="fixed inset-0 modal-overlay hidden items-center justify-center z-50">
+        <div class="modal-content max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 id="modalTitle" class="text-lg font-semibold text-gray-900">Tambah User</h3>
+            </div>
+            <form id="userForm" class="p-6 space-y-6">
+                <input type="hidden" id="userId" name="id">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="userName" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                        <input type="text" id="userName" name="username" required 
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                        <input type="email" id="userEmail" name="email" required 
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="userPhone" class="block text-sm font-medium text-gray-700 mb-2">No. Telepon</label>
+                        <input type="tel" id="userPhone" name="phone" 
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label for="userRole" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <select id="userRole" name="role" required 
+                                class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Pilih Role</option>
+                            <option value="user">User</option>
+                            <option value="premium">Premium</option>
+                            <option value="vip">VIP</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="userBalance" class="block text-sm font-medium text-gray-700 mb-2">Balance</label>
+                        <input type="number" id="userBalance" name="balance" step="0.01" 
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label for="userPassword" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input type="password" id="userPassword" name="password" 
+                               class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengubah password</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="userActive" name="is_active" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="userActive" class="ml-2 block text-sm text-gray-900">User Aktif</label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="userVerified" name="is_verified" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="userVerified" class="ml-2 block text-sm text-gray-900">Email Terverifikasi</label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                    <button type="button" id="cancelUserBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                        Batal
+                    </button>
+                    <button type="submit" id="saveUserBtn" class="btn-primary text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-save mr-2"></i>
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Balance Modal -->
+    <div id="balanceModal" class="fixed inset-0 modal-overlay hidden items-center justify-center z-50">
+        <div class="modal-content max-w-md w-full mx-4">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Kelola Balance</h3>
+            </div>
+            <form id="balanceForm" class="p-6 space-y-4">
+                <input type="hidden" id="balanceUserId" name="userId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">User</label>
+                    <p id="balanceUserName" class="text-sm text-gray-600 bg-gray-50 p-2 rounded"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Balance Saat Ini</label>
+                    <p id="currentBalance" class="text-lg font-semibold text-gray-900 bg-gray-50 p-2 rounded"></p>
+                </div>
+                
+                <div>
+                    <label for="balanceAction" class="block text-sm font-medium text-gray-700 mb-2">Aksi</label>
+                    <select id="balanceAction" name="action" required 
+                            class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Pilih Aksi</option>
+                        <option value="add">Tambah Balance</option>
+                        <option value="subtract">Kurangi Balance</option>
+                        <option value="set">Set Balance</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="balanceAmount" class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
+                    <input type="number" id="balanceAmount" name="amount" step="0.01" required 
+                           class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="balanceNote" class="block text-sm font-medium text-gray-700 mb-2">Catatan</label>
+                    <textarea id="balanceNote" name="note" rows="3" 
+                              class="form-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              placeholder="Catatan untuk perubahan balance"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                    <button type="button" id="cancelBalanceBtn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                        Batal
+                    </button>
+                    <button type="submit" id="saveBalanceBtn" class="btn-success text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-save mr-2"></i>
+                        Update Balance
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700">Memuat data...</span>
+        </div>
+    </div>
+
+    <script src="dashboard_shared.js"></script>
+    <script src="dashboard_users.js"></script>
+</body>
+</html>

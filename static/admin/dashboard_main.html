@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - FA Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="dashboard_shared.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 mobile-menu-overlay z-40 hidden lg:hidden"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar sidebar-hidden lg:translate-x-0 fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl">
+        <div class="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-white text-sm"></i>
+                </div>
+                <span class="ml-3 text-xl font-bold text-gray-800">FA Admin</span>
+            </div>
+            <button id="closeSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="mt-6 px-3">
+            <a href="dashboard_main.html" class="nav-item active flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-home mr-3"></i>
+                Dashboard
+            </a>
+            <a href="dashboard_products.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-box mr-3"></i>
+                Produk
+            </a>
+            <a href="dashboard_discord.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fab fa-discord mr-3"></i>
+                Discord Bot
+            </a>
+            <a href="dashboard_users.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-users mr-3"></i>
+                Users
+            </a>
+            <a href="dashboard_analytics.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Analytics
+            </a>
+            <a href="dashboard_settings.html" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1">
+                <i class="fas fa-cog mr-3"></i>
+                Settings
+            </a>
+            
+            <div class="border-t border-gray-200 mt-6 pt-6">
+                <button id="logoutBtn" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-lg mb-1 w-full text-left text-red-600 hover:bg-red-50">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Logout
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:pl-64">
+        <!-- Top Navigation -->
+        <div class="bg-white shadow-sm border-b border-gray-200">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <button id="openSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 class="ml-4 lg:ml-0 text-xl font-semibold text-gray-900">Dashboard Overview</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="text-gray-500 hover:text-gray-700 relative">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="notification-badge">3</span>
+                            </button>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-700 mr-2">Admin</span>
+                            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <main class="p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="android-card stat-card stat-card-blue p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-blue-100 text-sm font-medium">Total Users</p>
+                            <p id="totalUsers" class="text-3xl font-bold text-white">1,250</p>
+                            <p class="text-blue-100 text-xs mt-1">+12% dari bulan lalu</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-users text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="android-card stat-card stat-card-green p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-green-100 text-sm font-medium">Total Transaksi</p>
+                            <p id="totalTransactions" class="text-3xl font-bold text-white">3,420</p>
+                            <p class="text-green-100 text-xs mt-1">+8% dari bulan lalu</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-credit-card text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="android-card stat-card stat-card-purple p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-purple-100 text-sm font-medium">Total Produk</p>
+                            <p id="totalProducts" class="text-3xl font-bold text-white">156</p>
+                            <p class="text-purple-100 text-xs mt-1">+5 produk baru</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-box text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="android-card stat-card stat-card-orange p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-orange-100 text-sm font-medium">Total Revenue</p>
+                            <p id="totalRevenue" class="text-3xl font-bold text-white">Rp 45.0M</p>
+                            <p class="text-orange-100 text-xs mt-1">+15% dari bulan lalu</p>
+                        </div>
+                        <div class="bg-white bg-opacity-20 rounded-full p-3">
+                            <i class="fas fa-chart-line text-white text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Transaction Chart -->
+                <div class="android-card bg-white p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Transaksi Mingguan</h3>
+                        <button class="text-sm text-blue-600 hover:text-blue-800">Lihat Detail</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Product Categories Chart -->
+                <div class="android-card bg-white p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Kategori Produk</h3>
+                        <button class="text-sm text-blue-600 hover:text-blue-800">Lihat Detail</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Recent Transactions -->
+                <div class="android-card bg-white p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Transaksi Terbaru</h3>
+                        <a href="dashboard_analytics.html" class="text-sm text-blue-600 hover:text-blue-800">Lihat Semua</a>
+                    </div>
+                    <div id="recentTransactions" class="space-y-4">
+                        <!-- Recent transactions will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- System Status -->
+                <div class="android-card bg-white p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Status Sistem</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-1 pulse"></span>
+                            Online
+                        </span>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Database</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>
+                                Aktif
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">API Server</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>
+                                Aktif
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Payment Gateway</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>
+                                Aktif
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Discord Bot</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>
+                                Aktif
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">PPOB Service</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Maintenance
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="floating-action-button" title="Quick Actions">
+        <i class="fas fa-plus text-xl"></i>
+    </button>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700">Memuat data...</span>
+        </div>
+    </div>
+
+    <script src="dashboard_shared.js"></script>
+    <script src="dashboard_main.js"></script>
+</body>
+</html>
