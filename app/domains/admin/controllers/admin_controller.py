@@ -421,6 +421,18 @@ class DashboardController:
             dashboard_data = dashboard_service.get_dashboard_data()
             
             return dashboard_data
+        
+        @self.router.get("/stats")
+        async def get_dashboard_stats(
+            current_admin: Admin = Depends(get_current_admin),
+            db: Session = Depends(get_db)
+        ):
+            """Ambil statistik dashboard"""
+            dashboard_service = DashboardService(db)
+            
+            stats = dashboard_service.get_dashboard_stats()
+            
+            return APIResponse.success(data=stats)
 
 
 class MarginManagementController:
