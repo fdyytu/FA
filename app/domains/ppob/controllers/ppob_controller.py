@@ -90,7 +90,8 @@ class PPOBController:
             "/stats",
             self.get_transaction_stats,
             methods=["GET"],
-            response_model=APIResponse[PPOBStatsResponse]
+            response_model=APIResponse[PPOBStatsResponse],
+            operation_id="get_ppob_transaction_stats"
         )
         self.router.add_api_route(
             "/popular-products",
@@ -104,7 +105,8 @@ class PPOBController:
             "/admin/stats",
             self.get_admin_stats,
             methods=["GET"],
-            response_model=APIResponse[PPOBStatsResponse]
+            response_model=APIResponse[PPOBStatsResponse],
+            operation_id="get_ppob_admin_stats"
         )
         self.router.add_api_route(
             "/admin/revenue/{year}/{month}",
