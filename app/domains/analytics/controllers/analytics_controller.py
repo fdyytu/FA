@@ -7,10 +7,13 @@ from datetime import datetime, timedelta
 from app.domains.analytics.services.analytics_service import AnalyticsService
 from app.domains.analytics.schemas.analytics_schemas import (
     AnalyticsEventCreate, AnalyticsEventResponse, AnalyticsFilter,
-    DashboardSummary, ChartData, AnalyticsReport
+    DashboardSummary, ChartData, AnalyticsReport, PerformanceMetricsResponse,
+    GeographicDataResponse, RecentActivityResponse, RecentActivityItem
 )
-from app.infrastructure.database.database_manager import get_db
+from app.core.database import get_db
 from app.shared.responses.api_response import create_response
+from app.shared.dependencies.admin_auth_deps import get_current_admin
+from app.domains.admin.models.admin import Admin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -807,3 +810,237 @@ async def get_weekly_transactions_analytics(
     except Exception as e:
         logger.error(f"Error getting weekly transactions analytics: {e}")
         raise HTTPException(status_code=500, detail="Gagal mengambil analytics transaksi mingguan")
+
+# Test endpoint untuk memastikan kode berfungsi
+@router.get("/test-performance-metrics", response_model=dict, summary="Test Performance Metrics")
+async def test_performance_metrics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Test endpoint untuk performance metrics
+    """
+    try:
+        # Mock data untuk performance metrics
+        import random
+        
+        # Generate daily metrics for the specified period
+        daily_metrics = []
+        base_date = datetime.now() - timedelta(days=days)
+        
+        for i in range(days):
+            current_date = base_date + timedelta(days=i)
+            daily_metrics.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "transactions": random.randint(50, 200),
+                "revenue": random.randint(500000, 2000000),
+                "success_rate": round(random.uniform(85.0, 98.0), 2),
+                "response_time": round(random.uniform(0.1, 0.8), 3)
+            })
+        
+        total_transactions = sum(day["transactions"] for day in daily_metrics)
+        successful_transactions = int(total_transactions * 0.92)
+        failed_transactions = total_transactions - successful_transactions
+        total_revenue = sum(day["revenue"] for day in daily_metrics)
+        
+        performance_data = {
+            "total_transactions": total_transactions,
+            "successful_transactions": successful_transactions,
+            "failed_transactions": failed_transactions,
+            "success_rate": round((successful_transactions / total_transactions) * 100, 2),
+            "total_revenue": float(total_revenue),
+            "average_transaction_value": float(total_revenue / total_transactions),
+            "peak_hour": "14:00-15:00",
+            "peak_day": "Selasa",
+            "response_time_avg": 0.245,
+            "uptime_percentage": 99.8,
+            "period_days": days,
+            "generated_at": datetime.now().isoformat(),
+            "daily_metrics": daily_metrics
+        }
+        
+        return create_response(
+            success=True,
+            message="Data performance metrics berhasil diambil",
+            data=performance_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting test performance metrics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil performance metrics")
+
+# Admin Analytics Router
+admin_analytics_router = APIRouter()
+
+@admin_analytics_router.get("/performance-metrics", response_model=dict, summary="Get Performance Metrics")
+async def get_performance_metrics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan performance metrics untuk admin dashboard
+    """
+    try:
+        # Mock data untuk performance metrics
+        from decimal import Decimal
+        import random
+        
+        # Generate daily metrics for the specified period
+        daily_metrics = []
+        base_date = datetime.now() - timedelta(days=days)
+        
+        for i in range(days):
+            current_date = base_date + timedelta(days=i)
+            daily_metrics.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "transactions": random.randint(50, 200),
+                "revenue": random.randint(500000, 2000000),
+                "success_rate": round(random.uniform(85.0, 98.0), 2),
+                "response_time": round(random.uniform(0.1, 0.8), 3)
+            })
+        
+        total_transactions = sum(day["transactions"] for day in daily_metrics)
+        successful_transactions = int(total_transactions * 0.92)
+        failed_transactions = total_transactions - successful_transactions
+        total_revenue = sum(day["revenue"] for day in daily_metrics)
+        
+        performance_data = {
+            "total_transactions": total_transactions,
+            "successful_transactions": successful_transactions,
+            "failed_transactions": failed_transactions,
+            "success_rate": round((successful_transactions / total_transactions) * 100, 2),
+            "total_revenue": float(total_revenue),
+            "average_transaction_value": float(total_revenue / total_transactions),
+            "peak_hour": "14:00-15:00",
+            "peak_day": "Selasa",
+            "response_time_avg": 0.245,
+            "uptime_percentage": 99.8,
+            "period_days": days,
+            "generated_at": datetime.now().isoformat(),
+            "daily_metrics": daily_metrics
+        }
+        
+        return create_response(
+            success=True,
+            message="Data performance metrics berhasil diambil",
+            data=performance_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting performance metrics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil performance metrics")
+
+@admin_analytics_router.get("/geographic", response_model=dict, summary="Get Geographic Data")
+async def get_geographic_data(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan data geografis untuk admin dashboard
+    """
+    try:
+        # Mock data untuk geographic analytics
+        geographic_data = {
+            "total_regions": 34,
+            "top_regions": [
+                {"region": "DKI Jakarta", "transactions": 1250, "revenue": 15000000, "percentage": 28.5},
+                {"region": "Jawa Barat", "transactions": 980, "revenue": 11760000, "percentage": 22.3},
+                {"region": "Jawa Timur", "transactions": 750, "revenue": 9000000, "percentage": 17.1},
+                {"region": "Jawa Tengah", "transactions": 620, "revenue": 7440000, "percentage": 14.1},
+                {"region": "Sumatera Utara", "transactions": 450, "revenue": 5400000, "percentage": 10.2}
+            ],
+            "country_distribution": [
+                {"country": "Indonesia", "transactions": 4050, "revenue": 48600000, "percentage": 92.3},
+                {"country": "Malaysia", "transactions": 200, "revenue": 2400000, "percentage": 4.6},
+                {"country": "Singapura", "transactions": 100, "revenue": 1200000, "percentage": 2.3},
+                {"country": "Thailand", "transactions": 50, "revenue": 600000, "percentage": 1.1}
+            ],
+            "city_distribution": [
+                {"city": "Jakarta", "transactions": 800, "revenue": 9600000, "percentage": 18.2},
+                {"city": "Surabaya", "transactions": 450, "revenue": 5400000, "percentage": 10.3},
+                {"city": "Bandung", "transactions": 380, "revenue": 4560000, "percentage": 8.7},
+                {"city": "Medan", "transactions": 320, "revenue": 3840000, "percentage": 7.3},
+                {"city": "Semarang", "transactions": 280, "revenue": 3360000, "percentage": 6.4}
+            ],
+            "revenue_by_region": [
+                {"region": "Pulau Jawa", "revenue": 43200000, "percentage": 82.3},
+                {"region": "Pulau Sumatera", "revenue": 6000000, "percentage": 11.4},
+                {"region": "Pulau Kalimantan", "revenue": 2400000, "percentage": 4.6},
+                {"region": "Pulau Sulawesi", "revenue": 900000, "percentage": 1.7}
+            ],
+            "period_days": days,
+            "generated_at": datetime.now().isoformat()
+        }
+        
+        return create_response(
+            success=True,
+            message="Data geografis berhasil diambil",
+            data=geographic_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting geographic data: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil data geografis")
+
+@admin_analytics_router.get("/recent-activity", response_model=dict, summary="Get Recent Activity")
+async def get_recent_activity(
+    limit: int = Query(10, ge=1, le=100, description="Jumlah aktivitas yang ditampilkan")
+):
+    """
+    Mendapatkan aktivitas terbaru untuk admin dashboard
+    """
+    try:
+        # Mock data untuk recent activity
+        import random
+        
+        activity_types = [
+            "USER_REGISTRATION", "PRODUCT_PURCHASE", "VOUCHER_REDEMPTION", 
+            "ADMIN_LOGIN", "CONFIG_UPDATE", "TRANSACTION_COMPLETED",
+            "PAYMENT_RECEIVED", "DISCORD_COMMAND", "CACHE_CLEARED", "BACKUP_CREATED"
+        ]
+        
+        activities = []
+        for i in range(limit):
+            activity_type = random.choice(activity_types)
+            timestamp = datetime.now() - timedelta(minutes=random.randint(1, 1440))
+            
+            # Generate description based on activity type
+            descriptions = {
+                "USER_REGISTRATION": "User baru mendaftar ke sistem",
+                "PRODUCT_PURCHASE": "Pembelian produk berhasil dilakukan",
+                "VOUCHER_REDEMPTION": "Voucher berhasil ditukarkan",
+                "ADMIN_LOGIN": "Admin berhasil login ke sistem",
+                "CONFIG_UPDATE": "Konfigurasi sistem diperbarui",
+                "TRANSACTION_COMPLETED": "Transaksi berhasil diselesaikan",
+                "PAYMENT_RECEIVED": "Pembayaran berhasil diterima",
+                "DISCORD_COMMAND": "Command Discord berhasil dieksekusi",
+                "CACHE_CLEARED": "Cache sistem berhasil dibersihkan",
+                "BACKUP_CREATED": "Backup database berhasil dibuat"
+            }
+            
+            activities.append({
+                "id": i + 1,
+                "activity_type": activity_type,
+                "description": descriptions.get(activity_type, "Aktivitas sistem"),
+                "user_id": random.randint(1, 1000) if activity_type in ["USER_REGISTRATION", "PRODUCT_PURCHASE", "VOUCHER_REDEMPTION"] else None,
+                "admin_id": random.randint(1, 10) if activity_type in ["ADMIN_LOGIN", "CONFIG_UPDATE", "CACHE_CLEARED", "BACKUP_CREATED"] else None,
+                "timestamp": timestamp.isoformat(),
+                "metadata": {
+                    "ip_address": f"192.168.1.{random.randint(1, 255)}",
+                    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+                }
+            })
+        
+        recent_activity_data = {
+            "activities": activities,
+            "total_count": limit,
+            "limit": limit,
+            "generated_at": datetime.now().isoformat()
+        }
+        
+        return create_response(
+            success=True,
+            message="Data aktivitas terbaru berhasil diambil",
+            data=recent_activity_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting recent activity: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil aktivitas terbaru")
