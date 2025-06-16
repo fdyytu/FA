@@ -78,12 +78,21 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
             # Process request dengan proper error handling
             try:
                 response = await call_next(request)
+                
+                # Pastikan response adalah Response object yang valid
+                if not hasattr(response, 'status_code'):
+                    logger.error(f"Invalid response type from next middleware: {type(response)}")
+                    return JSONResponse(
+                        status_code=500,
+                        content={"error": "Internal server error", "details": "Invalid response format"}
+                    )
+                    
             except Exception as call_error:
                 logger.error(f"Error calling next middleware: {call_error}")
                 # Return error response instead of re-raising
                 return JSONResponse(
                     status_code=500,
-                    content={"error": "Internal server error"}
+                    content={"error": "Internal server error", "details": str(call_error)}
                 )
             
             # Add rate limit headers
