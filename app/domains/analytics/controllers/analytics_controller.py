@@ -871,6 +871,412 @@ async def test_performance_metrics(
 # Admin Analytics Router
 admin_analytics_router = APIRouter()
 
+@admin_analytics_router.get("/overview", response_model=dict, summary="Get Analytics Overview")
+async def get_analytics_overview(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan overview analytics untuk admin dashboard
+    """
+    try:
+        # Mock data untuk overview analytics
+        import random
+        
+        overview_data = {
+            "total_revenue": 125000000,
+            "total_transactions": 4250,
+            "total_users": 1850,
+            "total_products": 125,
+            "revenue_growth": 15.8,
+            "transaction_growth": 12.3,
+            "user_growth": 8.7,
+            "product_growth": 5.2,
+            "conversion_rate": 3.4,
+            "average_order_value": 29411.76,
+            "customer_lifetime_value": 67567.57,
+            "churn_rate": 2.1,
+            "period_days": days,
+            "generated_at": datetime.now().isoformat(),
+            "quick_stats": {
+                "today_revenue": 4200000,
+                "today_transactions": 142,
+                "today_new_users": 23,
+                "today_orders": 89
+            },
+            "trends": {
+                "revenue_trend": "up",
+                "transaction_trend": "up", 
+                "user_trend": "up",
+                "conversion_trend": "stable"
+            }
+        }
+        
+        return create_response(
+            success=True,
+            message="Data overview analytics berhasil diambil",
+            data=overview_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting analytics overview: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil overview analytics")
+
+@admin_analytics_router.get("/revenue", response_model=dict, summary="Get Revenue Analytics")
+async def get_revenue_analytics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan analytics revenue untuk admin dashboard
+    """
+    try:
+        # Mock data untuk revenue analytics
+        import random
+        
+        # Generate daily revenue data
+        daily_revenue = []
+        base_date = datetime.now() - timedelta(days=days)
+        
+        for i in range(days):
+            current_date = base_date + timedelta(days=i)
+            daily_revenue.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "revenue": random.randint(2000000, 6000000),
+                "transactions": random.randint(80, 250),
+                "average_order_value": random.randint(20000, 35000)
+            })
+        
+        total_revenue = sum(day["revenue"] for day in daily_revenue)
+        total_transactions = sum(day["transactions"] for day in daily_revenue)
+        
+        revenue_data = {
+            "total_revenue": total_revenue,
+            "total_transactions": total_transactions,
+            "average_order_value": round(total_revenue / total_transactions, 2),
+            "revenue_growth": 15.8,
+            "highest_revenue_day": max(daily_revenue, key=lambda x: x["revenue"]),
+            "lowest_revenue_day": min(daily_revenue, key=lambda x: x["revenue"]),
+            "revenue_by_category": [
+                {"category": "Digital Products", "revenue": total_revenue * 0.45, "percentage": 45.0},
+                {"category": "Physical Products", "revenue": total_revenue * 0.35, "percentage": 35.0},
+                {"category": "Services", "revenue": total_revenue * 0.20, "percentage": 20.0}
+            ],
+            "monthly_comparison": [
+                {"month": "Januari", "revenue": 45000000, "growth": 12.5},
+                {"month": "Februari", "revenue": 52000000, "growth": 15.6},
+                {"month": "Maret", "revenue": 48000000, "growth": -7.7},
+                {"month": "April", "revenue": 58000000, "growth": 20.8}
+            ],
+            "period_days": days,
+            "generated_at": datetime.now().isoformat(),
+            "daily_revenue": daily_revenue
+        }
+        
+        return create_response(
+            success=True,
+            message="Data revenue analytics berhasil diambil",
+            data=revenue_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting revenue analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil revenue analytics")
+
+@admin_analytics_router.get("/orders", response_model=dict, summary="Get Orders Analytics")
+async def get_orders_analytics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan analytics pesanan untuk admin dashboard
+    """
+    try:
+        # Mock data untuk orders analytics
+        import random
+        
+        # Generate daily orders data
+        daily_orders = []
+        base_date = datetime.now() - timedelta(days=days)
+        
+        for i in range(days):
+            current_date = base_date + timedelta(days=i)
+            completed = random.randint(60, 180)
+            pending = random.randint(5, 25)
+            cancelled = random.randint(2, 15)
+            
+            daily_orders.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "total_orders": completed + pending + cancelled,
+                "completed_orders": completed,
+                "pending_orders": pending,
+                "cancelled_orders": cancelled,
+                "completion_rate": round((completed / (completed + pending + cancelled)) * 100, 2)
+            })
+        
+        total_orders = sum(day["total_orders"] for day in daily_orders)
+        completed_orders = sum(day["completed_orders"] for day in daily_orders)
+        pending_orders = sum(day["pending_orders"] for day in daily_orders)
+        cancelled_orders = sum(day["cancelled_orders"] for day in daily_orders)
+        
+        orders_data = {
+            "total_orders": total_orders,
+            "completed_orders": completed_orders,
+            "pending_orders": pending_orders,
+            "cancelled_orders": cancelled_orders,
+            "completion_rate": round((completed_orders / total_orders) * 100, 2),
+            "cancellation_rate": round((cancelled_orders / total_orders) * 100, 2),
+            "order_growth": 12.3,
+            "average_orders_per_day": round(total_orders / days, 2),
+            "peak_order_day": max(daily_orders, key=lambda x: x["total_orders"]),
+            "order_status_distribution": [
+                {"status": "Completed", "count": completed_orders, "percentage": round((completed_orders / total_orders) * 100, 2)},
+                {"status": "Pending", "count": pending_orders, "percentage": round((pending_orders / total_orders) * 100, 2)},
+                {"status": "Cancelled", "count": cancelled_orders, "percentage": round((cancelled_orders / total_orders) * 100, 2)}
+            ],
+            "hourly_distribution": [
+                {"hour": f"{i:02d}:00", "orders": random.randint(10, 150)} for i in range(24)
+            ],
+            "period_days": days,
+            "generated_at": datetime.now().isoformat(),
+            "daily_orders": daily_orders
+        }
+        
+        return create_response(
+            success=True,
+            message="Data orders analytics berhasil diambil",
+            data=orders_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting orders analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil orders analytics")
+
+@admin_analytics_router.get("/user-growth", response_model=dict, summary="Get User Growth Analytics")
+async def get_user_growth_analytics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan analytics pertumbuhan user untuk admin dashboard
+    """
+    try:
+        # Mock data untuk user growth analytics
+        import random
+        
+        # Generate daily user growth data
+        daily_users = []
+        base_date = datetime.now() - timedelta(days=days)
+        cumulative_users = 1500  # Starting point
+        
+        for i in range(days):
+            current_date = base_date + timedelta(days=i)
+            new_users = random.randint(5, 35)
+            active_users = random.randint(200, 800)
+            returning_users = random.randint(50, 200)
+            cumulative_users += new_users
+            
+            daily_users.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "new_users": new_users,
+                "active_users": active_users,
+                "returning_users": returning_users,
+                "cumulative_users": cumulative_users,
+                "retention_rate": round((returning_users / active_users) * 100, 2)
+            })
+        
+        total_new_users = sum(day["new_users"] for day in daily_users)
+        avg_active_users = round(sum(day["active_users"] for day in daily_users) / days, 2)
+        avg_retention_rate = round(sum(day["retention_rate"] for day in daily_users) / days, 2)
+        
+        user_growth_data = {
+            "total_users": cumulative_users,
+            "new_users_period": total_new_users,
+            "user_growth_rate": 8.7,
+            "average_active_users": avg_active_users,
+            "average_retention_rate": avg_retention_rate,
+            "churn_rate": 2.1,
+            "user_acquisition_cost": 45000,
+            "customer_lifetime_value": 675000,
+            "user_segments": [
+                {"segment": "New Users", "count": total_new_users, "percentage": 15.2},
+                {"segment": "Active Users", "count": int(avg_active_users), "percentage": 42.8},
+                {"segment": "Returning Users", "count": int(avg_active_users * 0.3), "percentage": 28.5},
+                {"segment": "Inactive Users", "count": int(cumulative_users * 0.13), "percentage": 13.5}
+            ],
+            "acquisition_channels": [
+                {"channel": "Organic Search", "users": int(total_new_users * 0.35), "percentage": 35.0},
+                {"channel": "Social Media", "users": int(total_new_users * 0.25), "percentage": 25.0},
+                {"channel": "Direct", "users": int(total_new_users * 0.20), "percentage": 20.0},
+                {"channel": "Referral", "users": int(total_new_users * 0.15), "percentage": 15.0},
+                {"channel": "Paid Ads", "users": int(total_new_users * 0.05), "percentage": 5.0}
+            ],
+            "period_days": days,
+            "generated_at": datetime.now().isoformat(),
+            "daily_users": daily_users
+        }
+        
+        return create_response(
+            success=True,
+            message="Data user growth analytics berhasil diambil",
+            data=user_growth_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting user growth analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil user growth analytics")
+
+@admin_analytics_router.get("/payment-methods", response_model=dict, summary="Get Payment Methods Analytics")
+async def get_payment_methods_analytics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
+):
+    """
+    Mendapatkan analytics metode pembayaran untuk admin dashboard
+    """
+    try:
+        # Mock data untuk payment methods analytics
+        import random
+        
+        payment_methods_data = {
+            "total_transactions": 4250,
+            "total_revenue": 125000000,
+            "payment_methods": [
+                {
+                    "method": "Bank Transfer",
+                    "transactions": 1700,
+                    "revenue": 50000000,
+                    "percentage": 40.0,
+                    "success_rate": 95.2,
+                    "average_amount": 29411.76
+                },
+                {
+                    "method": "E-Wallet (OVO, GoPay, DANA)",
+                    "transactions": 1275,
+                    "revenue": 37500000,
+                    "percentage": 30.0,
+                    "success_rate": 97.8,
+                    "average_amount": 29411.76
+                },
+                {
+                    "method": "Credit Card",
+                    "transactions": 850,
+                    "revenue": 25000000,
+                    "percentage": 20.0,
+                    "success_rate": 92.5,
+                    "average_amount": 29411.76
+                },
+                {
+                    "method": "Virtual Account",
+                    "transactions": 425,
+                    "revenue": 12500000,
+                    "percentage": 10.0,
+                    "success_rate": 98.1,
+                    "average_amount": 29411.76
+                }
+            ],
+            "payment_trends": [
+                {"month": "Januari", "bank_transfer": 35, "e_wallet": 28, "credit_card": 25, "virtual_account": 12},
+                {"month": "Februari", "bank_transfer": 38, "e_wallet": 30, "credit_card": 22, "virtual_account": 10},
+                {"month": "Maret", "bank_transfer": 40, "e_wallet": 30, "credit_card": 20, "virtual_account": 10},
+                {"month": "April", "bank_transfer": 40, "e_wallet": 30, "credit_card": 20, "virtual_account": 10}
+            ],
+            "failed_transactions": [
+                {"method": "Bank Transfer", "failed": 85, "failure_rate": 4.8},
+                {"method": "E-Wallet", "failed": 28, "failure_rate": 2.2},
+                {"method": "Credit Card", "failed": 64, "failure_rate": 7.5},
+                {"method": "Virtual Account", "failed": 8, "failure_rate": 1.9}
+            ],
+            "processing_time": [
+                {"method": "Bank Transfer", "avg_time": "2-3 jam", "instant_percentage": 0},
+                {"method": "E-Wallet", "avg_time": "Instant", "instant_percentage": 100},
+                {"method": "Credit Card", "avg_time": "Instant", "instant_percentage": 100},
+                {"method": "Virtual Account", "avg_time": "1-2 jam", "instant_percentage": 15}
+            ],
+            "period_days": days,
+            "generated_at": datetime.now().isoformat()
+        }
+        
+        return create_response(
+            success=True,
+            message="Data payment methods analytics berhasil diambil",
+            data=payment_methods_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting payment methods analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil payment methods analytics")
+
+@admin_analytics_router.get("/top-products", response_model=dict, summary="Get Top Products Analytics")
+async def get_top_products_analytics(
+    days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis"),
+    limit: int = Query(10, ge=1, le=50, description="Jumlah produk teratas yang ditampilkan")
+):
+    """
+    Mendapatkan analytics produk terlaris untuk admin dashboard
+    """
+    try:
+        # Mock data untuk top products analytics
+        import random
+        
+        # Generate top products data
+        product_names = [
+            "Premium Gaming Package", "Discord Nitro 1 Month", "Spotify Premium", 
+            "Netflix Premium", "YouTube Premium", "Steam Wallet", "Google Play Gift Card",
+            "iTunes Gift Card", "PlayStation Plus", "Xbox Game Pass", "Adobe Creative Suite",
+            "Microsoft Office 365", "Canva Pro", "Grammarly Premium", "VPN Premium"
+        ]
+        
+        top_products = []
+        for i in range(min(limit, len(product_names))):
+            sales = random.randint(50, 500)
+            revenue = sales * random.randint(15000, 150000)
+            
+            top_products.append({
+                "rank": i + 1,
+                "product_id": i + 1,
+                "product_name": product_names[i],
+                "category": random.choice(["Digital", "Gaming", "Streaming", "Software", "Gift Card"]),
+                "sales_count": sales,
+                "revenue": revenue,
+                "average_price": round(revenue / sales, 2),
+                "growth_rate": round(random.uniform(-5.0, 25.0), 2),
+                "stock_status": random.choice(["In Stock", "Low Stock", "Out of Stock"]),
+                "rating": round(random.uniform(4.0, 5.0), 1),
+                "reviews_count": random.randint(10, 200)
+            })
+        
+        total_sales = sum(product["sales_count"] for product in top_products)
+        total_revenue = sum(product["revenue"] for product in top_products)
+        
+        top_products_data = {
+            "total_products_analyzed": len(product_names),
+            "top_products_count": len(top_products),
+            "total_sales": total_sales,
+            "total_revenue": total_revenue,
+            "average_price": round(total_revenue / total_sales, 2),
+            "top_products": top_products,
+            "category_performance": [
+                {"category": "Gaming", "sales": int(total_sales * 0.35), "revenue": int(total_revenue * 0.40), "percentage": 35.0},
+                {"category": "Streaming", "sales": int(total_sales * 0.25), "revenue": int(total_revenue * 0.25), "percentage": 25.0},
+                {"category": "Software", "sales": int(total_sales * 0.20), "revenue": int(total_revenue * 0.20), "percentage": 20.0},
+                {"category": "Digital", "sales": int(total_sales * 0.15), "revenue": int(total_revenue * 0.10), "percentage": 15.0},
+                {"category": "Gift Card", "sales": int(total_sales * 0.05), "revenue": int(total_revenue * 0.05), "percentage": 5.0}
+            ],
+            "trending_products": [
+                {"product_name": "Discord Nitro 1 Month", "growth_rate": 45.2, "trend": "up"},
+                {"product_name": "Steam Wallet", "growth_rate": 32.1, "trend": "up"},
+                {"product_name": "Netflix Premium", "growth_rate": -8.5, "trend": "down"}
+            ],
+            "period_days": days,
+            "generated_at": datetime.now().isoformat()
+        }
+        
+        return create_response(
+            success=True,
+            message="Data top products analytics berhasil diambil",
+            data=top_products_data
+        )
+        
+    except Exception as e:
+        logger.error(f"Error getting top products analytics: {e}")
+        raise HTTPException(status_code=500, detail="Gagal mengambil top products analytics")
+
 @admin_analytics_router.get("/performance-metrics", response_model=dict, summary="Get Performance Metrics")
 async def get_performance_metrics(
     days: int = Query(30, ge=1, le=365, description="Jumlah hari untuk analisis")
