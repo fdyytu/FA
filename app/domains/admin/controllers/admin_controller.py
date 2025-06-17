@@ -944,7 +944,7 @@ class DiscordAdminController:
                 
             except Exception as e:
                 logger.error(f"Error getting Discord bots: {e}")
-                return APIResponse.success(data=[])
+                raise HTTPException(status_code=500, detail=f"Error getting Discord bots: {str(e)}")
         
         @self.router.get("/worlds")
         async def get_discord_worlds(
@@ -977,7 +977,7 @@ class DiscordAdminController:
                 
             except Exception as e:
                 logger.error(f"Error getting Discord worlds: {e}")
-                return APIResponse.success(data=[])
+                raise HTTPException(status_code=500, detail=f"Error getting Discord worlds: {str(e)}")
         
         @self.router.put("/bots/{bot_id}")
         async def update_discord_bot(
@@ -1142,7 +1142,7 @@ class TransactionController:
                 
             except Exception as e:
                 logger.error(f"Error getting recent transactions: {e}")
-                return APIResponse.success(data=[])
+                raise HTTPException(status_code=500, detail=f"Error getting recent transactions: {str(e)}")
         
         @self.router.get("/")
         async def get_transactions(
@@ -1199,21 +1199,18 @@ class TransactionController:
                 
             except Exception as e:
                 logger.error(f"Error getting transactions: {e}")
-                return APIResponse.success(data={
-                    "items": [],
-                    "total": 0,
-                    "page": page,
-                    "limit": limit,
-                    "pages": 0
-                })
+                raise HTTPException(status_code=500, detail=f"Error getting transactions: {str(e)}")
 
 
-# Initialize controllers
+# Initialize additional controllers after class definitions
 discord_admin_controller = DiscordAdminController()
 transaction_controller = TransactionController()
 
 # Include Discord admin routes
 router.include_router(discord_admin_controller.router, prefix="/discord", tags=["Discord Admin"])
 
-# Include Transaction routes
-router.include_router(transaction_controller.router, prefix="/transactions", tags=["Transactions"])
+# Include Transaction routes  
+router.include_router(transaction_controller.router, prefix="/transactions-admin", tags=["Admin Transactions Internal"])
+
+
+

@@ -19,6 +19,16 @@ class APIResponse(BaseModel, Generic[T]):
     def error_response(cls, message: str = "Error", errors: Optional[Dict[str, Any]] = None) -> "APIResponse[T]":
         """Create error response"""
         return cls(success=False, message=message, errors=errors)
+    
+    @classmethod
+    def success(cls, data: Optional[T] = None, message: str = "Success") -> "APIResponse[T]":
+        """Create success response - alias for success_response"""
+        return cls(success=True, message=message, data=data)
+    
+    @classmethod
+    def error(cls, message: str = "Error", errors: Optional[Dict[str, Any]] = None) -> "APIResponse[T]":
+        """Create error response - alias for error_response"""
+        return cls(success=False, message=message, errors=errors)
 
 def create_response(
     success: bool = True,
