@@ -4,8 +4,14 @@ from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
 import logging
 
-# PostgreSQL connection
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@localhost/ppob_db"
+import os
+
+# PostgreSQL connection - support Railway
+DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost/ppob_db')
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+SQLALCHEMY_DATABASE_URL = DATABASE_URL
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

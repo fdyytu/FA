@@ -6,31 +6,43 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 def setup_database():
     """Setup PostgreSQL database and tables"""
     try:
-        # Create database if not exists
+        # Get database URL from environment or use default
+        database_url = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost/ppob_db')
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+        # Parse database URL
+        from urllib.parse import urlparse
+        url = urlparse(database_url)
+        dbname = url.path[1:] if url.path else 'ppob_db'
+        
+        # Connect to default database first
         conn = psycopg2.connect(
-            host="localhost",
-            user="postgres",
-            password="postgres",
-            database="postgres"
+            host=url.hostname,
+            port=url.port or 5432,
+            user=url.username,
+            password=url.password,
+            database='postgres'
         )
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         
         # Check if database exists
-        cur.execute("SELECT 1 FROM pg_database WHERE datname = 'ppob_db'")
+        cur.execute(f"SELECT 1 FROM pg_database WHERE datname = '{dbname}'")
         if not cur.fetchone():
-            cur.execute("CREATE DATABASE ppob_db")
-            print("Database ppob_db created successfully")
+            cur.execute(f'CREATE DATABASE "{dbname}"')
+            print(f"Database {dbname} created successfully")
         
         cur.close()
         conn.close()
         
-        # Connect to ppob_db
+        # Connect to target database
         conn = psycopg2.connect(
-            host="localhost",
-            user="postgres",
-            password="postgres",
-            database="ppob_db"
+            host=url.hostname,
+            port=url.port or 5432,
+            user=url.username,
+            password=url.password,
+            database=dbname
         )
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
