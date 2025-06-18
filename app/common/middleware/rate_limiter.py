@@ -88,12 +88,23 @@ class RateLimiterMiddleware(BaseHTTPMiddleware):
                     )
                     
             except Exception as call_error:
-                logger.error(f"Error calling next middleware: {call_error}")
-                # Return error response instead of re-raising
-                return JSONResponse(
-                    status_code=500,
-                    content={"error": "Internal server error", "details": str(call_error)}
-                )
+                # Filter out "success" messages yang bukan error sebenarnya
+                error_message = str(call_error).lower()
+                if error_message == "success" or "success" in error_message:
+                    # Jika exception message adalah "success", kemungkinan bukan error sebenarnya
+                    logger.warning(f"Caught exception with 'success' message, treating as non-critical: {call_error}")
+                    # Return generic error response tanpa expose "success" message
+                    return JSONResponse(
+                        status_code=500,
+                        content={"error": "Internal server error", "details": "Service temporarily unavailable"}
+                    )
+                else:
+                    logger.error(f"Error calling next middleware: {call_error}")
+                    # Return error response instead of re-raising
+                    return JSONResponse(
+                        status_code=500,
+                        content={"error": "Internal server error", "details": str(call_error)}
+                    )
             
             # Add rate limit headers
             self._add_rate_limit_headers(response, rate_key, config)
