@@ -200,20 +200,37 @@ async def start_discord_bot(
 ):
     """Start Discord Bot"""
     try:
+        # Check if DiscordBot model is available
+        if not DiscordBot:
+            raise HTTPException(
+                status_code=503, 
+                detail="Discord Bot model tidak tersedia"
+            )
+        
         bot = db.query(DiscordBot).filter(DiscordBot.id == bot_id).first()
         if not bot:
             raise HTTPException(status_code=404, detail="Bot tidak ditemukan")
         
-        # Initialize and start bot
-        await bot_service.initialize_bot(bot_id, db)
+        # Initialize and start bot only if bot_service is available
+        if bot_service:
+            try:
+                await bot_service.initialize_bot(bot_id, db)
+                
+                # Start bot in background
+                import asyncio
+                asyncio.create_task(bot_service.start_bot())
+            except Exception as service_error:
+                logger.error(f"Error with bot service: {service_error}")
+                # Continue with status update even if service fails
         
-        # Update status
-        bot.status = "active"
+        # Update status - use string if DiscordBotStatus is not available
+        if DiscordBotStatus:
+            bot.status = DiscordBotStatus.ACTIVE
+        else:
+            bot.status = "active"
+        
+        bot.is_active = True
         db.commit()
-        
-        # Start bot in background
-        import asyncio
-        asyncio.create_task(bot_service.start_bot())
         
         return create_success_response(
             message="Discord Bot berhasil distart"
@@ -232,15 +249,32 @@ async def stop_discord_bot(
 ):
     """Stop Discord Bot"""
     try:
+        # Check if DiscordBot model is available
+        if not DiscordBot:
+            raise HTTPException(
+                status_code=503, 
+                detail="Discord Bot model tidak tersedia"
+            )
+        
         bot = db.query(DiscordBot).filter(DiscordBot.id == bot_id).first()
         if not bot:
             raise HTTPException(status_code=404, detail="Bot tidak ditemukan")
         
-        # Stop bot
-        await bot_service.stop_bot()
+        # Stop bot only if bot_service is available
+        if bot_service:
+            try:
+                await bot_service.stop_bot()
+            except Exception as service_error:
+                logger.warning(f"Error stopping bot service: {service_error}")
+                # Continue with status update even if service stop fails
         
-        # Update status
-        bot.status = DiscordBotStatus.INACTIVE
+        # Update status - use string if DiscordBotStatus is not available
+        if DiscordBotStatus:
+            bot.status = DiscordBotStatus.INACTIVE
+        else:
+            bot.status = "inactive"
+        
+        bot.is_active = False
         db.commit()
         
         return create_success_response(
@@ -251,6 +285,45 @@ async def stop_discord_bot(
         raise
     except Exception as e:
         logger.error(f"Error stopping Discord bot: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/bots/{bot_id}", response_model=dict)
+async def delete_discord_bot(
+    bot_id: int,
+    db: Session = Depends(get_db)
+):
+    """Hapus Discord Bot"""
+    try:
+        # Check if DiscordBot model is available
+        if not DiscordBot:
+            raise HTTPException(
+                status_code=503, 
+                detail="Discord Bot model tidak tersedia"
+            )
+        
+        bot = db.query(DiscordBot).filter(DiscordBot.id == bot_id).first()
+        if not bot:
+            raise HTTPException(status_code=404, detail="Bot tidak ditemukan")
+        
+        # Stop bot first if it's running
+        if bot.is_active and bot_service:
+            try:
+                await bot_service.stop_bot()
+            except Exception as service_error:
+                logger.warning(f"Error stopping bot service before deletion: {service_error}")
+        
+        # Delete the bot
+        db.delete(bot)
+        db.commit()
+        
+        return create_success_response(
+            message="Discord Bot berhasil dihapus"
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting Discord bot: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Live Stock Management
