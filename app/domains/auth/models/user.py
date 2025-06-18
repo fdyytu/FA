@@ -17,5 +17,5 @@ class User(BaseModel):
     phone_number = Column(String(20), nullable=True)
     balance = Column(Numeric(15, 2), default=0, nullable=False)
     
-    # Relationships will be added when related models are implemented
-    pass
+    # Relationships
+    ppob_transactions = relationship("PPOBTransaction", back_populates="user")
