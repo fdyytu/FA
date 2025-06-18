@@ -424,10 +424,14 @@ class DashboardController:
         ):
             """Ambil data dashboard"""
             dashboard_service = DashboardService(db)
-            
             dashboard_data = dashboard_service.get_dashboard_data()
             
-            return dashboard_data
+            # Since service now handles errors and returns empty data,
+            # we can directly return the response
+            return APIResponse.success(
+                data=dashboard_data,
+                message="Data dashboard berhasil dimuat"
+            )
         
         @self.router.get("/stats")
         async def get_dashboard_stats(
@@ -435,16 +439,15 @@ class DashboardController:
             db: Session = Depends(get_db)
         ):
             """Ambil statistik dashboard"""
-            try:
-                dashboard_service = DashboardService(db)
-                stats = dashboard_service.get_dashboard_stats()
-                return APIResponse.success(data=stats)
-            except Exception as e:
-                logger.error(f"Error getting dashboard stats: {str(e)}")
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail="Gagal mengambil statistik dashboard"
-                )
+            dashboard_service = DashboardService(db)
+            stats = dashboard_service.get_dashboard_stats()
+            
+            # Since service now handles errors and returns zero values,
+            # we can directly return the response
+            return APIResponse.success(
+                data=stats,
+                message="Statistik dashboard berhasil dimuat"
+            )
 
 
 class MarginManagementController:

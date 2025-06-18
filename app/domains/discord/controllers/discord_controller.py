@@ -648,14 +648,39 @@ async def get_recent_commands(
 async def get_discord_stats(db: Session = Depends(get_db)):
     """Ambil statistik Discord Bot"""
     try:
-        total_bots = db.query(DiscordBot).count()
-        active_bots = db.query(DiscordBot).filter(DiscordBot.status == "active").count()
-        total_users = db.query(DiscordUser).count()
-        verified_users = db.query(DiscordUser).filter(DiscordUser.is_verified == True).count()
-        total_products = db.query(LiveStock).count()
-        active_products = db.query(LiveStock).filter(LiveStock.is_active == True).count()
-        total_worlds = db.query(AdminWorldConfig).count()
-        active_worlds = db.query(AdminWorldConfig).filter(AdminWorldConfig.is_active == True).count()
+        if not all([DiscordBot, DiscordUser, LiveStock, AdminWorldConfig]):
+            return create_success_response(
+                data={
+                    "bots": {"total": 0, "active": 0, "inactive": 0},
+                    "users": {"total": 0, "verified": 0, "unverified": 0},
+                    "products": {"total": 0, "active": 0, "inactive": 0},
+                    "worlds": {"total": 0, "active": 0, "inactive": 0}
+                }
+            )
+
+        # Get bot stats
+        total_bots = db.query(DiscordBot).count() if DiscordBot else 0
+        active_bots = db.query(DiscordBot).filter(
+            DiscordBot.status == DiscordBotStatus.ACTIVE
+        ).count() if DiscordBot else 0
+        
+        # Get user stats
+        total_users = db.query(DiscordUser).count() if DiscordUser else 0
+        verified_users = db.query(DiscordUser).filter(
+            DiscordUser.is_verified == True
+        ).count() if DiscordUser else 0
+        
+        # Get product stats
+        total_products = db.query(LiveStock).count() if LiveStock else 0
+        active_products = db.query(LiveStock).filter(
+            LiveStock.is_active == True
+        ).count() if LiveStock else 0
+        
+        # Get world stats
+        total_worlds = db.query(AdminWorldConfig).count() if AdminWorldConfig else 0
+        active_worlds = db.query(AdminWorldConfig).filter(
+            AdminWorldConfig.is_active == True
+        ).count() if AdminWorldConfig else 0
         
         return create_success_response(
             data={

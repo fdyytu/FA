@@ -1,60 +1,67 @@
-from sqlalchemy import Column, String, Integer, Numeric, ForeignKey, Text, Enum
+from enum import Enum
+from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean, ForeignKey, Enum as SQLEnum
 from sqlalchemy.orm import relationship
-from app.shared.base_classes.base import BaseModel
-import enum
+from datetime import datetime
 
-class TransactionStatus(enum.Enum):
-    """Status transaksi PPOB"""
-    PENDING = "pending"
-    SUCCESS = "success"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
+from app.core.database import Base
 
-class PPOBCategory(enum.Enum):
-    """Kategori layanan PPOB"""
-    PULSA = "pulsa"
-    LISTRIK = "listrik"
-    PDAM = "pdam"
-    INTERNET = "internet"
-    BPJS = "bpjs"
-    MULTIFINANCE = "multifinance"
+class TransactionStatus(str, Enum):
+    """Status untuk transaksi PPOB"""
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
+    EXPIRED = "EXPIRED"
+    REFUNDED = "REFUNDED"
+    CANCELLED = "CANCELLED"
 
-class PPOBTransaction(BaseModel):
-    """
-    Model untuk transaksi PPOB.
-    Mengimplementasikan Single Responsibility Principle - hanya menangani data transaksi PPOB.
-    """
+class PPOBTransaction(Base):
+    """Model untuk transaksi PPOB"""
     __tablename__ = "ppob_transactions"
-    
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    transaction_code = Column(String(50), unique=True, index=True, nullable=False)
-    category = Column(Enum(PPOBCategory), nullable=False)
-    product_code = Column(String(50), nullable=False)
-    product_name = Column(String(200), nullable=False)
-    customer_number = Column(String(50), nullable=False)
-    customer_name = Column(String(100), nullable=True)
-    amount = Column(Numeric(15, 2), nullable=False)
-    admin_fee = Column(Numeric(15, 2), default=0)
-    total_amount = Column(Numeric(15, 2), nullable=False)
-    status = Column(Enum(TransactionStatus), default=TransactionStatus.PENDING)
-    provider_ref = Column(String(100), nullable=True)
-    notes = Column(Text, nullable=True)
-    
-    # Relationship will be added when User model is properly configured
-    # user = relationship("User", back_populates="ppob_transactions")
 
-class PPOBProduct(BaseModel):
-    """
-    Model untuk produk PPOB.
-    Menyimpan informasi produk yang tersedia untuk transaksi PPOB.
-    """
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    transaction_code = Column(String, unique=True, index=True)
+    category = Column(String)
+    product_code = Column(String)
+    product_name = Column(String)
+    customer_number = Column(String)
+    customer_name = Column(String)
+    amount = Column(Float)
+    admin_fee = Column(Float, default=0)
+    total_amount = Column(Float)
+    status = Column(SQLEnum(TransactionStatus), default=TransactionStatus.PENDING)
+    provider_ref = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", back_populates="ppob_transactions")
+
+class PPOBProduct(Base):
+    """Model untuk produk PPOB"""
     __tablename__ = "ppob_products"
-    
-    product_code = Column(String(50), unique=True, index=True, nullable=False)
-    product_name = Column(String(200), nullable=False)
-    category = Column(Enum(PPOBCategory), nullable=False)
-    provider = Column(String(50), nullable=False)
-    price = Column(Numeric(15, 2), nullable=False)
-    admin_fee = Column(Numeric(15, 2), default=0)
-    is_active = Column(String(10), default="1")
-    description = Column(Text, nullable=True)
+
+    id = Column(Integer, primary_key=True, index=True)
+    category = Column(String)
+    product_code = Column(String, unique=True, index=True)
+    product_name = Column(String)
+    description = Column(String, nullable=True)
+    price = Column(Float)
+    admin_fee = Column(Float, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class PPOBMarginConfig(Base):
+    """Model untuk konfigurasi margin PPOB"""
+    __tablename__ = "ppob_margin_configs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    category = Column(String)
+    product_code = Column(String, nullable=True)
+    margin_type = Column(String)  # percentage atau fixed
+    margin_value = Column(Float)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

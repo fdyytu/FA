@@ -4,7 +4,7 @@ from typing import Dict, Any, List
 from datetime import datetime, timedelta
 
 from app.domains.auth.models.user import User
-from app.domains.ppob.models.ppob import PPOBTransaction
+from app.domains.ppob.models.ppob import PPOBTransaction, TransactionStatus
 from app.shared.base_classes.base_repository import BaseRepository
 
 class DashboardRepository(BaseRepository):
@@ -22,16 +22,20 @@ class DashboardRepository(BaseRepository):
             total_users = self.db.query(User).count()
             active_users = self.db.query(User).filter(User.is_active == True).count()
             
-            # Transaction stats
+            # Transaction stats with proper enum values
             total_transactions = self.db.query(PPOBTransaction).count()
+            pending_transactions = self.db.query(PPOBTransaction).filter(
+                PPOBTransaction.status == TransactionStatus.PENDING
+            ).count()
+            failed_transactions = self.db.query(PPOBTransaction).filter(
+                PPOBTransaction.status == TransactionStatus.FAILED
+            ).count()
             
-            # Success transactions only for revenue
-            success_transactions = self.db.query(PPOBTransaction).filter(
-                PPOBTransaction.status == "success"
-            )
-            
-            total_revenue = success_transactions.with_entities(
+            # Revenue stats
+            total_revenue = self.db.query(
                 func.coalesce(func.sum(PPOBTransaction.total_amount), 0)
+            ).filter(
+                PPOBTransaction.status == TransactionStatus.SUCCESS
             ).scalar()
             
             # Get today's stats
@@ -47,7 +51,7 @@ class DashboardRepository(BaseRepository):
             ).filter(
                 and_(
                     PPOBTransaction.created_at >= today_start,
-                    PPOBTransaction.status == "success"
+                    PPOBTransaction.status == TransactionStatus.SUCCESS
                 )
             ).scalar()
             
@@ -57,7 +61,9 @@ class DashboardRepository(BaseRepository):
                 "total_transactions": total_transactions,
                 "total_revenue": float(total_revenue),
                 "today_transactions": today_transactions,
-                "today_revenue": float(today_revenue)
+                "today_revenue": float(today_revenue),
+                "pending_transactions": pending_transactions,
+                "failed_transactions": failed_transactions
             }
             
         except Exception as e:
@@ -73,7 +79,9 @@ class DashboardRepository(BaseRepository):
                 "total_transactions": 0,
                 "total_revenue": 0,
                 "today_transactions": 0,
-                "today_revenue": 0
+                "today_revenue": 0,
+                "pending_transactions": 0,
+                "failed_transactions": 0
             }
     
     def get_recent_transactions(self, limit: int = 10) -> List[PPOBTransaction]:
@@ -98,7 +106,10 @@ class DashboardRepository(BaseRepository):
                 func.count(PPOBTransaction.id).label('count'),
                 func.coalesce(func.sum(PPOBTransaction.total_amount), 0).label('amount')
             ).filter(
-                PPOBTransaction.created_at >= start_date
+                and_(
+                    PPOBTransaction.created_at >= start_date,
+                    PPOBTransaction.status == TransactionStatus.SUCCESS
+                )
             ).group_by(
                 func.date(PPOBTransaction.created_at)
             ).all()
