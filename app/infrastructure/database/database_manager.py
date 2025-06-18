@@ -4,12 +4,10 @@ from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
 import logging
 
-# Mock database for testing
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+# PostgreSQL connection
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@localhost/ppob_db"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
