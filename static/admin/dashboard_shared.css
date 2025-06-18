@@ -16,6 +16,37 @@ body {
 .stat-card {
     background: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
     color: white;
+    transition: all 0.3s ease;
+}
+
+/* Error state untuk stat cards */
+.stat-card.error {
+    --gradient-from: #9ca3af;
+    --gradient-to: #6b7280;
+    opacity: 0.8;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card.error::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.1) 10px,
+        rgba(255, 255, 255, 0.2) 10px,
+        rgba(255, 255, 255, 0.2) 20px
+    );
+}
+
+.stat-card.error:hover {
+    opacity: 1;
+    transform: translateY(-2px);
 }
 
 .stat-card-blue {

@@ -437,21 +437,14 @@ class DashboardController:
             """Ambil statistik dashboard"""
             try:
                 dashboard_service = DashboardService(db)
-                
                 stats = dashboard_service.get_dashboard_stats()
-                
                 return APIResponse.success(data=stats)
-                
             except Exception as e:
-                logger.error(f"Error getting dashboard stats: {e}")
-                # Return default stats if error occurs
-                default_stats = {
-                    "total_users": 0,
-                    "total_transactions": 0,
-                    "total_revenue": 0,
-                    "active_users": 0
-                }
-                return APIResponse.success(data=default_stats)
+                logger.error(f"Error getting dashboard stats: {str(e)}")
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail="Gagal mengambil statistik dashboard"
+                )
 
 
 class MarginManagementController:

@@ -27,12 +27,32 @@ async function initDashboard() {
 // Load dashboard statistics
 async function loadDashboardStats() {
     try {
-        const data = await apiRequest('/admin/dashboard/stats');
-        updateStatsCards(data.data || data);
+        const response = await apiRequest('/admin/dashboard/stats');
+        if (!response || !response.data) {
+            throw new Error('Invalid response format');
+        }
+        updateStatsCards(response.data);
+        
+        // Hapus kelas error jika sebelumnya ada error
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.classList.remove('error');
+        });
     } catch (error) {
         console.error('Error loading stats:', error);
         showToast('Gagal memuat statistik dashboard', 'error');
-        throw error;
+        
+        // Tambahkan visual indicator untuk error
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.classList.add('error');
+        });
+        
+        // Set nilai 0 untuk semua stats
+        updateStatsCards({
+            total_users: 0,
+            total_transactions: 0,
+            total_products: 0,
+            total_revenue: 0
+        });
     }
 }
 
@@ -46,20 +66,19 @@ function updateStatsCards(stats) {
     };
     
     if (elements.totalUsers) {
-        elements.totalUsers.textContent = formatNumber(stats.total_users || 1250);
+        elements.totalUsers.textContent = formatNumber(stats.total_users || 0);
     }
     
     if (elements.totalTransactions) {
-        elements.totalTransactions.textContent = formatNumber(stats.total_transactions || 3420);
+        elements.totalTransactions.textContent = formatNumber(stats.total_transactions || 0);
     }
     
     if (elements.totalProducts) {
-        elements.totalProducts.textContent = formatNumber(stats.total_products || 156);
+        elements.totalProducts.textContent = formatNumber(stats.total_products || 0);
     }
     
     if (elements.totalRevenue) {
-        const revenue = stats.total_revenue || 45000000;
-        elements.totalRevenue.textContent = formatCurrency(revenue).replace('IDR', 'Rp');
+        elements.totalRevenue.textContent = formatCurrency(stats.total_revenue || 0).replace('IDR', 'Rp');
     }
 }
 
@@ -69,7 +88,7 @@ async function loadRecentTransactions() {
     if (!container) return;
     
     try {
-        const data = await apiRequest('/admin/transactions/recent?limit=5');
+        const data = await apiRequest('/admin/transactions-admin/recent?limit=5');
         const transactions = data.data || [];
         
         if (transactions.length === 0) {
@@ -125,6 +144,9 @@ async function initTransactionChart() {
     
     try {
         const data = await apiRequest('/admin/analytics/transactions/weekly');
+        if (!data || !data.data) {
+            throw new Error('Invalid response format from analytics API');
+        }
         const chartData = data.data || {
             labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
             data: []
@@ -217,6 +239,9 @@ async function initCategoryChart() {
     
     try {
         const data = await apiRequest('/admin/analytics/products/categories');
+        if (!data || !data.data) {
+            throw new Error('Invalid response format from categories API');
+        }
         const chartData = data.data || {
             labels: [],
             data: []
@@ -348,8 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initDashboard();
     initFloatingActionButton();
     
-    // Auto-refresh setiap 30 detik
-    setInterval(refreshDashboard, 30 * 1000);
+    // Auto-refresh setiap 15 detik
+    setInterval(refreshDashboard, 15 * 1000);
+    
+    // Initial load
+    refreshDashboard();
 });
 
 // Cleanup charts when page unloads

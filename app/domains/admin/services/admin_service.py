@@ -591,15 +591,12 @@ class DashboardService(BaseService):
         )
     
     def get_dashboard_stats(self) -> Dict[str, Any]:
-        """Ambil statistik dashboard saja"""
+        """Ambil statistik dashboard"""
         try:
             stats = self.dashboard_repo.get_dashboard_stats()
             return stats
         except Exception as e:
-            # Return mock data if repository fails
-            return {
-                "total_users": 1250,
-                "total_transactions": 3420,
-                "total_products": 156,
-                "total_revenue": 45000000
-            }
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in DashboardService.get_dashboard_stats: {str(e)}")
+            raise  # Re-raise exception to be handled by controller
