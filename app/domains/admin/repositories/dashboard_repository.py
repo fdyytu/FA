@@ -270,24 +270,17 @@ class DashboardRepository(BaseRepository):
                     "products": []
                 }
             
-            # Get overall top products
+            # Simplified top products without category join
             total_results = self.db.query(
                 PPOBTransaction.product_code,
                 PPOBTransaction.product_name,
-                PPOBCategory.code.label('category_code'),
-                PPOBCategory.name.label('category_name'),
                 func.count(PPOBTransaction.id).label('total_transactions'),
                 func.sum(PPOBTransaction.total_amount).label('total_amount')
-            ).join(
-                PPOBCategory,
-                PPOBTransaction.category_id == PPOBCategory.id
             ).filter(
                 PPOBTransaction.status == TransactionStatus.SUCCESS
             ).group_by(
                 PPOBTransaction.product_code,
-                PPOBTransaction.product_name,
-                PPOBCategory.code,
-                PPOBCategory.name
+                PPOBTransaction.product_name
             ).order_by(
                 desc('total_transactions')
             ).limit(limit).all()
@@ -297,8 +290,8 @@ class DashboardRepository(BaseRepository):
                     "product_code": r.product_code,
                     "product_name": r.product_name,
                     "category": {
-                        "code": r.category_code,
-                        "name": r.category_name
+                        "code": "unknown",
+                        "name": "Unknown"
                     },
                     "total_transactions": r.total_transactions,
                     "total_amount": float(r.total_amount or 0)
