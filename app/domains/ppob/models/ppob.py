@@ -1,9 +1,25 @@
 from enum import Enum
-from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Column, String, Integer, Float, DateTime, Boolean, ForeignKey, Enum as SQLEnum, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
 from app.core.database import Base
+
+class PPOBCategory(Base):
+    """Model untuk kategori PPOB"""
+    __tablename__ = "ppob_categories"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    code = Column(String, unique=True, index=True)
+    description = Column(Text, nullable=True)
+    icon = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    products = relationship("PPOBProduct", back_populates="category")
 
 class TransactionStatus(str, Enum):
     """Status untuk transaksi PPOB"""
@@ -21,7 +37,7 @@ class PPOBTransaction(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     transaction_code = Column(String, unique=True, index=True)
-    category = Column(String)
+    category_id = Column(Integer, ForeignKey("ppob_categories.id"))
     product_code = Column(String)
     product_name = Column(String)
     customer_number = Column(String)
@@ -37,13 +53,15 @@ class PPOBTransaction(Base):
 
     # Relationships
     user = relationship("User", back_populates="ppob_transactions")
+    category = relationship("PPOBCategory", backref="transactions")
 
 class PPOBProduct(Base):
     """Model untuk produk PPOB"""
     __tablename__ = "ppob_products"
 
     id = Column(Integer, primary_key=True, index=True)
-    category = Column(String)
+    category_id = Column(Integer, ForeignKey("ppob_categories.id"))
+    category = relationship("PPOBCategory", back_populates="products")
     product_code = Column(String, unique=True, index=True)
     product_name = Column(String)
     description = Column(String, nullable=True)
