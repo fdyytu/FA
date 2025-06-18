@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import logging
+import json
 
 from app.core.database import get_db
 from app.domains.admin.services.admin_service import (
@@ -1116,7 +1117,7 @@ class TransactionController:
                         "id": f"TXN{i:03d}",
                         "user_id": f"user_{i}",
                         "amount": 10000 + (i * 5000),
-                        "status": "completed" if i % 2 == 0 else "pending",
+                        "status": "COMPLETED" if i % 2 == 0 else "PENDING",
                         "type": "topup" if i % 3 == 0 else "purchase",
                         "created_at": "2025-01-16T10:00:00Z"
                     }
@@ -1131,7 +1132,7 @@ class TransactionController:
                     action="VIEW",
                     resource="transactions",
                     resource_id=None,
-                    new_values=f"Viewed recent transactions (limit: {limit})"
+                    new_values=json.dumps({"action": "viewed_recent_transactions", "limit": limit})
                 )
                 
                 return APIResponse.success(data=recent_transactions)
@@ -1160,7 +1161,7 @@ class TransactionController:
                         "id": f"TXN{i:03d}",
                         "user_id": f"user_{i}",
                         "amount": 10000 + (i * 1000),
-                        "status": "completed" if i % 3 == 0 else ("pending" if i % 3 == 1 else "failed"),
+                        "status": "COMPLETED" if i % 3 == 0 else ("PENDING" if i % 3 == 1 else "FAILED"),
                         "type": "topup" if i % 2 == 0 else "purchase",
                         "created_at": "2025-01-16T10:00:00Z",
                         "updated_at": "2025-01-16T10:05:00Z"
@@ -1182,7 +1183,7 @@ class TransactionController:
                     action="VIEW",
                     resource="transactions",
                     resource_id=None,
-                    new_values=f"Viewed transactions page {page}"
+                    new_values=json.dumps({"action": "viewed_transactions", "page": page, "limit": limit, "filters": {"status": status, "type": type}})
                 )
                 
                 return APIResponse.success(data={

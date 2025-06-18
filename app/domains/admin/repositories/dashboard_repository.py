@@ -47,12 +47,12 @@ class DashboardRepository(BaseRepository):
             total_revenue = 0
             
             for tx in transactions:
-            if tx.status == TransactionStatus.PENDING:
-                pending_transactions += 1
-            elif tx.status == TransactionStatus.FAILED:
-                failed_transactions += 1
-            elif tx.status == TransactionStatus.SUCCESS:
-                total_revenue += float(tx.total_amount or 0)
+                if tx.status == TransactionStatus.PENDING:
+                    pending_transactions += 1
+                elif tx.status == TransactionStatus.FAILED:
+                    failed_transactions += 1
+                elif tx.status == TransactionStatus.SUCCESS:
+                    total_revenue += float(tx.total_amount or 0)
                     
                 total_transactions += 1
             

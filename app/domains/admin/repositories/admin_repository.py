@@ -1,14 +1,13 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, desc, func
+from sqlalchemy import func, desc, or_, and_
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
+import json
 
 from app.shared.base_classes.base_repository import BaseRepository
-from app.domains.admin.models.admin import (
-    Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog, AdminNotificationSetting
-)
+from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog
 from app.domains.auth.models.user import User
-from app.domains.ppob.models.ppob import PPOBProduct, PPOBTransaction
+from app.domains.ppob.models.ppob import PPOBProduct, PPOBTransaction, TransactionStatus
 from app.domains.wallet.models.wallet import WalletTransaction
 
 
@@ -208,17 +207,17 @@ class DashboardRepository:
         # Transaction stats
         total_transactions = self.db.query(PPOBTransaction).count()
         pending_transactions = self.db.query(PPOBTransaction).filter(
-            PPOBTransaction.status == "pending"
+            PPOBTransaction.status == TransactionStatus.PENDING
         ).count()
         failed_transactions = self.db.query(PPOBTransaction).filter(
-            PPOBTransaction.status == "failed"
+            PPOBTransaction.status == TransactionStatus.FAILED
         ).count()
         
         # Revenue stats
         total_revenue = self.db.query(
             func.sum(PPOBTransaction.total_amount)
         ).filter(
-            PPOBTransaction.status == "success"
+            PPOBTransaction.status == TransactionStatus.SUCCESS
         ).scalar() or 0
         
         return {
@@ -267,7 +266,7 @@ class DashboardRepository:
             func.count(PPOBTransaction.id).label('transaction_count'),
             func.sum(PPOBTransaction.total_amount).label('total_amount')
         ).filter(
-            PPOBTransaction.status == "success"
+            PPOBTransaction.status == TransactionStatus.SUCCESS
         ).group_by(
             PPOBTransaction.product_code,
             PPOBTransaction.product_name
