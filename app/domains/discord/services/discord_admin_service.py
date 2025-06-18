@@ -5,7 +5,7 @@ Service untuk mengelola operasi Discord admin
 from sqlalchemy.orm import Session
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-
+from app.common.exceptions.custom_exceptions import DatabaseOperationError
 from app.domains.discord.repositories.discord_admin_repository import DiscordAdminRepository
 from app.domains.discord.schemas.discord_admin_schemas import (
     DiscordLogResponse, DiscordCommandResponse, DiscordLogFilter, 
@@ -181,6 +181,14 @@ class DiscordAdminService:
             extra_data=log.extra_data,
             created_at=log.created_at
         )
+    
+    def get_discord_worlds(db: Session):
+        try:
+            return DiscordAdminRepository.get_discord_worlds(db)
+        except Exception as e:
+            # Log error dan lempar exception khusus
+            logger.error(f"Database error fetching Discord worlds: {str(e)}", exc_info=True)
+            raise DatabaseOperationError(f"Failed to fetch Discord worlds: {str(e)}")
     
     def create_discord_command(
         self,

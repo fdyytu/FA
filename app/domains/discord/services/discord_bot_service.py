@@ -107,27 +107,37 @@ class DiscordBotService:
             logger.error(f"Error restarting Discord bot: {e}")
             return False
     
+
+            
+    def get_uptime(self) -> Optional[float]:
+        """Get bot uptime in seconds"""
+        if not self.last_connect or not self.is_running:
+            return None
+        return (datetime.now(timezone.utc) - self.last_connect).total_seconds()
+
     def get_status(self) -> Dict[str, Any]:
         """Get bot status"""
         if not self.bot or not self.bot.user:
             return {
                 "status": "not_initialized",
                 "is_running": False,
-                "guilds": 0,
+                "guilds": [],
                 "users": 0,
                 "latency": 0,
                 "user": None,
-                "id": None
+                "id": None,
+                "ready": self.is_ready
             }
         
         return {
             "status": "online" if self.is_running and not self.bot.is_closed() else "offline",
             "is_running": self.is_running,
-            "guilds": len(self.bot.guilds) if self.bot.guilds else 0,
-            "users": len(self.bot.users) if self.bot.users else 0,
+            "guilds_count": len(self.bot.guilds) if self.bot.guilds else 0,
+            "users_count": sum(g.member_count for g in self.bot.guilds) if self.bot.guilds else 0,
             "latency": round(self.bot.latency * 1000) if self.bot.latency else 0,
             "user": str(self.bot.user) if self.bot.user else None,
-            "id": self.bot.user.id if self.bot.user else None
+            "id": str(self.bot.user.id) if self.bot.user else None,
+            "ready": self.is_ready
         }
     
     async def send_message(self, channel_id: int, message: str) -> bool:

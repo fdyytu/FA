@@ -253,14 +253,9 @@ function generateMockWorlds() {
 // Render worlds list
 function renderWorldsList() {
     const container = document.getElementById('worldsList');
-    if (!container) return;
-    
     container.innerHTML = worlds.map(world => `
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
             <div class="flex items-center">
-                <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-globe text-white text-sm"></i>
-                </div>
                 <div class="ml-3">
                     <h4 class="text-sm font-medium text-gray-900">${world.name}</h4>
                     <p class="text-xs text-gray-500">Owner: ${world.owner}</p>
@@ -269,10 +264,10 @@ function renderWorldsList() {
             </div>
             <div class="flex items-center space-x-2">
                 ${getStatusBadge(world.is_active ? 'active' : 'inactive')}
-                <button onclick="editWorld(${world.id})" class="text-blue-600 hover:text-blue-800" title="Edit">
+                <button onclick="editWorld(${world.id})" class="text-blue-600">
                     <i class="fas fa-edit text-xs"></i>
                 </button>
-                <button onclick="deleteWorld(${world.id})" class="text-red-600 hover:text-red-800" title="Delete">
+                <button onclick="deleteWorld(${world.id})" class="text-red-600">
                     <i class="fas fa-trash text-xs"></i>
                 </button>
             </div>
@@ -628,40 +623,20 @@ function populateWorldForm(world) {
 // Handle world form submission
 async function handleWorldSubmit(e) {
     e.preventDefault();
-    
     const formData = new FormData(e.target);
     const worldData = Object.fromEntries(formData.entries());
     
-    // Convert checkboxes
     worldData.is_active = formData.has('is_active');
     worldData.bot_id = parseInt(worldData.bot_id);
     
-    showLoading(true);
+    const isEdit = worldData.id;
+    const endpoint = isEdit ? `/discord/worlds/${worldData.id}` : '/discord/worlds';
+    const method = isEdit ? 'PUT' : 'POST';
     
-    try {
-        const isEdit = worldData.id;
-        const endpoint = isEdit ? `/discord/worlds/${worldData.id}` : '/discord/worlds';
-        const method = isEdit ? 'PUT' : 'POST';
-        
-        const response = await apiRequest(endpoint, {
-            method: method,
-            body: JSON.stringify(worldData)
-        });
-        
-        if (response && response.ok) {
-            showToast(`World berhasil ${isEdit ? 'diperbarui' : 'ditambahkan'}`, 'success');
-            closeModal('worldModal');
-            await loadWorlds();
-        } else {
-            const errorData = await response.json();
-            showToast(errorData.message || 'Gagal menyimpan world', 'error');
-        }
-    } catch (error) {
-        console.error('Error saving world:', error);
-        showToast('Terjadi kesalahan saat menyimpan world', 'error');
-    } finally {
-        showLoading(false);
-    }
+    const response = await apiRequest(endpoint, {
+        method: method,
+        body: JSON.stringify(worldData)
+    });
 }
 
 // Toggle bot status

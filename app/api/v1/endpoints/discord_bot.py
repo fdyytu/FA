@@ -141,7 +141,6 @@ async def send_message(channel_id: int, message: str) -> Dict[str, Any]:
         logger.error(f"Error sending message: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @router.get("/health")
 async def bot_health_check() -> Dict[str, Any]:
     """Check Discord bot health"""

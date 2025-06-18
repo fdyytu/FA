@@ -21,7 +21,27 @@ class BaseCustomException(Exception):
         self.details = details or {}
         super().__init__(self.message)
 
-
+class DatabaseOperationError(BaseCustomException):
+    """Exception untuk kegagalan operasi database"""
+    
+    def __init__(
+        self, 
+        message: str = "Operasi database gagal", 
+        operation: str = "", 
+        details: Optional[Dict[str, Any]] = None
+    ):
+        _details = {
+            "operation": operation,
+            **(details or {})
+        }
+        
+        super().__init__(
+            message=message,
+            status_code=500,  # Internal Server Error
+            error_code="DATABASE_OPERATION_ERROR",
+            details=_details
+        )
+        
 class ValidationException(BaseCustomException):
     """Exception untuk validation errors"""
     

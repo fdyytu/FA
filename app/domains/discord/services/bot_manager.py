@@ -140,7 +140,7 @@ class DiscordBotManager:
         except Exception as e:
             logger.error(f"Error restarting bot: {e}")
             return False
-    
+        
     def get_bot_status(self) -> Dict[str, Any]:
         """Get comprehensive bot status"""
         try:
@@ -149,9 +149,12 @@ class DiscordBotManager:
                     "status": "not_initialized",
                     "is_running": False,
                     "manager_initialized": False,
-                    "error": "Bot service not available"
+                    "error": "Bot service not available",
+                    "guilds": [],  # Tambahkan list guilds kosong
+                    "guilds_count": 0,
+                    "users_count": 0
                 }
-
+    
             base_status = self.bot_service.get_status()
             
             # Check token configuration from both sources
@@ -171,6 +174,28 @@ class DiscordBotManager:
             except Exception:
                 pass  # Ignore database errors for status check
             
+            # Ambil informasi guild jika bot aktif
+            guilds_info = []
+            if self.bot_service.bot and self.bot_service.is_running:
+                try:
+                    guilds_info = [
+                        {
+                            "id": str(guild.id),  # Convert ke string untuk JSON
+                            "name": guild.name,
+                            "member_count": guild.member_count if hasattr(guild, 'member_count') else 0,
+                            "icon": str(guild.icon.url) if guild.icon else None,
+                            "owner_id": str(guild.owner_id) if hasattr(guild, 'owner_id') else None,
+                            "permissions": True  # Asumsi bot punya akses
+                        }
+                        for guild in self.bot_service.bot.guilds
+                    ]
+                except Exception as guild_error:
+                    logger.warning(f"Error getting guilds info: {guild_error}")
+                    guilds_info = []
+    
+            # Hitung total users dari guilds
+            total_users = sum(guild.get('member_count', 0) for guild in guilds_info)
+                
             return {
                 **base_status,
                 "manager_initialized": self.is_initialized,
@@ -183,6 +208,16 @@ class DiscordBotManager:
                 "environment": {
                     "command_prefix": os.getenv("DISCORD_COMMAND_PREFIX", "!"),
                     "guild_id": os.getenv("DISCORD_GUILD_ID"),
+                },
+                # Tambahkan informasi guild
+                "guilds": guilds_info,
+                "guilds_count": len(guilds_info),
+                "users_count": total_users,
+                # Status yang lebih detail
+                "detailed_status": {
+                    "uptime": self.bot_service.get_uptime() if hasattr(self.bot_service, 'get_uptime') else None,
+                    "last_connect": self.bot_service.last_connect.isoformat() if hasattr(self.bot_service, 'last_connect') else None,
+                    "ready": self.bot_service.is_ready if hasattr(self.bot_service, 'is_ready') else False
                 }
             }
             
@@ -192,7 +227,15 @@ class DiscordBotManager:
                 "status": "error",
                 "error": str(e),
                 "manager_initialized": self.is_initialized,
-                "config_source": self.config_source
+                "config_source": self.config_source,
+                "guilds": [],  # Tambahkan list guilds kosong
+                "guilds_count": 0,
+                "users_count": 0,
+                "token_configured": False,
+                "token_sources": {
+                    "environment": False,
+                    "database": False
+                }
             }
     
     async def send_notification(self, channel_id: int, message: str) -> bool:
