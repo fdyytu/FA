@@ -35,7 +35,24 @@ def setup_database():
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         
-        # Create users table first
+        # Create admins table first
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS admins (
+                id SERIAL PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                full_name VARCHAR(100) NOT NULL,
+                hashed_password TEXT NOT NULL,
+                is_active BOOLEAN DEFAULT true,
+                role VARCHAR(50) DEFAULT 'admin',
+                phone_number VARCHAR(20),
+                last_login TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Create users table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
