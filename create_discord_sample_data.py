@@ -12,6 +12,7 @@ from app.domains.discord.models.discord import (
 )
 from datetime import datetime, timedelta
 import random
+import json
 
 def create_sample_data():
     """Buat sample data untuk testing"""
@@ -93,6 +94,15 @@ def create_sample_data():
                     minutes=random.randint(0, 59)
                 )
                 
+                extra_data = json.dumps({
+                    "source": "sample_data",
+                    "timestamp": created_time.isoformat(),
+                    "metadata": {
+                        "environment": "testing",
+                        "version": "1.0.0"
+                    }
+                })
+                
                 log = DiscordLog(
                     user_id=random.choice(users).id if random.choice([True, False]) else None,
                     bot_id=bot.id,
@@ -101,6 +111,7 @@ def create_sample_data():
                     action=random.choice(log_actions),
                     channel_id="987654321098765432",
                     guild_id="123456789012345678",
+                    extra_data=extra_data,
                     created_at=created_time
                 )
                 db.add(log)
@@ -125,7 +136,7 @@ def create_sample_data():
                 command = DiscordCommand(
                     user_id=random.choice(users).id,
                     command_name=random.choice(command_names),
-                    command_args='{"arg1": "value1"}' if random.choice([True, False]) else None,
+                    command_args=json.dumps({"arg1": "value1", "arg2": 123}) if random.choice([True, False]) else None,
                     channel_id="987654321098765432",
                     guild_id="123456789012345678",
                     success=success,
