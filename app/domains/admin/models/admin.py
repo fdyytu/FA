@@ -47,6 +47,7 @@ class AdminConfig(BaseModel):
     is_active = Column(Boolean, default=True)
 
 class PPOBMarginConfig(BaseModel):
+    __table_args__ = {'extend_existing': True}
     """
     Model untuk konfigurasi margin PPOB - Single Responsibility: Mengelola margin pricing
     """

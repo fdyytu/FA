@@ -1,6 +1,5 @@
 """Models package."""
 from app.shared.base_classes.base import Base, BaseModel
-from app.domains.file_monitor.models.file_event import FileEvent
 
 # Import models from domains that exist
 try:
@@ -20,8 +19,7 @@ except ImportError:
 
 __all__ = [
     "Base",
-    "BaseModel",
-    "FileEvent"
+    "BaseModel"
 ]
 
 # Add to __all__ only if imported successfully
