@@ -374,6 +374,38 @@ body {
     }
 }
 
+/* Discord section styles */
+.discord-section {
+    transition: all 0.3s ease;
+}
+
+.discord-section.error {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    opacity: 0.8;
+    position: relative;
+    overflow: hidden;
+}
+
+.discord-section.error::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.05),
+        rgba(0, 0, 0, 0.05) 10px,
+        rgba(0, 0, 0, 0.08) 10px,
+        rgba(0, 0, 0, 0.08) 20px
+    );
+}
+
+.discord-section.error:hover {
+    opacity: 1;
+}
+
 /* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     .android-card {

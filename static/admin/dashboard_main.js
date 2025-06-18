@@ -324,9 +324,24 @@ function initFloatingActionButton() {
     const fab = document.querySelector('.floating-action-button');
     if (fab) {
         fab.addEventListener('click', () => {
-            // Show quick actions menu
             showQuickActionsMenu();
         });
+    }
+}
+
+// Refresh all data
+async function refreshAllData() {
+    showLoading(true);
+    try {
+        await Promise.all([
+            refreshDashboard(),
+            loadDiscordStats()
+        ]);
+        showToast('Semua data berhasil diperbarui', 'success', 3000);
+    } catch (error) {
+        showToast('Gagal memperbarui beberapa data', 'warning');
+    } finally {
+        showLoading(false);
     }
 }
 
@@ -348,9 +363,9 @@ function showQuickActionsMenu() {
                 <i class="fas fa-user-plus mr-3 text-green-600"></i>
                 Tambah User
             </a>
-            <button onclick="refreshDashboard()" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg w-full text-left">
+            <button onclick="refreshAllData()" class="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg w-full text-left">
                 <i class="fas fa-sync-alt mr-3 text-orange-600"></i>
-                Refresh Data
+                Refresh Semua Data
             </button>
         </div>
     `;
@@ -373,11 +388,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initDashboard();
     initFloatingActionButton();
     
-    // Auto-refresh setiap 15 detik
-    setInterval(refreshDashboard, 15 * 1000);
-    
     // Initial load
     refreshDashboard();
+    loadDiscordStats();
+    
+    // Auto-refresh setiap 15 detik
+    setInterval(() => {
+        refreshDashboard();
+        loadDiscordStats();
+    }, 15 * 1000);
 });
 
 // Cleanup charts when page unloads
