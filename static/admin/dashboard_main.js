@@ -27,33 +27,12 @@ async function initDashboard() {
 // Load dashboard statistics
 async function loadDashboardStats() {
     try {
-        const response = await apiRequest('/dashboard/stats');
-        
-        if (response && response.ok) {
-            const data = await response.json();
-            updateStatsCards(data.data || data);
-        } else {
-            // Use mock data if API fails
-            updateStatsCards({
-                total_users: 1250,
-                total_transactions: 3420,
-                total_products: 156,
-                total_revenue: 45000000,
-                discord_bots: 3,
-                active_users: 892
-            });
-        }
+        const data = await apiRequest('/admin/dashboard/stats');
+        updateStatsCards(data.data || data);
     } catch (error) {
         console.error('Error loading stats:', error);
-        // Use mock data
-        updateStatsCards({
-            total_users: 1250,
-            total_transactions: 3420,
-            total_products: 156,
-            total_revenue: 45000000,
-            discord_bots: 3,
-            active_users: 892
-        });
+        showToast('Gagal memuat statistik dashboard', 'error');
+        throw error;
     }
 }
 
@@ -90,58 +69,12 @@ async function loadRecentTransactions() {
     if (!container) return;
     
     try {
-        const response = await apiRequest('/transactions/recent?limit=5');
-        let transactions = [];
+        const data = await apiRequest('/admin/transactions/recent?limit=5');
+        const transactions = data.data || [];
         
-        if (response && response.ok) {
-            const data = await response.json();
-            transactions = data.data || [];
-        }
-        
-        // Use mock data if no real data
         if (transactions.length === 0) {
-            transactions = [
-                { 
-                    id: 1, 
-                    user: 'John Doe', 
-                    product: 'Pulsa Telkomsel 50K', 
-                    amount: 52000, 
-                    status: 'success', 
-                    created_at: new Date(Date.now() - 2 * 60 * 1000).toISOString()
-                },
-                { 
-                    id: 2, 
-                    user: 'Jane Smith', 
-                    product: 'Token PLN 100K', 
-                    amount: 102500, 
-                    status: 'pending', 
-                    created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString()
-                },
-                { 
-                    id: 3, 
-                    user: 'Bob Johnson', 
-                    product: 'Paket Data XL 5GB', 
-                    amount: 65000, 
-                    status: 'success', 
-                    created_at: new Date(Date.now() - 10 * 60 * 1000).toISOString()
-                },
-                { 
-                    id: 4, 
-                    user: 'Alice Brown', 
-                    product: 'Pulsa Indosat 25K', 
-                    amount: 26500, 
-                    status: 'failed', 
-                    created_at: new Date(Date.now() - 15 * 60 * 1000).toISOString()
-                },
-                { 
-                    id: 5, 
-                    user: 'Charlie Wilson', 
-                    product: 'BPJS Kesehatan', 
-                    amount: 150000, 
-                    status: 'success', 
-                    created_at: new Date(Date.now() - 20 * 60 * 1000).toISOString()
-                }
-            ];
+            container.innerHTML = '<p class="text-gray-500 text-center py-4">Tidak ada transaksi terbaru</p>';
+            return;
         }
         
         container.innerHTML = transactions.map(tx => `
@@ -186,25 +119,16 @@ async function initTransactionChart() {
     
     const ctx = canvas.getContext('2d');
     
-    // Destroy existing chart if it exists
     if (transactionChart) {
         transactionChart.destroy();
     }
     
     try {
-        // Try to load real data
-        const response = await apiRequest('/analytics/transactions/weekly');
-        let chartData = {
+        const data = await apiRequest('/admin/analytics/transactions/weekly');
+        const chartData = data.data || {
             labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
-            data: [120, 190, 300, 500, 200, 300, 450]
+            data: []
         };
-        
-        if (response && response.ok) {
-            const data = await response.json();
-            if (data.data) {
-                chartData = data.data;
-            }
-        }
         
         transactionChart = new Chart(ctx, {
             type: 'line',
@@ -287,25 +211,16 @@ async function initCategoryChart() {
     
     const ctx = canvas.getContext('2d');
     
-    // Destroy existing chart if it exists
     if (categoryChart) {
         categoryChart.destroy();
     }
     
     try {
-        // Try to load real data
-        const response = await apiRequest('/analytics/products/categories');
-        let chartData = {
-            labels: ['Pulsa', 'Token PLN', 'Paket Data', 'BPJS', 'Lainnya'],
-            data: [35, 25, 20, 15, 5]
+        const data = await apiRequest('/admin/analytics/products/categories');
+        const chartData = data.data || {
+            labels: [],
+            data: []
         };
-        
-        if (response && response.ok) {
-            const data = await response.json();
-            if (data.data) {
-                chartData = data.data;
-            }
-        }
         
         categoryChart = new Chart(ctx, {
             type: 'doughnut',
@@ -433,8 +348,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initDashboard();
     initFloatingActionButton();
     
-    // Auto-refresh every 5 minutes
-    setInterval(refreshDashboard, 5 * 60 * 1000);
+    // Auto-refresh setiap 30 detik
+    setInterval(refreshDashboard, 30 * 1000);
 });
 
 // Cleanup charts when page unloads

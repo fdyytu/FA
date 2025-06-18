@@ -1,5 +1,5 @@
 // Shared JavaScript functions for all dashboard components
-const API_BASE_URL = '/api/v1/admin';
+const API_BASE_URL = '/api/v1';  // Sesuaikan dengan base URL API yang benar
 
 // Authentication functions
 function checkAuth() {
@@ -169,16 +169,21 @@ async function apiRequest(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, mergedOptions);
         
-        if (response.status === 401) {
-            logout();
-            return null;
+        if (!response.ok) {
+            if (response.status === 401) {
+                logout();
+                throw new Error('Unauthorized access');
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return response;
+        const data = await response.json();
+        return data;
+        
     } catch (error) {
         console.error('API request error:', error);
-        showToast('Terjadi kesalahan koneksi', 'error');
-        return null;
+        showToast(`Error: ${error.message}`, 'error');
+        throw error;
     }
 }
 
