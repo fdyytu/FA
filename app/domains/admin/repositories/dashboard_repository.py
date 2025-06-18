@@ -39,10 +39,7 @@ class DashboardRepository(BaseRepository):
                 }
             
             # Transaction stats with proper enum values and category breakdown
-            transactions = self.db.query(PPOBTransaction).join(
-                PPOBCategory,
-                PPOBTransaction.category_id == PPOBCategory.id
-            ).all()
+            transactions = self.db.query(PPOBTransaction).all()
             
             total_transactions = 0
             pending_transactions = 0
@@ -50,19 +47,12 @@ class DashboardRepository(BaseRepository):
             total_revenue = 0
             
             for tx in transactions:
-                if tx.category and tx.category.code in category_stats:
-                    cat_stats = category_stats[tx.category.code]
-                    cat_stats["total_transactions"] += 1
-                    
-                    if tx.status == TransactionStatus.PENDING:
-                        cat_stats["pending_transactions"] += 1
-                        pending_transactions += 1
-                    elif tx.status == TransactionStatus.FAILED:
-                        cat_stats["failed_transactions"] += 1
-                        failed_transactions += 1
-                    elif tx.status == TransactionStatus.SUCCESS:
-                        cat_stats["total_revenue"] += float(tx.total_amount or 0)
-                        total_revenue += float(tx.total_amount or 0)
+            if tx.status == TransactionStatus.PENDING:
+                pending_transactions += 1
+            elif tx.status == TransactionStatus.FAILED:
+                failed_transactions += 1
+            elif tx.status == TransactionStatus.SUCCESS:
+                total_revenue += float(tx.total_amount or 0)
                     
                 total_transactions += 1
             
@@ -138,10 +128,7 @@ class DashboardRepository(BaseRepository):
     def get_recent_transactions(self, limit: int = 10) -> List[Dict[str, Any]]:
         """Ambil transaksi terbaru dengan informasi kategori"""
         try:
-            transactions = self.db.query(PPOBTransaction).join(
-                PPOBCategory,
-                PPOBTransaction.category_id == PPOBCategory.id
-            ).order_by(
+            transactions = self.db.query(PPOBTransaction).order_by(
                 desc(PPOBTransaction.created_at)
             ).limit(limit).all()
 
@@ -152,9 +139,9 @@ class DashboardRepository(BaseRepository):
                         "id": tx.id,
                         "transaction_code": tx.transaction_code,
                         "category": {
-                            "id": tx.category.id if tx.category else None,
-                            "name": tx.category.name if tx.category else "Unknown",
-                            "code": tx.category.code if tx.category else "unknown"
+                            "id": None,
+                            "name": "Unknown",
+                            "code": "unknown"
                         },
                         "product_name": tx.product_name,
                         "customer_number": tx.customer_number,
@@ -222,30 +209,21 @@ class DashboardRepository(BaseRepository):
                 for result in total_results
             ]
             
-            # Get trends per category
-            for category in categories:
-                category_results = self.db.query(
-                    func.date(PPOBTransaction.created_at).label('date'),
-                    func.count(PPOBTransaction.id).label('count'),
-                    func.coalesce(func.sum(PPOBTransaction.total_amount), 0).label('amount')
-                ).filter(
-                    and_(
-                        PPOBTransaction.created_at >= start_date,
-                        PPOBTransaction.status == TransactionStatus.SUCCESS,
-                        PPOBTransaction.category_id == category.id
-                    )
-                ).group_by(
-                    func.date(PPOBTransaction.created_at)
-                ).all()
-                
-                trends["by_category"][category.code]["data"] = [
-                    {
-                        "date": str(result.date),
-                        "count": result.count,
-                        "amount": float(result.amount)
-                    }
-                    for result in category_results
-                ]
+            # Simplified trends without category breakdown
+            trends["by_category"] = {
+                "pulsa": {
+                    "name": "Pulsa",
+                    "data": []
+                },
+                "data": {
+                    "name": "Paket Data",
+                    "data": []
+                },
+                "pln": {
+                    "name": "PLN",
+                    "data": []
+                }
+            }
             
             return trends
             
