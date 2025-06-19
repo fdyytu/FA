@@ -51,7 +51,7 @@ except ImportError:
 
 # Include Transaction endpoints - use correct path without duplication
 try:
-    from app.domains.admin.controllers.admin_controller import transaction_controller
+    from app.domains.admin.controllers.transaction_controller import transaction_controller
     api_router.include_router(transaction_controller.router, prefix="/admin/transactions", tags=["admin-transactions"])
 except ImportError:
     pass
