@@ -33,7 +33,7 @@ async function initDiscordDashboard() {
 // Load Discord statistics
 async function loadDiscordStats() {
     try {
-        const response = await apiRequest('/discord/stats');
+        const response = await apiRequest('/admin/discord/stats');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -88,7 +88,7 @@ function updateDiscordStats(stats) {
 // Load bots
 async function loadBots() {
     try {
-        const response = await apiRequest('/discord/bots');
+        const response = await apiRequest('/admin/discord/bots');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -198,7 +198,7 @@ function renderBotsList() {
 // Load worlds
 async function loadWorlds() {
     try {
-        const response = await apiRequest('/discord/worlds');
+        const response = await apiRequest('/admin/discord/worlds');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -278,7 +278,7 @@ function renderWorldsList() {
 // Load recent commands
 async function loadRecentCommands() {
     try {
-        const response = await apiRequest('/discord/commands/recent?limit=5');
+        const response = await apiRequest('/admin/discord/commands/recent?limit=5');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -339,7 +339,7 @@ function renderRecentCommands() {
 // Load bot logs
 async function loadBotLogs() {
     try {
-        const response = await apiRequest('/discord/logs?limit=10');
+        const response = await apiRequest('/admin/discord/logs?limit=10');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -630,7 +630,7 @@ async function handleWorldSubmit(e) {
     worldData.bot_id = parseInt(worldData.bot_id);
     
     const isEdit = worldData.id;
-    const endpoint = isEdit ? `/discord/worlds/${worldData.id}` : '/discord/worlds';
+    const endpoint = isEdit ? `/admin/discord/worlds/${worldData.id}` : '/admin/discord/worlds';
     const method = isEdit ? 'PUT' : 'POST';
     
     const response = await apiRequest(endpoint, {
@@ -649,7 +649,7 @@ async function toggleBot(botId) {
     showLoading(true);
     
     try {
-        const response = await apiRequest(`/discord/bots/${botId}/${action}`, {
+        const response = await apiRequest(`/admin/discord/bots/${botId}/${action}`, {
             method: 'POST'
         });
         
@@ -682,7 +682,7 @@ async function deleteBot(botId) {
     showLoading(true);
     
     try {
-        const response = await apiRequest(`/discord/bots/${botId}`, {
+        const response = await apiRequest(`/admin/discord/bots/${botId}`, {
             method: 'DELETE'
         });
         
@@ -715,7 +715,7 @@ async function deleteWorld(worldId) {
     showLoading(true);
     
     try {
-        const response = await apiRequest(`/discord/worlds/${worldId}`, {
+        const response = await apiRequest(`/admin/discord/worlds/${worldId}`, {
             method: 'DELETE'
         });
         
@@ -743,7 +743,7 @@ async function clearBotLogs() {
     showLoading(true);
     
     try {
-        const response = await apiRequest('/discord/logs', {
+        const response = await apiRequest('/admin/discord/logs', {
             method: 'DELETE'
         });
         
