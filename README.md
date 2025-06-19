@@ -27,7 +27,7 @@ Aplikasi FastAPI dengan arsitektur Domain-Driven Design (DDD) yang telah direstr
 ├── alembic/              # Database migrations
 ├── static/               # Static files
 ├── requirements.txt      # Dependencies
-└── run.py               # Entry point aplikasi
+└── main.py              # Entry point aplikasi
 ```
 
 ## Fitur Utama
@@ -55,7 +55,7 @@ Aplikasi FastAPI dengan arsitektur Domain-Driven Design (DDD) yang telah direstr
    ```
 5. Jalankan aplikasi:
    ```bash
-   python run.py
+   python main.py
    ```
 
 ## Pengembangan
@@ -73,6 +73,36 @@ Aplikasi ini menggunakan arsitektur Domain-Driven Design (DDD) dengan struktur:
 Setelah aplikasi berjalan, akses dokumentasi API di:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
+
+## Deployment
+
+### Railway Deployment
+Aplikasi sudah dikonfigurasi untuk deployment di Railway:
+
+1. **File Konfigurasi**:
+   - `deployment/Procfile` - Heroku-style startup
+   - `config/nixpacks.toml` - Nixpacks build configuration
+   - `config/railway.json` - Railway deployment settings
+   - `deployment/Dockerfile` - Container deployment
+
+2. **Deploy ke Railway**:
+   ```bash
+   # Via Railway CLI
+   railway login
+   railway up
+   
+   # Atau connect via GitHub di railway.app
+   ```
+
+3. **Environment Variables**:
+   - Copy dari `config/.env.railway.example`
+   - Set di Railway dashboard atau via CLI
+
+4. **Database**:
+   - Tambah PostgreSQL service di Railway
+   - DATABASE_URL otomatis tersedia
+
+Lihat dokumentasi lengkap di `docs/deployment/`
 
 ## Testing
 

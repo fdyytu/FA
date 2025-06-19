@@ -10,10 +10,11 @@
 
 ### File yang Diperlukan (✅ Sudah Tersedia)
 - ✅ `railway.json` - Konfigurasi Railway
-- ✅ `Procfile` - Command startup: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- ✅ `Procfile` - Command startup: `python main.py`
 - ✅ `requirements.txt` - Dependencies Python
-- ✅ `nixpacks.toml` - Konfigurasi build
+- ✅ `nixpacks.toml` - Konfigurasi build dengan uvicorn
 - ✅ `.env.railway.example` - Template environment variables
+- ✅ `main.py` - Entry point aplikasi dengan konfigurasi PORT otomatis
 
 ### Environment Variables yang Diperlukan
 ```bash
@@ -36,6 +37,21 @@ MIDTRANS_CLIENT_KEY=your-client-key
 # Redis (Optional)
 REDIS_URL=redis://localhost:6379/0
 ```
+
+## Startup Configuration
+
+### Entry Point Aplikasi
+Aplikasi menggunakan `main.py` sebagai entry point utama yang:
+- Menggunakan uvicorn untuk menjalankan FastAPI app
+- Otomatis menggunakan PORT dari environment variable Railway
+- Fallback ke port 8000 jika PORT tidak tersedia
+- Konfigurasi host `0.0.0.0` untuk akses eksternal
+
+### Opsi Deployment
+Railway mendukung 3 metode startup:
+1. **Procfile**: `python main.py` (Heroku-style)
+2. **Nixpacks**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT` (langsung)
+3. **Dockerfile**: `python main.py` (containerized)
 
 ## Deployment ke Railway
 
@@ -97,16 +113,27 @@ railway service restart
 File `nixpacks.toml` sudah dikonfigurasi dengan:
 ```toml
 [phases.setup]
-nixPkgs = ["python39", "pip", "gcc", "pkg-config"]
+nixPkgs = ["python311", "python311Packages.pip", "python311Packages.setuptools", "python311Packages.wheel", "postgresql", "gcc", "pkg-config"]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+  "python --version",
+  "python -m pip --version", 
+  "python -m pip install --upgrade pip setuptools wheel",
+  "python -m pip install -r requirements.txt --no-cache-dir"
+]
 
 [phases.build]
-cmds = ["python -m compileall ."]
+cmds = ["echo 'Build completed'"]
 
 [start]
-cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1"
+
+[variables]
+PYTHONPATH = "/app"
+PYTHONUNBUFFERED = "1"
+PIP_NO_CACHE_DIR = "1"
+PIP_DISABLE_PIP_VERSION_CHECK = "1"
 ```
 
 ### Error: Database Connection

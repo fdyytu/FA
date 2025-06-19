@@ -8,14 +8,15 @@
 - **Status**: ✅ Sudah dikonfigurasi di `.env.production` dan `.env.railway.example`
 
 ### 2. File Konfigurasi Railway
-- ✅ `railway.json` - Konfigurasi deployment Railway
-- ✅ `Procfile` - Command startup: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- ✅ `railway.json` - Konfigurasi deployment Railway dengan startCommand: `python main.py`
+- ✅ `Procfile` - Command startup: `python main.py`
+- ✅ `nixpacks.toml` - Konfigurasi build dengan uvicorn langsung
 - ✅ `requirements.txt` - Dependencies Python (50 packages)
-- ✅ `runtime.txt` - Versi Python
+- ✅ `runtime.txt` - Versi Python 3.11.7
 - ✅ `.env.production` - Environment variables untuk production
 
 ### 3. Aplikasi
-- ✅ **Port Configuration**: `run.py` sudah diupdate untuk menggunakan `$PORT` dari Railway
+- ✅ **Port Configuration**: `main.py` sudah dikonfigurasi untuk menggunakan `$PORT` dari Railway
 - ✅ **Health Check**: Endpoint `/health` tersedia untuk Railway healthcheck
 - ✅ **Database**: Siap untuk PostgreSQL (Railway akan auto-provide `DATABASE_URL`)
 - ✅ **CORS**: Dikonfigurasi untuk production
