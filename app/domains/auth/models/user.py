@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Boolean, Text, Numeric
 from sqlalchemy.orm import relationship
-from app.shared.base_classes.base import BaseModel
+from app.common.base_classes.base import BaseModel
 
 class User(BaseModel):
     """

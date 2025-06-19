@@ -10,7 +10,7 @@ from app.domains.admin.schemas.admin_schemas import (
     MarginConfigUpdate, MarginConfigResponse, PaginatedResponse,
     DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse
 )
-from app.shared.dependencies.admin_auth_deps import get_current_admin, get_current_super_admin
+from app.common.dependencies.admin_auth_deps import get_current_admin, get_current_super_admin
 from app.domains.admin.models.admin import Admin
 
 logger = logging.getLogger(__name__)

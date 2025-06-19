@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from decimal import Decimal
 from datetime import datetime
 import json
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.domains.voucher.repositories.voucher_repository import VoucherRepository
 from app.domains.voucher.models.voucher import Voucher, VoucherUsage, VoucherType, VoucherStatus
 from app.domains.voucher.schemas.voucher_schemas import (

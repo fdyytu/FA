@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 from app.domains.wallet.models.wallet import (
     WalletTransaction, Transfer, TopUpRequest, 
     TransactionType, TransactionStatus, TopUpStatus, PaymentMethod

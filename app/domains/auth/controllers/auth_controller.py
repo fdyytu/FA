@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.shared.base_classes.base_controller import BaseController
-from app.shared.responses.api_response import APIResponse
+from app.common.base_classes.base_controller import BaseController
+from app.common.responses.api_response import APIResponse
 from app.domains.auth.services.auth_service import AuthService
 from app.domains.auth.repositories.user_repository import UserRepository
 from app.domains.auth.models.user import User

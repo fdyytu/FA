@@ -7,7 +7,7 @@ from app.core.database import get_db
 from app.domains.transaction.services.transaction_service import TransactionService
 from app.domains.transaction.schemas.transaction_schemas import TransactionCreate, TransactionUpdate
 from app.domains.transaction.models.transaction import TransactionStatus, TransactionType
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 
 router = APIRouter()
 

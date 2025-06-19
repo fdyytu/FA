@@ -4,9 +4,9 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 
 from app.core.database import get_db
-from app.shared.dependencies.admin_auth_deps import get_current_admin
+from app.common.dependencies.admin_auth_deps import get_current_admin
 from app.domains.admin.models.admin import Admin
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 
 router = APIRouter()
 

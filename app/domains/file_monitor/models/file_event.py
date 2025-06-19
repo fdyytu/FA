@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text
 from sqlalchemy.sql import func
-from app.shared.base_classes.base import Base
+from app.common.base_classes.base import Base
 
 class FileEvent(Base):
     __tablename__ = "file_events"

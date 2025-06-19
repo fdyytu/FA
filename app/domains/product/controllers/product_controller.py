@@ -1,7 +1,7 @@
 from typing import List, Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 from app.domains.product.services.product_service import ProductService
 from app.domains.product.repositories.product_repository import ProductRepository
 from app.domains.product.schemas.product_schemas import (

@@ -9,7 +9,7 @@ from typing import Dict, Optional, Callable
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.config.constants import RateLimits, StatusMessages
+from app.infrastructure.config.constants import RateLimits, StatusMessages
 from app.infrastructure.config.settings import settings
 import logging
 

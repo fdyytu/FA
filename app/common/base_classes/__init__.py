@@ -1,5 +1,5 @@
 """Models package."""
-from app.shared.base_classes.base import Base, BaseModel
+from app.common.base_classes.base import Base, BaseModel
 
 # Import models from domains that exist
 try:

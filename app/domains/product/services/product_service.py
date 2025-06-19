@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import HTTPException, status
 from decimal import Decimal
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.domains.product.repositories.product_repository import ProductRepository
 from app.domains.product.models.product import Product, ProductStatus
 from app.domains.product.schemas.product_schemas import (

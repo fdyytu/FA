@@ -4,7 +4,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import json
 
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog
 from app.domains.auth.models.user import User
 from app.domains.ppob.models.ppob import PPOBProduct, PPOBTransaction, TransactionStatus
