@@ -7,7 +7,7 @@
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "python run.py",
+    "startCommand": "python main.py",
     "healthcheckPath": "/health",
     "sleepApplication": false,
     "healthcheckTimeout": 600,
