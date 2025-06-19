@@ -5,7 +5,7 @@ from pathlib import Path
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "${{ Postgres.DATABASE_URL }}"
+    DATABASE_URL: str = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost/ppob_db')
     DATABASE_TEST_URL: Optional[str] = None
     
     # Security
