@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from fastapi import HTTPException, status
 from decimal import Decimal
 
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.domains.ppob.repositories.ppob_repository import PPOBRepository
 from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBCategory, TransactionStatus
 from app.domains.ppob.schemas.ppob_schemas import (

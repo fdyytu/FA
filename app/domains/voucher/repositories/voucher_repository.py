@@ -2,7 +2,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from datetime import datetime
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 from app.domains.voucher.models.voucher import Voucher, VoucherUsage, VoucherStatus
 
 class VoucherRepository:

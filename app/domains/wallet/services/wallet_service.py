@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from decimal import Decimal
 from datetime import datetime
 
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.domains.wallet.repositories.wallet_repository import WalletRepository
 from app.domains.wallet.models.wallet import (
     WalletTransaction, Transfer, TopUpRequest,

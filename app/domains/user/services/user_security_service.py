@@ -5,7 +5,7 @@ from app.schemas.user_profile import (
     UserPasswordChange, UserSecuritySettings
 )
 from app.utils.exceptions import HTTPException
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.common.security.auth_security import verify_password, get_password_hash
 import logging
 import pyotp

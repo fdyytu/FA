@@ -10,7 +10,7 @@ import json
 
 from app.api.deps import get_db
 from app.callbacks.callback_manager import get_callback_manager, CallbackRouter
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 
 logger = logging.getLogger(__name__)
 

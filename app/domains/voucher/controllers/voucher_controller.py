@@ -1,7 +1,7 @@
 from typing import List, Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 from app.domains.voucher.services.voucher_service import VoucherService
 from app.domains.voucher.repositories.voucher_repository import VoucherRepository
 from app.domains.voucher.schemas.voucher_schemas import (

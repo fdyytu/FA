@@ -7,7 +7,7 @@ from app.schemas.user_profile import (
     UserDetailResponse, UserListResponse, UserProfileResponse
 )
 from app.common.exceptions.custom_exceptions import HTTPException
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.common.security.auth_security import get_password_hash
 import logging
 import secrets

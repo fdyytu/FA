@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, func
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 from app.domains.product.models.product import Product, ProductStatus
 
 class ProductRepository:

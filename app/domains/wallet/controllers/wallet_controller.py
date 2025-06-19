@@ -1,8 +1,8 @@
 from typing import List, Annotated, Optional
 from fastapi import APIRouter, Depends, HTTPException, status, Query, File, UploadFile
 from sqlalchemy.orm import Session
-from app.shared.base_classes.base_controller import BaseController
-from app.shared.responses.api_response import APIResponse
+from app.common.base_classes.base_controller import BaseController
+from app.common.responses.api_response import APIResponse
 from app.domains.wallet.services.wallet_service import WalletService
 from app.domains.wallet.repositories.wallet_repository import WalletRepository
 from app.domains.wallet.schemas.wallet_schemas import (

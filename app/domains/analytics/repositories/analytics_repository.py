@@ -6,7 +6,7 @@ from app.domains.analytics.models.analytics import (
     AnalyticsEvent, ProductAnalytics, VoucherAnalytics, DashboardMetrics
 )
 from app.domains.analytics.schemas.analytics_schemas import AnalyticsEventCreate, AnalyticsFilter
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 import json
 import logging
 

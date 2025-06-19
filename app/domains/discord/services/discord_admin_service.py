@@ -7,7 +7,7 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 
 logger = logging.getLogger(__name__)
 

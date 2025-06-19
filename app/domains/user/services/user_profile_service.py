@@ -8,7 +8,7 @@ from app.schemas.user_profile import (
     UserDetailResponse
 )
 from app.utils.exceptions import HTTPException
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 import logging
 import os
 import uuid

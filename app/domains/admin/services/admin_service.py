@@ -6,7 +6,7 @@ import json
 import hashlib
 from decimal import Decimal
 
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, MarginType
 from app.domains.admin.repositories.admin_repository import (
     AdminRepository, AdminConfigRepository, PPOBMarginRepository,

@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, Numeric, Boolean, Text, Enum, ForeignKey
 from sqlalchemy.orm import relationship
-from app.shared.base_classes.base import BaseModel
+from app.common.base_classes.base import BaseModel
 import enum
 
 class ProductStatus(enum.Enum):

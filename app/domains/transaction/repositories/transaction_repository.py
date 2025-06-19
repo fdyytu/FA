@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from app.domains.transaction.models.transaction import Transaction, TransactionLog, TransactionStatus, TransactionType
 from app.domains.transaction.schemas.transaction_schemas import TransactionCreate, TransactionUpdate
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 import uuid
 import json
 

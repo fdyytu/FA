@@ -8,8 +8,8 @@ from app.domains.transaction.schemas.transaction_schemas import (
     TransactionCreate, TransactionUpdate, TransactionResponse, 
     TransactionListResponse, TransactionStatsResponse
 )
-from app.shared.base_classes.base_service import BaseService
-from app.shared.responses.api_response import APIResponse
+from app.common.base_classes.base_service import BaseService
+from app.common.responses.api_response import APIResponse
 
 class TransactionService(BaseService):
     def __init__(self, db: Session):

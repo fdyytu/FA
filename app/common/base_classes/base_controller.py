@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, List, Optional, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.shared.responses.api_response import APIResponse
+from app.common.responses.api_response import APIResponse
 
 T = TypeVar('T')  # Model type
 S = TypeVar('S')  # Service type

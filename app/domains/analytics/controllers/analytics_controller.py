@@ -11,8 +11,8 @@ from app.domains.analytics.schemas.analytics_schemas import (
     GeographicDataResponse, RecentActivityResponse, RecentActivityItem
 )
 from app.core.database import get_db
-from app.shared.responses.api_response import create_response
-from app.shared.dependencies.admin_auth_deps import get_current_admin
+from app.common.responses.api_response import create_response
+from app.common.dependencies.admin_auth_deps import get_current_admin
 from app.domains.admin.models.admin import Admin
 import logging
 

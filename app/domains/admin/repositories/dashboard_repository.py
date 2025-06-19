@@ -6,7 +6,7 @@ import logging
 
 from app.domains.auth.models.user import User
 from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBCategory, TransactionStatus
-from app.shared.base_classes.base_repository import BaseRepository
+from app.common.base_classes.base_repository import BaseRepository
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ from app.domains.analytics.schemas.analytics_schemas import (
     AnalyticsEventCreate, AnalyticsFilter, DashboardSummary, ChartData, ChartDataPoint
 )
 from app.domains.analytics.models.analytics import AnalyticsEvent
-from app.shared.base_classes.base_service import BaseService
+from app.common.base_classes.base_service import BaseService
 import logging
 from decimal import Decimal
 
