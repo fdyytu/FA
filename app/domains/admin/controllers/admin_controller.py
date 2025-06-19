@@ -1172,16 +1172,9 @@ class TransactionController:
                 return APIResponse.success(data=recent_transactions)
                 
             except Exception as e:
-                error_msg = str(e)
-                # Filter out "success" messages yang bukan error sebenarnya
-                if error_msg.lower() == "success" or "success" in error_msg.lower():
-                    logger.warning(f"Caught 'success' exception in get_recent_transactions: {e}")
-                    # Return empty data instead of error
-                    return APIResponse.success(data=[], message="Data transaksi terbaru berhasil dimuat")
-                else:
-                    logger.error(f"Error getting recent transactions: {e}")
-                    # Return empty data instead of raising exception
-                    return APIResponse.success(data=[], message="Data transaksi terbaru tidak tersedia saat ini")
+                logger.error(f"Error getting recent transactions: {e}")
+                # Return empty data instead of raising exception
+                return APIResponse.success(data=[], message="Data transaksi terbaru tidak tersedia saat ini")
         
         @self.router.get("/")
         async def get_transactions(
