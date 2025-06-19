@@ -95,6 +95,13 @@ try:
 except ImportError:
     pass
 
+# Include Analytics Tracking endpoints
+try:
+    from app.domains.analytics.controllers.tracking_controller import router as tracking_router
+    api_router.include_router(tracking_router, prefix="/analytics", tags=["analytics-tracking"])
+except ImportError:
+    pass
+
 # Include Admin Analytics endpoints
 try:
     from app.domains.analytics.controllers.analytics_controller import admin_analytics_router
