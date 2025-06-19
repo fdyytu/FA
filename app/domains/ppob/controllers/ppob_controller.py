@@ -7,7 +7,7 @@ from app.shared.responses.api_response import APIResponse
 router = APIRouter()
 
 @router.get("/categories")
-async def get_categories(db: Session = Depends(get_db)):
+async def get_categories():
     """Get available PPOB categories"""
     try:
         # Return simple category list
@@ -19,18 +19,20 @@ async def get_categories(db: Session = Depends(get_db)):
             {"id": 5, "name": "TV Cable", "code": "TV", "description": "TV Kabel"}
         ]
         
-        return APIResponse.success(
-            data=categories,
-            message="Kategori PPOB berhasil diambil"
-        )
+        return {
+            "success": True,
+            "message": "Kategori PPOB berhasil diambil",
+            "data": categories
+        }
     except Exception as e:
-        return APIResponse.error(f"Gagal mengambil kategori: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Gagal mengambil kategori: {str(e)}",
+            "data": None
+        }
 
 @router.get("/products/{category_id}")
-async def get_products_by_category(
-    category_id: int,
-    db: Session = Depends(get_db)
-):
+async def get_products_by_category(category_id: int):
     """Get products by category"""
     try:
         # Return simple product list based on category
@@ -46,37 +48,46 @@ async def get_products_by_category(
             }
         ]
         
-        return APIResponse.success(
-            data=products,
-            message=f"Produk kategori {category_id} berhasil diambil"
-        )
+        return {
+            "success": True,
+            "message": f"Produk kategori {category_id} berhasil diambil",
+            "data": products
+        }
     except Exception as e:
-        return APIResponse.error(f"Gagal mengambil produk: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Gagal mengambil produk: {str(e)}",
+            "data": None
+        }
 
 @router.get("/transactions")
 async def get_user_transactions(
-    db: Session = Depends(get_db),
     page: int = Query(1, ge=1),
     per_page: int = Query(20, ge=1, le=100)
 ):
     """Get user transactions"""
     try:
         # Return empty transaction list for now
-        return APIResponse.success(
-            data={
+        return {
+            "success": True,
+            "message": "Transaksi berhasil diambil",
+            "data": {
                 "transactions": [],
                 "total": 0,
                 "page": page,
                 "per_page": per_page,
                 "total_pages": 0
-            },
-            message="Transaksi berhasil diambil"
-        )
+            }
+        }
     except Exception as e:
-        return APIResponse.error(f"Gagal mengambil transaksi: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Gagal mengambil transaksi: {str(e)}",
+            "data": None
+        }
 
 @router.get("/stats")
-async def get_transaction_stats(db: Session = Depends(get_db)):
+async def get_transaction_stats():
     """Get transaction statistics"""
     try:
         stats = {
@@ -89,9 +100,14 @@ async def get_transaction_stats(db: Session = Depends(get_db)):
             "success_rate": 0.0
         }
         
-        return APIResponse.success(
-            data=stats,
-            message="Statistik berhasil diambil"
-        )
+        return {
+            "success": True,
+            "message": "Statistik berhasil diambil",
+            "data": stats
+        }
     except Exception as e:
-        return APIResponse.error(f"Gagal mengambil statistik: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Gagal mengambil statistik: {str(e)}",
+            "data": None
+        }
