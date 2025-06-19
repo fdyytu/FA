@@ -902,7 +902,7 @@ class DiscordAdminController:
                 action="VIEW",
                 resource="discord_logs",
                 resource_id=None,
-                new_values=f"Viewed Discord logs page {page}"
+                new_values=json.dumps({"action": "viewed_discord_logs", "page": page})
             )
             
             return result
@@ -927,7 +927,7 @@ class DiscordAdminController:
                 action="VIEW",
                 resource="discord_commands",
                 resource_id=None,
-                new_values=f"Viewed recent Discord commands (limit: {limit})"
+                new_values=json.dumps({"action": "viewed_recent_discord_commands", "limit": limit})
             )
             
             return result
@@ -968,7 +968,7 @@ class DiscordAdminController:
                 action="VIEW",
                 resource="discord_commands",
                 resource_id=None,
-                new_values=f"Viewed Discord commands page {page}"
+                new_values=json.dumps({"action": "viewed_discord_commands", "page": page})
             )
             
             return result
@@ -992,7 +992,7 @@ class DiscordAdminController:
                 action="VIEW",
                 resource="discord_stats",
                 resource_id=None,
-                new_values="Viewed Discord statistics"
+                new_values=json.dumps({"action": "viewed_discord_statistics"})
             )
             
             return result
@@ -1027,7 +1027,7 @@ class DiscordAdminController:
                     action="VIEW",
                     resource="discord_bots",
                     resource_id=None,
-                    new_values="Viewed Discord bots list"
+                    new_values=json.dumps({"action": "viewed_discord_bots_list"})
                 )
                 
                 return APIResponse.success(data=bots_data)
@@ -1060,7 +1060,7 @@ class DiscordAdminController:
                     action="VIEW",
                     resource="discord_worlds",
                     resource_id=None,
-                    new_values="Viewed Discord worlds/guilds list"
+                    new_values=json.dumps({"action": "viewed_discord_worlds_list"})
                 )
                 
                 return APIResponse.success(data=guilds_info)
@@ -1085,7 +1085,7 @@ class DiscordAdminController:
                     action="UPDATE",
                     resource="discord_bot",
                     resource_id=bot_id,
-                    new_values=f"Updated Discord bot {bot_id}"
+                    new_values=json.dumps({"action": "updated_discord_bot", "bot_id": bot_id})
                 )
                 
                 return APIResponse.success(message=f"Bot {bot_id} configuration updated")
@@ -1110,7 +1110,7 @@ class DiscordAdminController:
                     action="DELETE",
                     resource="discord_bot",
                     resource_id=bot_id,
-                    new_values=f"Deleted Discord bot {bot_id}"
+                    new_values=json.dumps({"action": "deleted_discord_bot", "bot_id": bot_id})
                 )
                 
                 return APIResponse.success(message=f"Bot {bot_id} deleted")
@@ -1139,7 +1139,7 @@ class DiscordAdminController:
                     action="START",
                     resource="discord_bot",
                     resource_id=bot_id,
-                    new_values=f"Started Discord bot {bot_id}"
+                    new_values=json.dumps({"action": "started_discord_bot", "bot_id": bot_id, "success": success})
                 )
                 
                 if success:
@@ -1171,7 +1171,7 @@ class DiscordAdminController:
                     action="STOP",
                     resource="discord_bot",
                     resource_id=bot_id,
-                    new_values=f"Stopped Discord bot {bot_id}"
+                    new_values=json.dumps({"action": "stopped_discord_bot", "bot_id": bot_id, "success": success})
                 )
                 
                 if success:
@@ -1304,7 +1304,7 @@ transaction_controller = TransactionController()
 router.include_router(discord_admin_controller.router, prefix="/discord", tags=["Discord Admin"])
 
 # Include Transaction routes  
-router.include_router(transaction_controller.router, prefix="/transactions-admin", tags=["Admin Transactions Internal"])
+router.include_router(transaction_controller.router, prefix="/transactions", tags=["Admin Transactions Internal"])
 
 
 
