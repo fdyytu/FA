@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import logging
 
 from app.core.database import get_db
-from app.domains.admin.services.admin_service import AdminAuthService
+from app.domains.admin.services.admin_auth_service import AdminAuthService
 from app.domains.admin.schemas.admin_schemas import (
     AdminLogin, AdminLoginResponse, AdminResponse
 )
