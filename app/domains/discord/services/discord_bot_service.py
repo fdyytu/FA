@@ -5,6 +5,7 @@ Service utama untuk mengelola Discord bot yang terintegrasi dengan backend
 import asyncio
 import logging
 from typing import Optional, Dict, Any
+from datetime import datetime, timezone
 import discord
 from discord.ext import commands
 from sqlalchemy.orm import Session
@@ -21,9 +22,11 @@ class DiscordBotService:
     def __init__(self):
         self.bot: Optional[commands.Bot] = None
         self.is_running = False
+        self.is_ready = False
         self.token: Optional[str] = None
         self.event_handler: Optional[DiscordBotEventHandler] = None
         self.slash_handler: Optional[DiscordSlashCommandHandler] = None
+        self.last_connect = None
         
     async def initialize(self, token: str, command_prefix: str = "!") -> bool:
         """Initialize Discord bot"""
@@ -46,6 +49,18 @@ class DiscordBotService:
             # Setup event handlers
             self.event_handler = DiscordBotEventHandler(self.bot)
             self.slash_handler = DiscordSlashCommandHandler(self.bot)
+            
+            # Setup bot ready event
+            @self.bot.event
+            async def on_ready():
+                self.is_ready = True
+                self.last_connect = datetime.now(timezone.utc)
+                logger.info(f"Bot {self.bot.user} is ready!")
+            
+            @self.bot.event
+            async def on_disconnect():
+                self.is_ready = False
+                logger.info("Bot disconnected")
             
             # Setup additional commands
             await self._setup_commands()

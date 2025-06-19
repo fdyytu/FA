@@ -1,106 +1,71 @@
 """
 Discord Admin Schemas
-Schema untuk endpoint admin Discord
+Schemas untuk Discord admin operations
 """
-from pydantic import BaseModel, Field
-from typing import Optional, List
+from pydantic import BaseModel
+from typing import Optional, List, Dict, Any
 from datetime import datetime
-from decimal import Decimal
-
-
-class DiscordLogResponse(BaseModel):
-    """Response schema untuk Discord Log"""
-    id: int
-    user_id: Optional[int] = None
-    bot_id: Optional[int] = None
-    level: str
-    message: str
-    action: Optional[str] = None
-    channel_id: Optional[str] = None
-    guild_id: Optional[str] = None
-    error_details: Optional[str] = None
-    extra_data: Optional[str] = None
-    created_at: datetime
-    
-    # User info jika ada
-    user_discord_username: Optional[str] = None
-    user_discord_id: Optional[str] = None
-    
-    class Config:
-        from_attributes = True
-
-
-class DiscordCommandResponse(BaseModel):
-    """Response schema untuk Discord Command"""
-    id: int
-    user_id: Optional[int] = None
-    command_name: str
-    command_args: Optional[str] = None
-    channel_id: str
-    guild_id: str
-    success: bool
-    execution_time: Optional[Decimal] = None
-    error_message: Optional[str] = None
-    response_message: Optional[str] = None
-    created_at: datetime
-    
-    # User info jika ada
-    user_discord_username: Optional[str] = None
-    user_discord_id: Optional[str] = None
-    
-    class Config:
-        from_attributes = True
 
 
 class DiscordLogFilter(BaseModel):
-    """Filter untuk Discord Logs"""
+    """Filter untuk Discord logs"""
     level: Optional[str] = None
     action: Optional[str] = None
     bot_id: Optional[int] = None
     user_id: Optional[int] = None
     guild_id: Optional[str] = None
     channel_id: Optional[str] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
 
 
 class DiscordCommandFilter(BaseModel):
-    """Filter untuk Discord Commands"""
+    """Filter untuk Discord commands"""
     command_name: Optional[str] = None
     success: Optional[bool] = None
     user_id: Optional[int] = None
     guild_id: Optional[str] = None
     channel_id: Optional[str] = None
-    start_date: Optional[datetime] = None
-    end_date: Optional[datetime] = None
+
+
+class DiscordLogResponse(BaseModel):
+    """Response untuk Discord log"""
+    id: int
+    level: str
+    action: str
+    bot_id: int
+    user_id: int
+    guild_id: str
+    channel_id: str
+    message: str
+    timestamp: str
+
+
+class DiscordCommandResponse(BaseModel):
+    """Response untuk Discord command"""
+    id: int
+    command_name: str
+    user_id: int
+    username: str
+    guild_id: str
+    channel_id: str
+    success: bool
+    response_time: int
+    timestamp: str
+    error_message: Optional[str] = None
 
 
 class DiscordStatsResponse(BaseModel):
-    """Response schema untuk Discord Statistics"""
-    total_logs: int
-    logs_by_level: dict
-    total_commands: int
-    successful_commands: int
-    failed_commands: int
-    top_commands: List[dict]
-    active_users: int
-    total_bots: int
-    active_bots: int
+    """Response untuk Discord statistics"""
+    success: bool
+    data: Dict[str, Any]
 
 
 class PaginatedDiscordLogsResponse(BaseModel):
-    """Response schema untuk paginated Discord logs"""
-    items: List[DiscordLogResponse]
-    total: int
-    page: int
-    size: int
-    pages: int
+    """Response untuk paginated Discord logs"""
+    success: bool
+    data: Dict[str, Any]
 
 
 class PaginatedDiscordCommandsResponse(BaseModel):
-    """Response schema untuk paginated Discord commands"""
-    items: List[DiscordCommandResponse]
-    total: int
-    page: int
-    size: int
-    pages: int
+    """Response untuk paginated Discord commands"""
+    success: bool
+    data: Dict[str, Any]
