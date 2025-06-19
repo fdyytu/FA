@@ -10,7 +10,7 @@ from app.shared.responses.api_response import APIResponse
 
 router = APIRouter()
 
-@router.get("/transactions/recent")
+@router.get("/recent")
 async def list_recent_transactions(
     limit: int = Query(5, ge=1, le=50, description="Jumlah transaksi terbaru"),
     current_admin: Admin = Depends(get_current_admin),
@@ -78,10 +78,11 @@ async def list_recent_transactions(
         # Batasi sesuai limit yang diminta
         recent_transactions = mock_transactions[:limit]
         
-        return APIResponse.success(
-            data=recent_transactions,
-            message=f"Berhasil mengambil {len(recent_transactions)} transaksi terbaru"
-        )
+        return {
+            "success": True,
+            "data": recent_transactions,
+            "message": f"Berhasil mengambil {len(recent_transactions)} transaksi terbaru"
+        }
         
     except Exception as e:
         raise HTTPException(
@@ -89,7 +90,7 @@ async def list_recent_transactions(
             detail=f"Gagal mengambil transaksi terbaru: {str(e)}"
         )
 
-@router.get("/transactions")
+@router.get("/")
 async def list_all_transactions(
     page: int = Query(1, ge=1, description="Halaman"),
     size: int = Query(10, ge=1, le=100, description="Jumlah per halaman"),
@@ -130,8 +131,9 @@ async def list_all_transactions(
         end = start + size
         transactions = all_transactions[start:end]
         
-        return APIResponse.success(
-            data={
+        return {
+            "success": True,
+            "data": {
                 "transactions": transactions,
                 "pagination": {
                     "page": page,
@@ -140,8 +142,8 @@ async def list_all_transactions(
                     "pages": (total + size - 1) // size
                 }
             },
-            message=f"Berhasil mengambil {len(transactions)} transaksi"
-        )
+            "message": f"Berhasil mengambil {len(transactions)} transaksi"
+        }
         
     except Exception as e:
         raise HTTPException(
@@ -149,7 +151,7 @@ async def list_all_transactions(
             detail=f"Gagal mengambil transaksi: {str(e)}"
         )
 
-@router.get("/transactions/stats")
+@router.get("/stats")
 async def list_transaction_stats(
     current_admin: Admin = Depends(get_current_admin),
     db: Session = Depends(get_db)
@@ -176,10 +178,11 @@ async def list_transaction_stats(
             ]
         }
         
-        return APIResponse.success(
-            data=stats,
-            message="Berhasil mengambil statistik transaksi"
-        )
+        return {
+            "success": True,
+            "data": stats,
+            "message": "Berhasil mengambil statistik transaksi"
+        }
         
     except Exception as e:
         raise HTTPException(
