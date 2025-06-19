@@ -424,15 +424,37 @@ class DashboardController:
             db: Session = Depends(get_db)
         ):
             """Ambil data dashboard"""
-            dashboard_service = DashboardService(db)
-            dashboard_data = dashboard_service.get_dashboard_data()
-            
-            # Since service now handles errors and returns empty data,
-            # we can directly return the response
-            return APIResponse.success(
-                data=dashboard_data,
-                message="Data dashboard berhasil dimuat"
-            )
+            try:
+                dashboard_service = DashboardService(db)
+                dashboard_data = dashboard_service.get_dashboard_data()
+                
+                # Since service now handles errors and returns empty data,
+                # we can directly return the response
+                return APIResponse.success(
+                    data=dashboard_data,
+                    message="Data dashboard berhasil dimuat"
+                )
+            except Exception as e:
+                logger.error(f"Error in get_dashboard: {str(e)}")
+                # Return empty dashboard data
+                from app.domains.admin.schemas.admin_schemas import DashboardStats
+                empty_dashboard = {
+                    "stats": {
+                        "total_users": 0,
+                        "active_users": 0,
+                        "total_transactions": 0,
+                        "total_revenue": 0,
+                        "pending_transactions": 0,
+                        "failed_transactions": 0
+                    },
+                    "recent_transactions": [],
+                    "transaction_trends": [],
+                    "top_products": []
+                }
+                return APIResponse.success(
+                    data=empty_dashboard,
+                    message="Data dashboard berhasil dimuat (data default)"
+                )
         
         @self.router.get("/stats")
         async def get_dashboard_stats(
@@ -444,22 +466,25 @@ class DashboardController:
                 dashboard_service = DashboardService(db)
                 stats = dashboard_service.get_dashboard_stats()
                 
-                # Validate stats data
+                # Validate and clean stats data - remove extra fields that don't belong in DashboardStats
                 if not isinstance(stats, dict):
                     logger.warning(f"Invalid stats data type: {type(stats)}")
-                    stats = {
-                        "total_users": 0,
-                        "active_users": 0,
-                        "total_transactions": 0,
-                        "total_revenue": 0,
-                        "today_transactions": 0,
-                        "today_revenue": 0,
-                        "pending_transactions": 0,
-                        "failed_transactions": 0
-                    }
+                    stats = {}
+                
+                # Extract only the fields that belong to DashboardStats schema
+                clean_stats = {
+                    "total_users": stats.get("total_users", 0),
+                    "active_users": stats.get("active_users", 0),
+                    "total_transactions": stats.get("total_transactions", 0),
+                    "total_revenue": stats.get("total_revenue", 0),
+                    "today_transactions": stats.get("today_transactions", 0),
+                    "today_revenue": stats.get("today_revenue", 0),
+                    "pending_transactions": stats.get("pending_transactions", 0),
+                    "failed_transactions": stats.get("failed_transactions", 0)
+                }
                 
                 return APIResponse.success(
-                    data=stats,
+                    data=clean_stats,
                     message="Statistik dashboard berhasil dimuat"
                 )
                 

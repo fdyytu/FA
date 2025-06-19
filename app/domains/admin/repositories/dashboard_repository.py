@@ -47,14 +47,19 @@ class DashboardRepository(BaseRepository):
             total_revenue = 0
             
             for tx in transactions:
-                if tx.status == TransactionStatus.PENDING:
-                    pending_transactions += 1
-                elif tx.status == TransactionStatus.FAILED:
-                    failed_transactions += 1
-                elif tx.status == TransactionStatus.SUCCESS:
-                    total_revenue += float(tx.total_amount or 0)
-                    
-                total_transactions += 1
+                try:
+                    if tx.status == TransactionStatus.PENDING:
+                        pending_transactions += 1
+                    elif tx.status == TransactionStatus.FAILED:
+                        failed_transactions += 1
+                    elif tx.status == TransactionStatus.SUCCESS:
+                        total_revenue += float(tx.total_amount or 0)
+                        
+                    total_transactions += 1
+                except Exception as e:
+                    logger.error(f"Error processing transaction status {tx.id}: {str(e)}")
+                    total_transactions += 1
+                    continue
             
             # Get today's stats
             today = datetime.utcnow().date()
@@ -64,14 +69,18 @@ class DashboardRepository(BaseRepository):
                 PPOBTransaction.created_at >= today_start
             ).count()
             
-            today_revenue = self.db.query(
-                func.coalesce(func.sum(PPOBTransaction.total_amount), 0)
-            ).filter(
-                and_(
-                    PPOBTransaction.created_at >= today_start,
-                    PPOBTransaction.status == TransactionStatus.SUCCESS
-                )
-            ).scalar()
+            try:
+                today_revenue = self.db.query(
+                    func.coalesce(func.sum(PPOBTransaction.total_amount), 0)
+                ).filter(
+                    and_(
+                        PPOBTransaction.created_at >= today_start,
+                        PPOBTransaction.status == TransactionStatus.SUCCESS
+                    )
+                ).scalar()
+            except Exception as e:
+                logger.error(f"Error getting today revenue: {str(e)}")
+                today_revenue = 0
             
             stats = {
                 "total_users": total_users,
