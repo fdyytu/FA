@@ -4,18 +4,20 @@ from sqlalchemy.orm import sessionmaker, Session
 from typing import Generator
 import logging
 
-import os
+from app.infrastructure.config.settings import settings
 
-# PostgreSQL connection - support Railway
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost/ppob_db')
-if DATABASE_URL.startswith('postgres://'):
-    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+# Use settings for database configuration
+engine = create_engine(
+    settings.DATABASE_URL,
+    pool_size=settings.DB_POOL_SIZE if settings.is_postgresql else 5,
+    max_overflow=settings.DB_MAX_OVERFLOW if settings.is_postgresql else 10,
+    pool_timeout=settings.DB_POOL_TIMEOUT if settings.is_postgresql else 30,
+    pool_recycle=settings.DB_POOL_RECYCLE if settings.is_postgresql else 3600,
+    connect_args={"check_same_thread": False} if settings.is_sqlite else {},
+    echo=settings.DEBUG,
+)
 
-SQLALCHEMY_DATABASE_URL = DATABASE_URL
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 Base = declarative_base()
 
 class DatabaseManager:
