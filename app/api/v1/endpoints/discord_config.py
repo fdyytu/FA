@@ -1,249 +1,76 @@
-"""
-Discord Configuration API Endpoints
-API untuk mengelola konfigurasi Discord Bot dari dashboard
-"""
-from fastapi import APIRouter, Depends, HTTPException, status
+
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from typing import List, Dict, Any
-import logging
+from typing import Dict, Any
 
 from app.core.database import get_db
-from app.domains.discord.services.discord_config_service import discord_config_service
+from app.domains.discord.controllers.discord_config_controller import DiscordConfigController
 from app.domains.discord.schemas.discord_config_schemas import (
-    DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigResponse,
-    DiscordConfigTest, DiscordConfigTestResult
+    DiscordConfigCreate, DiscordConfigUpdate, DiscordConfigTest
 )
 
-logger = logging.getLogger(__name__)
 router = APIRouter()
 
-
-@router.post("/config", response_model=Dict[str, Any])
+@router.post("/config")
 async def create_discord_config(
     config_data: DiscordConfigCreate,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """Buat konfigurasi Discord baru"""
-    try:
-        # Create new config
-        db_config = discord_config_service.create_config(db, config_data)
-        
-        return {
-            "success": True,
-            "message": "Konfigurasi Discord berhasil dibuat",
-            "data": DiscordConfigResponse.from_orm(db_config)
-        }
-        
-    except Exception as e:
-        logger.error(f"Error creating Discord config: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal membuat konfigurasi: {str(e)}"
-        )
+    return await DiscordConfigController.create_config(config_data, db)
 
-
-@router.get("/config", response_model=Dict[str, Any])
+@router.get("/config")
 async def get_discord_configs(
     skip: int = 0,
     limit: int = 100,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """Ambil semua konfigurasi Discord"""
-    try:
-        configs = discord_config_service.get_all_configs(db, skip=skip, limit=limit)
-        total = len(configs)
-        
-        return {
-            "success": True,
-            "data": {
-                "configs": [DiscordConfigResponse.from_orm(config) for config in configs],
-                "total": total,
-                "skip": skip,
-                "limit": limit
-            }
-        }
-        
-    except Exception as e:
-        logger.error(f"Error getting Discord configs: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal mengambil konfigurasi: {str(e)}"
-        )
+    return await DiscordConfigController.get_all_configs(skip, limit, db)
 
-
-@router.get("/config/active", response_model=Dict[str, Any])
-async def get_active_discord_config(db: Session = Depends(get_db)):
+@router.get("/config/active")
+async def get_active_discord_config(
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
     """Ambil konfigurasi Discord yang aktif"""
-    try:
-        config = discord_config_service.get_active_config(db)
-        
-        if not config:
-            return {
-                "success": True,
-                "message": "Tidak ada konfigurasi aktif",
-                "data": None
-            }
-        
-        return {
-            "success": True,
-            "data": DiscordConfigResponse.from_orm(config)
-        }
-        
-    except Exception as e:
-        logger.error(f"Error getting active Discord config: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal mengambil konfigurasi aktif: {str(e)}"
-        )
+    return await DiscordConfigController.get_active_config(db)
 
-
-@router.get("/config/{config_id}", response_model=Dict[str, Any])
+@router.get("/config/{config_id}")
 async def get_discord_config(
     config_id: int,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """Ambil konfigurasi Discord berdasarkan ID"""
-    try:
-        config = discord_config_service.get_config(db, config_id)
-        
-        if not config:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Konfigurasi tidak ditemukan"
-            )
-        
-        return {
-            "success": True,
-            "data": DiscordConfigResponse.from_orm(config)
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error getting Discord config: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal mengambil konfigurasi: {str(e)}"
-        )
+    return await DiscordConfigController.get_config(config_id, db)
 
-
-@router.put("/config/{config_id}", response_model=Dict[str, Any])
+@router.put("/config/{config_id}")
 async def update_discord_config(
     config_id: int,
     config_data: DiscordConfigUpdate,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """Update konfigurasi Discord"""
-    try:
-        db_config = discord_config_service.update_config(db, config_id, config_data)
-        
-        if not db_config:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Konfigurasi tidak ditemukan"
-            )
-        
-        return {
-            "success": True,
-            "message": "Konfigurasi Discord berhasil diupdate",
-            "data": DiscordConfigResponse.from_orm(db_config)
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error updating Discord config: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal mengupdate konfigurasi: {str(e)}"
-        )
+    return await DiscordConfigController.update_config(config_id, config_data, db)
 
-
-@router.delete("/config/{config_id}", response_model=Dict[str, Any])
+@router.delete("/config/{config_id}")
 async def delete_discord_config(
     config_id: int,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """Hapus konfigurasi Discord"""
-    try:
-        success = discord_config_service.delete_config(db, config_id)
-        
-        if not success:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Konfigurasi tidak ditemukan"
-            )
-        
-        return {
-            "success": True,
-            "message": "Konfigurasi Discord berhasil dihapus"
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error deleting Discord config: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal menghapus konfigurasi: {str(e)}"
-        )
+    return await DiscordConfigController.delete_config(config_id, db)
 
-
-@router.post("/config/test", response_model=Dict[str, Any])
-async def test_discord_config(config_test: DiscordConfigTest):
+@router.post("/config/test")
+async def test_discord_config(
+    config_test: DiscordConfigTest
+) -> Dict[str, Any]:
     """Test validitas konfigurasi Discord"""
-    try:
-        result = await discord_config_service.test_token(
-            config_test.token,
-            config_test.guild_id
-        )
-        
-        return {
-            "success": result.get('success', False),
-            "message": result.get('message', 'Test completed'),
-            "data": result
-        }
-        
-    except Exception as e:
-        logger.error(f"Error testing Discord config: {e}")
-        return {
-            "success": False,
-            "message": f"Error testing configuration: {str(e)}",
-            "data": {
-                "success": False,
-                "errors": [str(e)]
-            }
-        }
+    return await DiscordConfigController.test_config(config_test)
 
-
-@router.post("/config/{config_id}/activate", response_model=Dict[str, Any])
+@router.post("/config/{config_id}/activate")
 async def activate_discord_config(
     config_id: int,
     db: Session = Depends(get_db)
-):
+) -> Dict[str, Any]:
     """Aktifkan konfigurasi Discord"""
-    try:
-        # Update config to active
-        config_data = DiscordConfigUpdate(is_active=True)
-        db_config = discord_config_service.update_config(db, config_id, config_data)
-        
-        if not db_config:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Konfigurasi tidak ditemukan"
-            )
-        
-        return {
-            "success": True,
-            "message": "Konfigurasi Discord berhasil diaktifkan",
-            "data": DiscordConfigResponse.from_orm(db_config)
-        }
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error activating Discord config: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Gagal mengaktifkan konfigurasi: {str(e)}"
-        )
+    return await DiscordConfigController.activate_config(config_id, db)

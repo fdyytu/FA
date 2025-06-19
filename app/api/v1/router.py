@@ -7,31 +7,84 @@ api_router = APIRouter()
 api_router.include_router(health.router, tags=["health"])
 api_router.include_router(cache.router, prefix="/cache", tags=["cache"])
 
-# Include Discord router
-try:
-    from app.domains.discord.controllers.discord_controller import router as discord_router
-    api_router.include_router(discord_router, prefix="/discord", tags=["discord"])
-except ImportError:
-    pass
-
-# Include Discord bot management endpoints
+# Include Discord endpoints (API endpoints)
 try:
     from app.api.v1.endpoints.discord_bot import router as discord_bot_router
-    api_router.include_router(discord_bot_router, prefix="/bot", tags=["discord-bot"])
+    api_router.include_router(discord_bot_router, prefix="/api/discord/bot", tags=["discord-bot-api"])
 except ImportError:
     pass
 
-# Include Discord configuration endpoints
 try:
     from app.api.v1.endpoints.discord_config import router as discord_config_router
-    api_router.include_router(discord_config_router, prefix="/discord", tags=["discord-config"])
+    api_router.include_router(discord_config_router, prefix="/api/discord/config", tags=["discord-config-api"])
+except ImportError:
+    pass
+
+# Include Discord domain controllers
+try:
+    from app.domains.discord.controllers.bot_controller import bot_controller
+    api_router.include_router(bot_controller.router, prefix="/discord/bot", tags=["discord-bot"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.analytics_controller import analytics_controller
+    api_router.include_router(analytics_controller.router, prefix="/discord/analytics", tags=["discord-analytics"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.user_controller import user_controller
+    api_router.include_router(user_controller.router, prefix="/discord/users", tags=["discord-users"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.product_controller import product_controller
+    api_router.include_router(product_controller.router, prefix="/discord/products", tags=["discord-products"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.discord_config_controller import discord_config_controller
+    api_router.include_router(discord_config_controller.router, prefix="/discord/config", tags=["discord-config"])
 except ImportError:
     pass
 
 # Include Admin endpoints
 try:
-    from app.domains.admin.controllers.admin_controller import router as admin_router
-    api_router.include_router(admin_router, prefix="/admin", tags=["admin"])
+    from app.domains.admin.controllers.auth_controller import auth_controller
+    api_router.include_router(auth_controller.router, prefix="/admin/auth", tags=["admin-auth"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.admin.controllers.admin_management_controller import admin_management_controller
+    api_router.include_router(admin_management_controller.router, prefix="/admin/management", tags=["admin-management"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.admin.controllers.dashboard_controller import dashboard_controller
+    api_router.include_router(dashboard_controller.router, prefix="/admin/dashboard", tags=["admin-dashboard"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.admin.controllers.user_management_controller import user_management_controller
+    api_router.include_router(user_management_controller.router, prefix="/admin/users", tags=["admin-users"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.admin.controllers.product_management_controller import product_management_controller
+    api_router.include_router(product_management_controller.router, prefix="/admin/products", tags=["admin-products"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.admin.controllers.configuration_controller import configuration_controller
+    api_router.include_router(configuration_controller.router, prefix="/admin/config", tags=["admin-config"])
 except ImportError:
     pass
 
