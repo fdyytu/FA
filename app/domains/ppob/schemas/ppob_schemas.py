@@ -2,13 +2,13 @@ from pydantic import BaseModel, validator, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from decimal import Decimal
-from app.domains.ppob.models.ppob import PPOBCategory, TransactionStatus
+from app.domains.ppob.models.ppob import TransactionStatus
 
 class PPOBProductBase(BaseModel):
     """Base schema untuk produk PPOB"""
     product_code: str = Field(..., description="Kode produk unik")
     product_name: str = Field(..., description="Nama produk")
-    category: PPOBCategory = Field(..., description="Kategori produk")
+    category_id: int = Field(..., description="ID kategori produk")
     provider: str = Field(..., description="Provider layanan")
     price: Decimal = Field(..., description="Harga produk")
     admin_fee: Decimal = Field(default=Decimal('0'), description="Biaya admin")
@@ -38,7 +38,7 @@ class PPOBProductResponse(PPOBProductBase):
 
 class PPOBTransactionBase(BaseModel):
     """Base schema untuk transaksi PPOB"""
-    category: PPOBCategory = Field(..., description="Kategori layanan")
+    category_id: int = Field(..., description="ID kategori layanan")
     product_code: str = Field(..., description="Kode produk")
     customer_number: str = Field(..., description="Nomor pelanggan")
     
@@ -63,7 +63,7 @@ class PPOBTransactionResponse(BaseModel):
     """Schema response untuk transaksi PPOB"""
     id: int
     transaction_code: str
-    category: PPOBCategory
+    category_id: int
     product_code: str
     product_name: str
     customer_number: str
@@ -82,7 +82,7 @@ class PPOBTransactionResponse(BaseModel):
 
 class PPOBInquiryRequest(BaseModel):
     """Schema request untuk inquiry tagihan"""
-    category: PPOBCategory = Field(..., description="Kategori layanan")
+    category_id: int = Field(..., description="ID kategori layanan")
     customer_number: str = Field(..., description="Nomor pelanggan")
     
     @validator('customer_number')
@@ -105,7 +105,7 @@ class PPOBInquiryResponse(BaseModel):
 
 class PPOBPaymentRequest(BaseModel):
     """Schema request untuk pembayaran"""
-    category: PPOBCategory = Field(..., description="Kategori layanan")
+    category_id: int = Field(..., description="ID kategori layanan")
     product_code: str = Field(..., description="Kode produk")
     customer_number: str = Field(..., description="Nomor pelanggan")
     ref_id: Optional[str] = Field(None, description="Reference ID dari inquiry")
@@ -123,7 +123,8 @@ class PPOBCategoryResponse(BaseModel):
 
 class PPOBCategoryWithProducts(BaseModel):
     """Schema response untuk kategori dengan produk"""
-    category: PPOBCategory
+    category_id: int
+    category_name: str
     products: List[PPOBProductResponse]
 
 class TransactionHistoryResponse(BaseModel):

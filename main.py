@@ -141,6 +141,13 @@ async def auto_create_database_tables():
             models_imported.extend(["PPOBTransaction", "PPOBProduct"])
         except ImportError:
             pass
+            
+        # Transaction models - import model transaction yang baru
+        try:
+            from app.domains.transaction.models.transaction import Transaction, TransactionLog
+            models_imported.extend(["Transaction", "TransactionLog"])
+        except ImportError:
+            pass
         
         logger.info(f"Models imported: {models_imported}")
         

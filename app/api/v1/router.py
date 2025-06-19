@@ -122,3 +122,31 @@ try:
     api_router.include_router(product_router, prefix="/products", tags=["products"])
 except ImportError:
     pass
+
+# Include Transaction Management endpoints
+try:
+    from app.domains.transaction.controllers.transaction_controller import transaction_controller as main_transaction_controller
+    api_router.include_router(main_transaction_controller.router, prefix="/transactions", tags=["transactions"])
+except ImportError:
+    pass
+
+# Include Wallet Management endpoints
+try:
+    from app.domains.wallet.controllers.wallet_controller import router as wallet_router
+    api_router.include_router(wallet_router, prefix="/wallet", tags=["wallet"])
+except ImportError:
+    pass
+
+# Include Voucher Management endpoints
+try:
+    from app.domains.voucher.controllers.voucher_controller import router as voucher_router
+    api_router.include_router(voucher_router, prefix="/vouchers", tags=["vouchers"])
+except ImportError:
+    pass
+
+# Include PPOB Management endpoints
+try:
+    from app.domains.ppob.controllers.ppob_controller import router as ppob_router
+    api_router.include_router(ppob_router, prefix="/ppob", tags=["ppob"])
+except ImportError:
+    pass
