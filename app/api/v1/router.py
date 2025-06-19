@@ -55,3 +55,17 @@ try:
     api_router.include_router(transaction_router, prefix="/admin/transactions", tags=["admin-transactions"])
 except ImportError:
     pass
+
+# Include User Management endpoints
+try:
+    from app.domains.user.controllers.user_controller import router as user_router
+    api_router.include_router(user_router, prefix="/users", tags=["users"])
+except ImportError:
+    pass
+
+# Include Product Management endpoints
+try:
+    from app.domains.product.controllers.product_controller import router as product_router
+    api_router.include_router(product_router, prefix="/products", tags=["products"])
+except ImportError:
+    pass

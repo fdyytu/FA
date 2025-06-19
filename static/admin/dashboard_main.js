@@ -27,7 +27,7 @@ async function initDashboard() {
 // Load dashboard statistics
 async function loadDashboardStats() {
     try {
-        const response = await apiRequest('/admin/dashboard/stats');
+        const response = await apiRequest('/admin/stats');
         if (!response || !response.data) {
             throw new Error('Invalid response format');
         }
@@ -88,7 +88,7 @@ async function loadRecentTransactions() {
     if (!container) return;
     
     try {
-        const data = await apiRequest('/admin/transactions-admin/recent?limit=5');
+        const data = await apiRequest('/admin/transactions/transactions/recent?limit=5');
         const transactions = data.data || [];
         
         if (transactions.length === 0) {
