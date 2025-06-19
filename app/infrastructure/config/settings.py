@@ -24,6 +24,17 @@ class Settings(BaseSettings):
     # Database settings - Railway akan provide PostgreSQL URL otomatis
     DATABASE_URL: str = "sqlite:///./fa_database.db"  # Fallback untuk development
     
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Override DATABASE_URL from environment if available
+        import os
+        env_db_url = os.getenv('DATABASE_URL')
+        if env_db_url:
+            self.DATABASE_URL = env_db_url
+            # Fix postgres:// to postgresql:// for SQLAlchemy compatibility
+            if self.DATABASE_URL.startswith('postgres://'):
+                self.DATABASE_URL = self.DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    
     # PostgreSQL specific settings
     DB_POOL_SIZE: int = 5
     DB_MAX_OVERFLOW: int = 10
