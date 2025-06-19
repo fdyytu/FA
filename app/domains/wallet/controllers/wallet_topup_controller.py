@@ -6,5 +6,5 @@ Implementasi telah dipindahkan ke modul terpisah di folder topup/.
 from app.domains.wallet.controllers.topup import topup_router
 
 # Re-export
-router = topup_router.router
+router = topup_router
 __all__ = ['router']
