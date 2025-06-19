@@ -6,5 +6,5 @@ Implementasi telah dipindahkan ke modul terpisah di folder auth/.
 from app.domains.admin.controllers.auth import auth_router
 
 # Re-export
-router = auth_router.router
+router = auth_router
 __all__ = ['router']
