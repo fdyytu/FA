@@ -2,12 +2,12 @@
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
     "builder": "DOCKERFILE",
-    "dockerfilePath": "Dockerfile"
+    "dockerfilePath": "deployment/Dockerfile"
   },
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "python main.py",
+    "startCommand": "python run.py",
     "healthcheckPath": "/health",
     "sleepApplication": false,
     "healthcheckTimeout": 600,
