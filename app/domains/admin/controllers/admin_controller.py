@@ -794,52 +794,7 @@ router.include_router(dashboard_controller.router, prefix="/dashboard", tags=["D
 router.include_router(margin_controller.router, prefix="/margins", tags=["Margin Management"])
 router.include_router(discord_config_controller.router, prefix="/discord-config", tags=["Discord Configuration"])
 
-# Add direct stats endpoint for frontend compatibility
-@router.get("/stats")
-async def get_admin_stats(
-    current_admin: Admin = Depends(get_current_admin),
-    db: Session = Depends(get_db)
-):
-    """Direct stats endpoint for admin dashboard frontend"""
-    try:
-        # Return realistic mock stats for dashboard
-        simple_stats = {
-            "total_users": 1520,
-            "active_users": 1340,
-            "total_transactions": 2850,
-            "total_revenue": 45750000.0,
-            "today_transactions": 45,
-            "today_revenue": 567000.0,
-            "pending_transactions": 12,
-            "failed_transactions": 8,
-            "total_products": 156,
-            "active_products": 142
-        }
-        
-        return {
-            "success": True,
-            "message": "Statistik dashboard berhasil dimuat",
-            "data": simple_stats
-        }
-        
-    except Exception as e:
-        logger.error(f"Error in get_admin_stats: {str(e)}")
-        # Return default stats instead of raising exception
-        default_stats = {
-            "total_users": 0,
-            "active_users": 0,
-            "total_transactions": 0,
-            "total_revenue": 0.0,
-            "today_transactions": 0,
-            "today_revenue": 0.0,
-            "pending_transactions": 0,
-            "failed_transactions": 0
-        }
-        return {
-            "success": True,
-            "message": "Statistik dashboard berhasil dimuat (data default)",
-            "data": default_stats
-        }
+# Remove duplicate stats endpoint - use dashboard/stats instead
 
 # Include Analytics endpoints for admin
 try:
