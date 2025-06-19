@@ -7,16 +7,47 @@ api_router = APIRouter()
 api_router.include_router(health.router, tags=["health"])
 api_router.include_router(cache.router, prefix="/cache", tags=["cache"])
 
-# Include Discord endpoints
+# Include Discord endpoints (API endpoints)
 try:
     from app.api.v1.endpoints.discord_bot import router as discord_bot_router
-    api_router.include_router(discord_bot_router, prefix="/discord/bot", tags=["discord-bot"])
+    api_router.include_router(discord_bot_router, prefix="/api/discord/bot", tags=["discord-bot-api"])
 except ImportError:
     pass
 
 try:
     from app.api.v1.endpoints.discord_config import router as discord_config_router
-    api_router.include_router(discord_config_router, prefix="/discord/config", tags=["discord-config"])
+    api_router.include_router(discord_config_router, prefix="/api/discord/config", tags=["discord-config-api"])
+except ImportError:
+    pass
+
+# Include Discord domain controllers
+try:
+    from app.domains.discord.controllers.bot_controller import bot_controller
+    api_router.include_router(bot_controller.router, prefix="/discord/bot", tags=["discord-bot"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.analytics_controller import analytics_controller
+    api_router.include_router(analytics_controller.router, prefix="/discord/analytics", tags=["discord-analytics"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.user_controller import user_controller
+    api_router.include_router(user_controller.router, prefix="/discord/users", tags=["discord-users"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.product_controller import product_controller
+    api_router.include_router(product_controller.router, prefix="/discord/products", tags=["discord-products"])
+except ImportError:
+    pass
+
+try:
+    from app.domains.discord.controllers.discord_config_controller import discord_config_controller
+    api_router.include_router(discord_config_controller.router, prefix="/discord/config", tags=["discord-config"])
 except ImportError:
     pass
 

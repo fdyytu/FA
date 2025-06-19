@@ -54,7 +54,7 @@ class DiscordBotController:
     def _setup_routes(self):
         """Setup routes untuk manajemen Discord Bot"""
         
-        @self.router.post("/", response_model=dict)
+        @self.router.post("/config", response_model=dict)
         async def create_discord_bot(
             bot_data: DiscordBotCreate,
             db: Session = Depends(get_db)
@@ -87,7 +87,7 @@ class DiscordBotController:
                 logger.error(f"Error creating Discord bot: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.get("/", response_model=dict)
+        @self.router.get("/config", response_model=dict)
         async def get_discord_bots(
             skip: int = 0,
             limit: int = 100,
@@ -136,7 +136,7 @@ class DiscordBotController:
                 logger.error(f"Error getting Discord bots: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.get("/{bot_id}", response_model=dict)
+        @self.router.get("/config/{bot_id}", response_model=dict)
         async def get_discord_bot(
             bot_id: str,
             db: Session = Depends(get_db)
@@ -167,7 +167,7 @@ class DiscordBotController:
                 logger.error(f"Error getting Discord bot {bot_id}: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.put("/{bot_id}", response_model=dict)
+        @self.router.put("/config/{bot_id}", response_model=dict)
         async def update_discord_bot(
             bot_id: str,
             bot_data: DiscordBotUpdate,
@@ -199,7 +199,7 @@ class DiscordBotController:
                 logger.error(f"Error updating Discord bot {bot_id}: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.delete("/{bot_id}")
+        @self.router.delete("/config/{bot_id}")
         async def delete_discord_bot(
             bot_id: str,
             db: Session = Depends(get_db)
@@ -223,7 +223,7 @@ class DiscordBotController:
                 logger.error(f"Error deleting Discord bot {bot_id}: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.post("/{bot_id}/start")
+        @self.router.post("/operations/{bot_id}/start")
         async def start_discord_bot(
             bot_id: str,
             db: Session = Depends(get_db)
@@ -243,7 +243,7 @@ class DiscordBotController:
                 logger.error(f"Error starting Discord bot {bot_id}: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.post("/{bot_id}/stop")
+        @self.router.post("/operations/{bot_id}/stop")
         async def stop_discord_bot(
             bot_id: str,
             db: Session = Depends(get_db)
@@ -263,7 +263,7 @@ class DiscordBotController:
                 logger.error(f"Error stopping Discord bot {bot_id}: {e}")
                 raise HTTPException(status_code=500, detail=str(e))
         
-        @self.router.get("/{bot_id}/status")
+        @self.router.get("/operations/{bot_id}/status")
         async def get_bot_status(
             bot_id: str,
             db: Session = Depends(get_db)
