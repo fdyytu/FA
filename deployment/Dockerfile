@@ -32,5 +32,5 @@ EXPOSE 8000
 # Health check - gunakan port 8000 sebagai default atau PORT dari env
 HEALTHCHECK --interval=30s --timeout=30s --start-period=60s --retries=3     CMD curl -f http://localhost:${PORT:-8000}/health || exit 1
 
-# Start command menggunakan main.py yang sudah menangani PORT dengan benar
-CMD ["python", "main.py"]
+# Start command menggunakan run.py yang sudah menangani PORT dengan benar
+CMD ["python", "run.py"]
