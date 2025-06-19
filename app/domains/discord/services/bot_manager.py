@@ -216,7 +216,7 @@ class DiscordBotManager:
                 # Status yang lebih detail
                 "detailed_status": {
                     "uptime": self.bot_service.get_uptime() if hasattr(self.bot_service, 'get_uptime') else None,
-                    "last_connect": self.bot_service.last_connect.isoformat() if hasattr(self.bot_service, 'last_connect') else None,
+                    "last_connect": self.bot_service.last_connect.isoformat() if (hasattr(self.bot_service, 'last_connect') and self.bot_service.last_connect is not None) else None,
                     "ready": self.bot_service.is_ready if hasattr(self.bot_service, 'is_ready') else False
                 }
             }

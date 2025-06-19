@@ -1019,22 +1019,26 @@ class DiscordAdminController:
                     "users_count": bot_status.get("users_count", 0)
                 }]
                 
-                # Log audit
-                from app.domains.admin.repositories.admin_repository import AuditLogRepository
-                audit_repo = AuditLogRepository(db)
-                audit_repo.create_log(
-                    admin_id=current_admin.id,
-                    action="VIEW",
-                    resource="discord_bots",
-                    resource_id=None,
-                    new_values=json.dumps({"action": "viewed_discord_bots_list"})
-                )
+                # Log audit dengan error handling
+                try:
+                    from app.domains.admin.repositories.admin_repository import AuditLogRepository
+                    audit_repo = AuditLogRepository(db)
+                    audit_repo.create_log(
+                        admin_id=current_admin.id,
+                        action="VIEW",
+                        resource="discord_bots",
+                        resource_id=None,
+                        new_values=json.dumps({"action": "viewed_discord_bots_list"})
+                    )
+                except Exception as audit_error:
+                    logger.warning(f"Failed to log audit for discord bots: {audit_error}")
                 
                 return APIResponse.success(data=bots_data)
                 
             except Exception as e:
                 logger.error(f"Error getting Discord bots: {e}")
-                raise HTTPException(status_code=500, detail=f"Error getting Discord bots: {str(e)}")
+                # Return empty data instead of raising exception
+                return APIResponse.success(data=[], message="Data Discord bots tidak tersedia saat ini")
         
         @self.router.get("/worlds")
         async def get_discord_worlds(
@@ -1052,22 +1056,26 @@ class DiscordAdminController:
                 bot_status = bot_manager.get_bot_status()
                 guilds_info = bot_status.get("guilds", [])
                 
-                # Log audit
-                from app.domains.admin.repositories.admin_repository import AuditLogRepository
-                audit_repo = AuditLogRepository(db)
-                audit_repo.create_log(
-                    admin_id=current_admin.id,
-                    action="VIEW",
-                    resource="discord_worlds",
-                    resource_id=None,
-                    new_values=json.dumps({"action": "viewed_discord_worlds_list"})
-                )
+                # Log audit dengan error handling
+                try:
+                    from app.domains.admin.repositories.admin_repository import AuditLogRepository
+                    audit_repo = AuditLogRepository(db)
+                    audit_repo.create_log(
+                        admin_id=current_admin.id,
+                        action="VIEW",
+                        resource="discord_worlds",
+                        resource_id=None,
+                        new_values=json.dumps({"action": "viewed_discord_worlds_list"})
+                    )
+                except Exception as audit_error:
+                    logger.warning(f"Failed to log audit for discord worlds: {audit_error}")
                 
                 return APIResponse.success(data=guilds_info)
                 
             except Exception as e:
                 logger.error(f"Error getting Discord worlds: {e}")
-                raise HTTPException(status_code=500, detail=f"Error getting Discord worlds: {str(e)}")
+                # Return empty data instead of raising exception
+                return APIResponse.success(data=[], message="Data Discord worlds tidak tersedia saat ini")
         
         @self.router.put("/bots/{bot_id}")
         async def update_discord_bot(
@@ -1303,8 +1311,8 @@ transaction_controller = TransactionController()
 # Include Discord admin routes
 router.include_router(discord_admin_controller.router, prefix="/discord", tags=["Discord Admin"])
 
-# Include Transaction routes  
-router.include_router(transaction_controller.router, prefix="/transactions", tags=["Admin Transactions Internal"])
+# Transaction routes sudah di-include di router utama dengan prefix /admin/transactions
+# Tidak perlu di-include lagi di sini untuk menghindari duplikasi path
 
 
 
