@@ -20,9 +20,20 @@ static/
 │   │   └── analytics-main.js
 │   ├── discord/         # Discord module
 │   │   └── discord-data-service.js
-│   ├── products/        # Products module (akan ditambahkan)
-│   ├── users/           # Users module (akan ditambahkan)
-│   └── settings/        # Settings module (akan ditambahkan)
+│   ├── android/         # Android module
+│   │   ├── android-data-service.js
+│   │   ├── android-ui-controller.js
+│   │   ├── android-chart-manager.js
+│   │   └── android-main.js
+│   ├── shared/          # Shared module
+│   │   ├── shared-auth-service.js
+│   │   ├── shared-ui-service.js
+│   │   ├── shared-api-service.js
+│   │   ├── shared-utilities-service.js
+│   │   └── shared-main.js
+│   ├── products/        # Products module
+│   ├── users/           # Users module
+│   └── settings/        # Settings module
 ├── shared/              # Shared utilities
 │   ├── css/            # Shared CSS
 │   │   ├── base.css
@@ -79,6 +90,22 @@ static/
 <script src="/static/modules/analytics/analytics-main.js"></script>
 ```
 
+### Android Dashboard
+```html
+<!-- Include shared modules first -->
+<script src="/static/modules/shared/shared-auth-service.js"></script>
+<script src="/static/modules/shared/shared-ui-service.js"></script>
+<script src="/static/modules/shared/shared-api-service.js"></script>
+<script src="/static/modules/shared/shared-utilities-service.js"></script>
+<script src="/static/modules/shared/shared-main.js"></script>
+
+<!-- Android specific modules -->
+<script src="/static/modules/android/android-data-service.js"></script>
+<script src="/static/modules/android/android-ui-controller.js"></script>
+<script src="/static/modules/android/android-chart-manager.js"></script>
+<script src="/static/modules/android/android-main.js"></script>
+```
+
 ### Shared Utilities
 ```javascript
 // API Client
@@ -126,6 +153,17 @@ UIUtils.showLoading(true);
 | | `main-data-service.js` (89 lines) |
 | | `main-ui-controller.js` (119 lines) |
 | | `main-controller.js` (68 lines) |
+| `dashboard_android.js` (302 lines) | Dipecah menjadi: |
+| | `android-data-service.js` (83 lines) |
+| | `android-ui-controller.js` (122 lines) |
+| | `android-chart-manager.js` (105 lines) |
+| | `android-main.js` (77 lines) |
+| `dashboard_shared.js` (368 lines) | Dipecah menjadi: |
+| | `shared-auth-service.js` (48 lines) |
+| | `shared-ui-service.js` (137 lines) |
+| | `shared-api-service.js` (59 lines) |
+| | `shared-utilities-service.js` (135 lines) |
+| | `shared-main.js` (39 lines) |
 
 ### Backward Compatibility
 
@@ -160,8 +198,8 @@ File-file lama masih tersedia untuk backward compatibility, tetapi disarankan un
 - [x] Migrasi Users module
 - [x] Migrasi Settings module
 - [x] Migrasi Main Dashboard module
+- [x] Migrasi file Android module (dashboard_android.js - 302 lines)
+- [x] Migrasi file shared dashboard (dashboard_shared.js - 368 lines)
 - [ ] Implementasi lazy loading
 - [ ] Unit testing untuk setiap module
 - [ ] Performance monitoring
-- [ ] Migrasi file Android module (dashboard_android.js - 302 lines)
-- [ ] Migrasi file shared dashboard (dashboard_shared.js - 368 lines)

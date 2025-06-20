@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modular Android Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-spinner fa-spin mr-3"></i>
+                <span>Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-50 sidebar-hidden">
+        <div class="p-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold">Dashboard</h2>
+                <button id="closeSidebar" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <nav class="mt-4">
+            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 active">
+                <i class="fas fa-home mr-3"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                <i class="fas fa-users mr-3"></i>
+                Users
+            </a>
+        </nav>
+        <div class="absolute bottom-4 left-4 right-4">
+            <button id="logoutBtn" class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
+                <i class="fas fa-sign-out-alt mr-2"></i>
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-0 lg:ml-64">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="flex items-center justify-between px-4 py-3">
+                <button id="openSidebar" class="lg:hidden text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="text-xl font-semibold">Android Dashboard</h1>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-full">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Users</p>
+                            <p id="totalUsers" class="text-2xl font-bold">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-full">
+                            <i class="fas fa-exchange-alt text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Transactions</p>
+                            <p id="totalTransactions" class="text-2xl font-bold">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-full">
+                            <i class="fas fa-box text-purple-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Products</p>
+                            <p id="totalProducts" class="text-2xl font-bold">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-full">
+                            <i class="fas fa-dollar-sign text-yellow-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Revenue</p>
+                            <p id="totalRevenue" class="text-2xl font-bold">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4">Transaction Chart</h3>
+                    <div class="h-64">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold mb-4">Category Chart</h3>
+                    <div class="h-64">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold">Recent Transactions</h3>
+                </div>
+                <div id="recentTransactions" class="p-6 space-y-4">
+                    <!-- Transactions will be loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Include modular JavaScript files in correct order -->
+    <!-- Shared modules first -->
+    <script src="/static/modules/shared/shared-auth-service.js"></script>
+    <script src="/static/modules/shared/shared-ui-service.js"></script>
+    <script src="/static/modules/shared/shared-api-service.js"></script>
+    <script src="/static/modules/shared/shared-utilities-service.js"></script>
+    <script src="/static/modules/shared/shared-main.js"></script>
+    
+    <!-- Android specific modules -->
+    <script src="/static/modules/android/android-data-service.js"></script>
+    <script src="/static/modules/android/android-ui-controller.js"></script>
+    <script src="/static/modules/android/android-chart-manager.js"></script>
+    <script src="/static/modules/android/android-main.js"></script>
+
+    <style>
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        
+        .nav-item.active {
+            background-color: #f3f4f6;
+            border-right: 3px solid #3b82f6;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+        }
+        
+        .toast-success { background-color: #10b981; color: white; }
+        .toast-error { background-color: #ef4444; color: white; }
+        .toast-warning { background-color: #f59e0b; color: white; }
+        .toast-info { background-color: #3b82f6; color: white; }
+    </style>
+</body>
+</html>
