@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modul-Modul Lengkap</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Shared Utilities -->
+    <script src="/static/shared/js/api-client.js"></script>
+    <script src="/static/shared/js/formatters.js"></script>
+    <script src="/static/shared/js/ui-utils.js"></script>
+    <script src="/static/shared/js/mock-data.js"></script>
+    
+    <!-- Discord Module -->
+    <script src="/static/modules/discord/discord-data-service-extended.js"></script>
+    <script src="/static/modules/discord/discord-ui-controller.js"></script>
+    <script src="/static/modules/discord/discord-bot-manager.js"></script>
+    <script src="/static/modules/discord/discord-main.js"></script>
+    
+    <!-- Users Module -->
+    <script src="/static/modules/users/users-data-service.js"></script>
+    <script src="/static/modules/users/users-ui-controller.js"></script>
+    <script src="/static/modules/users/users-main.js"></script>
+    
+    <!-- Products Module -->
+    <script src="/static/modules/products/products-data-service.js"></script>
+    <script src="/static/modules/products/products-ui-controller.js"></script>
+    <script src="/static/modules/products/products-main.js"></script>
+    
+    <!-- Settings Module -->
+    <script src="/static/modules/settings/settings-data-service.js"></script>
+    <script src="/static/modules/settings/settings-ui-controller.js"></script>
+    <script src="/static/modules/settings/settings-main.js"></script>
+    
+    <!-- Main Module -->
+    <script src="/static/modules/main/main-data-service.js"></script>
+    <script src="/static/modules/main/main-ui-controller.js"></script>
+    <script src="/static/modules/main/main-controller.js"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8">Test Modul-Modul Lengkap</h1>
+        
+        <!-- Test Results -->
+        <div id="testResults" class="bg-white p-6 rounded-lg shadow mb-8">
+            <h2 class="text-xl font-semibold mb-4">Hasil Test</h2>
+            <div id="resultsContent" class="space-y-2 max-h-96 overflow-y-auto">
+                <p class="text-gray-600">Memulai test modul-modul...</p>
+            </div>
+        </div>
+        
+        <!-- Test Buttons -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+            <button onclick="testDiscordModule()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Test Discord Module
+            </button>
+            <button onclick="testUsersModule()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                Test Users Module
+            </button>
+            <button onclick="testProductsModule()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                Test Products Module
+            </button>
+            <button onclick="testSettingsModule()" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                Test Settings Module
+            </button>
+            <button onclick="testMainModule()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                Test Main Module
+            </button>
+            <button onclick="runAllTests()" class="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900">
+                Run All Tests
+            </button>
+        </div>
+        
+        <!-- Mock Data Display -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div id="discordStats" class="bg-white p-4 rounded-lg shadow">
+                <h3 class="font-semibold mb-2">Discord Stats</h3>
+                <div id="discordStatsContent" class="text-sm text-gray-600">Belum dimuat</div>
+            </div>
+            <div id="usersStats" class="bg-white p-4 rounded-lg shadow">
+                <h3 class="font-semibold mb-2">Users Stats</h3>
+                <div id="usersStatsContent" class="text-sm text-gray-600">Belum dimuat</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addTestResult(message, status = 'info') {
+            const resultsContent = document.getElementById('resultsContent');
+            const statusColors = {
+                'success': 'text-green-600',
+                'error': 'text-red-600',
+                'info': 'text-blue-600',
+                'warning': 'text-yellow-600'
+            };
+            
+            const p = document.createElement('p');
+            p.className = statusColors[status] || 'text-gray-600';
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            resultsContent.appendChild(p);
+            resultsContent.scrollTop = resultsContent.scrollHeight;
+        }
+
+        async function testDiscordModule() {
+            addTestResult('Testing Discord Module...', 'info');
+            try {
+                if (typeof DiscordDataService !== 'undefined') {
+                    const dataService = new DiscordDataService();
+                    addTestResult('✓ DiscordDataService berhasil dibuat', 'success');
+                    
+                    // Test mock data generation
+                    const mockStats = dataService.generateMockStats();
+                    document.getElementById('discordStatsContent').innerHTML = 
+                        `Bots: ${mockStats.total_bots}, Users: ${mockStats.discord_users}`;
+                    addTestResult('✓ Mock data Discord berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ DiscordDataService tidak ditemukan', 'error');
+                }
+                
+                if (typeof DiscordUIController !== 'undefined') {
+                    const uiController = new DiscordUIController();
+                    addTestResult('✓ DiscordUIController berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ DiscordUIController tidak ditemukan', 'error');
+                }
+                
+                if (typeof DiscordMainController !== 'undefined') {
+                    const mainController = new DiscordMainController();
+                    addTestResult('✓ DiscordMainController berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ DiscordMainController tidak ditemukan', 'error');
+                }
+            } catch (error) {
+                addTestResult(`✗ Error testing Discord Module: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUsersModule() {
+            addTestResult('Testing Users Module...', 'info');
+            try {
+                if (typeof UsersDataService !== 'undefined') {
+                    const dataService = new UsersDataService();
+                    addTestResult('✓ UsersDataService berhasil dibuat', 'success');
+                    
+                    // Test mock data generation
+                    const mockStats = dataService.generateMockStats();
+                    document.getElementById('usersStatsContent').innerHTML = 
+                        `Total: ${mockStats.total_users}, Active: ${mockStats.active_users}`;
+                    addTestResult('✓ Mock data Users berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ UsersDataService tidak ditemukan', 'error');
+                }
+                
+                if (typeof UsersMainController !== 'undefined') {
+                    const mainController = new UsersMainController();
+                    addTestResult('✓ UsersMainController berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ UsersMainController tidak ditemukan', 'error');
+                }
+            } catch (error) {
+                addTestResult(`✗ Error testing Users Module: ${error.message}`, 'error');
+            }
+        }
+
+        async function testProductsModule() {
+            addTestResult('Testing Products Module...', 'info');
+            try {
+                if (typeof ProductsDataService !== 'undefined') {
+                    const dataService = new ProductsDataService();
+                    addTestResult('✓ ProductsDataService berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ ProductsDataService tidak ditemukan', 'error');
+                }
+                
+                if (typeof ProductsMainController !== 'undefined') {
+                    const mainController = new ProductsMainController();
+                    addTestResult('✓ ProductsMainController berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ ProductsMainController tidak ditemukan', 'error');
+                }
+            } catch (error) {
+                addTestResult(`✗ Error testing Products Module: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSettingsModule() {
+            addTestResult('Testing Settings Module...', 'info');
+            try {
+                if (typeof SettingsDataService !== 'undefined') {
+                    const dataService = new SettingsDataService();
+                    addTestResult('✓ SettingsDataService berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ SettingsDataService tidak ditemukan', 'error');
+                }
+                
+                if (typeof SettingsMainController !== 'undefined') {
+                    const mainController = new SettingsMainController();
+                    addTestResult('✓ SettingsMainController berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ SettingsMainController tidak ditemukan', 'error');
+                }
+            } catch (error) {
+                addTestResult(`✗ Error testing Settings Module: ${error.message}`, 'error');
+            }
+        }
+
+        async function testMainModule() {
+            addTestResult('Testing Main Module...', 'info');
+            try {
+                if (typeof MainDashboardDataService !== 'undefined') {
+                    const dataService = new MainDashboardDataService();
+                    addTestResult('✓ MainDashboardDataService berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ MainDashboardDataService tidak ditemukan', 'error');
+                }
+                
+                if (typeof MainDashboardController !== 'undefined') {
+                    const mainController = new MainDashboardController();
+                    addTestResult('✓ MainDashboardController berhasil dibuat', 'success');
+                } else {
+                    addTestResult('✗ MainDashboardController tidak ditemukan', 'error');
+                }
+            } catch (error) {
+                addTestResult(`✗ Error testing Main Module: ${error.message}`, 'error');
+            }
+        }
+
+        async function runAllTests() {
+            addTestResult('=== Memulai semua test ===', 'info');
+            await testDiscordModule();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testUsersModule();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testProductsModule();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testSettingsModule();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            await testMainModule();
+            addTestResult('=== Semua test selesai ===', 'info');
+        }
+
+        // Auto run basic test on load
+        document.addEventListener('DOMContentLoaded', () => {
+            addTestResult('Halaman test dimuat. Klik "Run All Tests" untuk menguji semua modul.', 'info');
+        });
+    </script>
+</body>
+</html>
