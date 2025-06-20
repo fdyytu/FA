@@ -4,7 +4,7 @@ from typing import Optional
 import logging
 
 from app.core.database import get_db
-from app.domains.admin.services.admin_service import AdminManagementService
+from app.domains.admin.services.admin_management_service import AdminManagementService
 from app.domains.admin.schemas.admin_schemas import (
     AdminCreate, AdminUpdate, AdminResponse, PaginatedResponse, AuditLogResponse
 )

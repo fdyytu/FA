@@ -7,4 +7,6 @@ from app.domains.admin.controllers.auth import auth_router
 
 # Re-export
 router = auth_router
-__all__ = ['router']
+auth_controller = type('AuthController', (), {'router': router})()
+
+__all__ = ['router', 'auth_controller']

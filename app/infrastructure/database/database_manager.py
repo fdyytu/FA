@@ -1,24 +1,9 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm import Session
 from typing import Generator
 import logging
 
 from app.infrastructure.config.settings import settings
-
-# Use settings for database configuration
-engine = create_engine(
-    settings.DATABASE_URL,
-    pool_size=settings.DB_POOL_SIZE if settings.is_postgresql else 5,
-    max_overflow=settings.DB_MAX_OVERFLOW if settings.is_postgresql else 10,
-    pool_timeout=settings.DB_POOL_TIMEOUT if settings.is_postgresql else 30,
-    pool_recycle=settings.DB_POOL_RECYCLE if settings.is_postgresql else 3600,
-    connect_args={"check_same_thread": False} if settings.is_sqlite else {},
-    echo=settings.DEBUG,
-)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+from app.core.database import engine, SessionLocal, Base
 
 class DatabaseManager:
     """
