@@ -1,6 +1,6 @@
 """
-Auth Routes
-Routes untuk authentication dan authorization
+Flask Server - Auth Routes
+Routes untuk authentication endpoints
 """
 
 from flask import jsonify, request
@@ -9,7 +9,6 @@ from flask import jsonify, request
 def register_auth_routes(app):
     """Register authentication routes"""
     
-    # API endpoints for testing
     @app.route('/api/auth/login', methods=['POST'])
     def login():
         return jsonify({
@@ -25,34 +24,35 @@ def register_auth_routes(app):
             }
         })
 
-    # Admin API endpoints
     @app.route('/api/v1/admin/auth/login', methods=['POST'])
     def admin_login():
         data = request.get_json()
         username = data.get('username')
         password = data.get('password')
         
-        # Simple authentication check
+        # Mock authentication
         if username == 'admin' and password == 'admin123':
             return jsonify({
                 'success': True,
-                'access_token': 'admin_token_12345',
-                'user': {
-                    'id': 1,
-                    'username': 'admin',
-                    'email': 'admin@fa-application.com',
-                    'role': 'admin'
+                'data': {
+                    'token': 'admin_token_456',
+                    'user': {
+                        'id': 1,
+                        'username': 'admin',
+                        'email': 'admin@fa-application.com',
+                        'role': 'admin'
+                    }
                 }
             })
         else:
             return jsonify({
                 'success': False,
-                'detail': 'Username atau password salah'
+                'message': 'Invalid credentials'
             }), 401
 
     @app.route('/api/v1/admin/auth/logout', methods=['POST'])
     def admin_logout():
         return jsonify({
             'success': True,
-            'message': 'Logout berhasil'
+            'message': 'Logged out successfully'
         })

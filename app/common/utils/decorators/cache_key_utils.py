@@ -1,12 +1,12 @@
 """
 Cache Key Utilities
-Utility functions untuk generate cache key dari function arguments
+Utility functions untuk generate cache keys dari function arguments
 """
 
 import functools
 import inspect
 import logging
-from typing import Optional, Union, Callable
+from typing import Any, Callable, Optional, Union
 from datetime import timedelta
 
 logger = logging.getLogger(__name__)
@@ -18,8 +18,7 @@ def cache_key_from_args(
     cache_type: str = "default"
 ):
     """
-    Decorator untuk generate cache key dari function arguments
-    Menggunakan template string untuk format cache key
+    Decorator untuk generate cache key dari function arguments menggunakan template
     
     Args:
         key_template: Template string untuk cache key (e.g., "user:{user_id}:profile")
@@ -34,7 +33,7 @@ def cache_key_from_args(
                 
                 cache_service = await cache_manager.get_cache_service(cache_type)
                 
-                # Generate cache key dari template dan arguments
+                # Get function signature untuk parameter binding
                 sig = inspect.signature(func)
                 bound_args = sig.bind(*args, **kwargs)
                 bound_args.apply_defaults()
@@ -72,3 +71,34 @@ def cache_key_from_args(
             return sync_wrapper
     
     return decorator
+
+
+def generate_cache_key(prefix: str, *args, **kwargs) -> str:
+    """
+    Generate cache key dari prefix dan arguments
+    
+    Args:
+        prefix: Prefix untuk cache key
+        *args: Positional arguments
+        **kwargs: Keyword arguments
+        
+    Returns:
+        Generated cache key
+    """
+    key_parts = [prefix]
+    
+    # Add positional arguments
+    for arg in args:
+        if isinstance(arg, (str, int, float, bool)):
+            key_parts.append(str(arg))
+        else:
+            key_parts.append(str(hash(str(arg))))
+    
+    # Add keyword arguments (sorted untuk consistency)
+    for key, value in sorted(kwargs.items()):
+        if isinstance(value, (str, int, float, bool)):
+            key_parts.append(f"{key}:{value}")
+        else:
+            key_parts.append(f"{key}:{hash(str(value))}")
+    
+    return ":".join(key_parts)
