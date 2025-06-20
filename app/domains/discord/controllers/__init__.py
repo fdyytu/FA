@@ -8,7 +8,8 @@ from app.domains.discord.controllers.discord_bot_controller_modular import route
 from app.domains.discord.controllers.discord_config_controller import router as config_router
 from app.domains.discord.controllers.bot_controller import router as bot_base_router
 from app.domains.discord.controllers.analytics_controller import router as analytics_router
-from app.domains.discord.controllers.product_controller import router as product_router
+from app.domains.discord.controllers.livestock_controller import LiveStockController
+from app.domains.discord.controllers.admin_world_config_controller import AdminWorldConfigController
 from app.domains.discord.controllers.user_controller import router as user_router
 
 discord_router = APIRouter()
@@ -17,7 +18,12 @@ discord_router.include_router(bot_router, prefix="/bot", tags=["Discord Bot"])
 discord_router.include_router(config_router, prefix="/config", tags=["Discord Config"])
 discord_router.include_router(bot_base_router, prefix="/base-bot", tags=["Discord Bot Base"])
 discord_router.include_router(analytics_router, prefix="/analytics", tags=["Discord Analytics"])
-discord_router.include_router(product_router, prefix="/product", tags=["Discord Product"])
+# Create instances of new controllers
+livestock_controller = LiveStockController()
+admin_world_config_controller = AdminWorldConfigController()
+
+discord_router.include_router(livestock_controller.router, prefix="/livestock", tags=["Discord LiveStock"])
+discord_router.include_router(admin_world_config_controller.router, prefix="/admin-world", tags=["Discord Admin World Config"])
 discord_router.include_router(user_router, prefix="/user", tags=["Discord User"])
 
 __all__ = ['discord_router']
@@ -32,16 +38,9 @@ Berisi semua controller untuk Discord Bot yang telah dipecah berdasarkan Single 
 - DiscordConfigController: Konfigurasi Discord
 """
 
-from .bot_controller import bot_controller
-from .user_controller import user_controller
-from .product_controller import product_controller
-from .analytics_controller import analytics_controller
-from .discord_config_controller import discord_config_controller
-
+# Updated exports with new controllers
 __all__ = [
-    "bot_controller",
-    "user_controller",
-    "product_controller",
-    "analytics_controller",
-    "discord_config_controller"
+    'discord_router',
+    'livestock_controller',
+    'admin_world_config_controller'
 ]
