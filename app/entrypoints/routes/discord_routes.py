@@ -1,24 +1,23 @@
 """
-Discord Routes
-Routes untuk Discord bot management
+Flask Server - Discord Routes
+Routes untuk Discord bot management endpoints
 """
 
 from flask import jsonify, request
 
 
 def register_discord_routes(app):
-    """Register Discord bot management routes"""
+    """Register Discord management routes"""
     
-    # Discord Bot API endpoints
     @app.route('/api/v1/admin/discord/stats')
     def discord_stats():
         return jsonify({
             'success': True,
             'data': {
                 'total_bots': 3,
-                'discord_users': 2450,
-                'live_products': 156,
-                'commands_today': 1234
+                'active_bots': 2,
+                'total_servers': 15,
+                'total_users': 1250
             }
         })
 
@@ -29,31 +28,33 @@ def register_discord_routes(app):
             'data': [
                 {
                     'id': 1,
-                    'name': 'FA Store Bot',
-                    'token': 'MTMxODE4MDAyOTA5MTI4NzA3MQ.GXF_u-.vt5Ps5Kna-N_qZkV8rWkCekVyeANPajURfBdy4',
-                    'prefix': '!',
-                    'guild_id': '123456789012345678',
-                    'description': 'Bot utama untuk toko FA',
-                    'is_active': True,
-                    'auto_start': True,
+                    'name': 'FA Bot Main',
+                    'token': 'bot_token_***',
                     'status': 'online',
-                    'uptime': '2d 14h 32m',
-                    'commands_count': 1234,
-                    'created_at': '2024-01-15T10:30:00Z'
+                    'servers': 8,
+                    'users': 650,
+                    'uptime': '2d 14h 30m',
+                    'last_seen': '2024-01-15T10:30:00Z'
                 },
                 {
                     'id': 2,
-                    'name': 'FA Support Bot',
-                    'token': 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTE.YYYYYY.YYYYYYYYYYYYYYYYYYYYYYYYYY',
-                    'prefix': '?',
-                    'guild_id': '123456789012345679',
-                    'description': 'Bot untuk customer support',
-                    'is_active': True,
-                    'auto_start': False,
+                    'name': 'FA Bot Secondary',
+                    'token': 'bot_token_***',
                     'status': 'online',
+                    'servers': 5,
+                    'users': 400,
                     'uptime': '1d 8h 15m',
-                    'commands_count': 567,
-                    'created_at': '2024-01-14T15:45:00Z'
+                    'last_seen': '2024-01-15T10:25:00Z'
+                },
+                {
+                    'id': 3,
+                    'name': 'FA Bot Test',
+                    'token': 'bot_token_***',
+                    'status': 'offline',
+                    'servers': 2,
+                    'users': 200,
+                    'uptime': '0m',
+                    'last_seen': '2024-01-14T15:20:00Z'
                 }
             ]
         })
@@ -64,20 +65,16 @@ def register_discord_routes(app):
         return jsonify({
             'success': True,
             'data': {
-                'id': 3,
-                'name': data.get('name'),
-                'token': data.get('token'),
-                'prefix': data.get('prefix'),
-                'guild_id': data.get('guild_id'),
-                'description': data.get('description'),
-                'is_active': data.get('is_active', False),
-                'auto_start': data.get('auto_start', False),
+                'id': 4,
+                'name': data.get('name', 'New Bot'),
+                'token': data.get('token', ''),
                 'status': 'offline',
+                'servers': 0,
+                'users': 0,
                 'uptime': '0m',
-                'commands_count': 0,
-                'created_at': '2024-01-16T11:00:00Z'
+                'last_seen': None
             },
-            'message': 'Bot berhasil ditambahkan'
+            'message': 'Bot created successfully'
         })
 
     @app.route('/api/v1/admin/discord/bots/<int:bot_id>', methods=['PUT'])
@@ -87,34 +84,32 @@ def register_discord_routes(app):
             'success': True,
             'data': {
                 'id': bot_id,
-                'name': data.get('name'),
-                'token': data.get('token'),
-                'prefix': data.get('prefix'),
-                'guild_id': data.get('guild_id'),
-                'description': data.get('description'),
-                'is_active': data.get('is_active', False),
-                'auto_start': data.get('auto_start', False)
+                'name': data.get('name', f'Bot {bot_id}'),
+                'token': data.get('token', 'updated_token'),
+                'status': 'offline',
+                'servers': 0,
+                'users': 0
             },
-            'message': 'Bot berhasil diperbarui'
+            'message': 'Bot updated successfully'
         })
 
     @app.route('/api/v1/admin/discord/bots/<int:bot_id>/start', methods=['POST'])
     def start_discord_bot(bot_id):
         return jsonify({
             'success': True,
-            'message': f'Bot {bot_id} berhasil dijalankan'
+            'message': f'Bot {bot_id} started successfully'
         })
 
     @app.route('/api/v1/admin/discord/bots/<int:bot_id>/stop', methods=['POST'])
     def stop_discord_bot(bot_id):
         return jsonify({
             'success': True,
-            'message': f'Bot {bot_id} berhasil dihentikan'
+            'message': f'Bot {bot_id} stopped successfully'
         })
 
     @app.route('/api/v1/admin/discord/bots/<int:bot_id>', methods=['DELETE'])
     def delete_discord_bot(bot_id):
         return jsonify({
             'success': True,
-            'message': f'Bot {bot_id} berhasil dihapus'
+            'message': f'Bot {bot_id} deleted successfully'
         })

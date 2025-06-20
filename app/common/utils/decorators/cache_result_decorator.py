@@ -6,7 +6,7 @@ Decorator untuk caching hasil function dengan dukungan legacy dan new interface
 import functools
 import inspect
 import logging
-from typing import Any, Optional, Union, Callable
+from typing import Any, Optional, Union, Callable, Dict
 from datetime import timedelta
 
 logger = logging.getLogger(__name__)

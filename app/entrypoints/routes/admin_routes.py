@@ -1,6 +1,6 @@
 """
-Admin Dashboard Routes
-Routes untuk admin dashboard dan statistik
+Flask Server - Admin Dashboard Routes
+Routes untuk admin dashboard dan analytics endpoints
 """
 
 from flask import jsonify
@@ -14,66 +14,92 @@ def register_admin_routes(app):
         return jsonify({
             'success': True,
             'data': {
-                'total_revenue': 125000000,
-                'total_orders': 1847,
                 'total_users': 1250,
-                'total_products': 156,
-                'total_transactions': 3420,
-                'discord_bots': 3,
-                'active_users': 892
+                'total_transactions': 5680,
+                'total_revenue': 125000000,
+                'active_bots': 2,
+                'pending_transactions': 15
             }
         })
 
-    @app.route('/api/v1/admin/users')
-    def admin_users():
+    @app.route('/api/v1/admin/transactions/recent')
+    def recent_transactions():
         return jsonify({
             'success': True,
-            'data': {
-                'users': [
-                    {
-                        'id': 1,
-                        'username': 'user1',
-                        'email': 'user1@example.com',
-                        'is_active': True,
-                        'created_at': '2024-01-01T00:00:00Z'
-                    },
-                    {
-                        'id': 2,
-                        'username': 'user2',
-                        'email': 'user2@example.com',
-                        'is_active': True,
-                        'created_at': '2024-01-02T00:00:00Z'
-                    }
-                ],
-                'total': 1250,
-                'page': 1,
-                'per_page': 20
-            }
+            'data': [
+                {
+                    'id': 1,
+                    'user': 'user123',
+                    'amount': 50000,
+                    'type': 'topup',
+                    'status': 'completed',
+                    'timestamp': '2024-01-15T10:30:00Z'
+                },
+                {
+                    'id': 2,
+                    'user': 'user456',
+                    'amount': 25000,
+                    'type': 'purchase',
+                    'status': 'pending',
+                    'timestamp': '2024-01-15T10:25:00Z'
+                }
+            ]
         })
 
-    @app.route('/api/v1/admin/products')
-    def admin_products():
+    @app.route('/api/v1/admin/discord/worlds')
+    def discord_worlds():
         return jsonify({
             'success': True,
-            'data': {
-                'products': [
-                    {
-                        'id': 1,
-                        'name': 'Pulsa Telkomsel 10K',
-                        'price': 11000,
-                        'category': 'pulsa',
-                        'is_active': True
-                    },
-                    {
-                        'id': 2,
-                        'name': 'Token PLN 20K',
-                        'price': 21000,
-                        'category': 'pln',
-                        'is_active': True
-                    }
-                ],
-                'total': 156,
-                'page': 1,
-                'per_page': 20
-            }
+            'data': [
+                {
+                    'id': 1,
+                    'name': 'WORLD1',
+                    'players': 45,
+                    'status': 'online'
+                },
+                {
+                    'id': 2,
+                    'name': 'WORLD2',
+                    'players': 32,
+                    'status': 'online'
+                }
+            ]
+        })
+
+    @app.route('/api/v1/admin/discord/commands/recent')
+    def recent_commands():
+        return jsonify({
+            'success': True,
+            'data': [
+                {
+                    'id': 1,
+                    'command': '/balance',
+                    'user': 'user123',
+                    'timestamp': '2024-01-15T10:30:00Z'
+                },
+                {
+                    'id': 2,
+                    'command': '/buy',
+                    'user': 'user456',
+                    'timestamp': '2024-01-15T10:25:00Z'
+                }
+            ]
+        })
+
+    @app.route('/api/v1/admin/discord/logs')
+    def bot_logs():
+        return jsonify({
+            'success': True,
+            'data': [
+                {
+                    'timestamp': '2024-01-15T10:30:00Z',
+                    'level': 'INFO',
+                    'message': 'Bot connected successfully'
+                },
+                {
+                    'timestamp': '2024-01-15T10:25:00Z',
+                    'level': 'ERROR',
+                    'message': 'Failed to process command'
+                }
+            ]
         })

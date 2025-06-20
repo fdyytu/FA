@@ -36,9 +36,9 @@ def cache_invalidate(
                 
                 for pattern in patterns:
                     try:
-                        # Format pattern dengan args jika diperlukan
-                        if '{' in pattern and '}' in pattern:
-                            # Buat mapping dari args dan kwargs
+                        # Format pattern dengan function arguments jika diperlukan
+                        if '{' in pattern:
+                            # Get function signature untuk parameter binding
                             sig = inspect.signature(func)
                             bound_args = sig.bind(*args, **kwargs)
                             bound_args.apply_defaults()
