@@ -27,6 +27,17 @@ class AdminRepository:
         """Ambil admin berdasarkan email"""
         return self.db.query(Admin).filter(Admin.email == email).first()
     
+    def create(self, admin: Admin) -> Admin:
+        """Buat admin baru"""
+        self.db.add(admin)
+        self.db.commit()
+        self.db.refresh(admin)
+        return admin
+    
+    def get_by_id(self, admin_id: str) -> Optional[Admin]:
+        """Ambil admin berdasarkan ID"""
+        return self.db.query(Admin).filter(Admin.id == admin_id).first()
+    
     def update_last_login(self, admin_id: str) -> None:
         """Update waktu login terakhir"""
         self.db.query(Admin).filter(Admin.id == admin_id).update({

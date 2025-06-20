@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import logging
 
 from app.core.database import get_db
-from app.domains.admin.services.admin_service import DashboardService
+from app.domains.admin.services.dashboard_service import DashboardService
 from app.domains.admin.schemas.admin_schemas import DashboardResponse
 from app.common.dependencies.admin_auth_deps import get_current_admin
 from app.domains.admin.models.admin import Admin

@@ -4,7 +4,7 @@ from typing import Optional
 import logging
 
 from app.core.database import get_db
-from app.domains.admin.services.admin_service import ProductManagementService
+from app.domains.admin.services.product_management_service import ProductManagementService
 from app.domains.admin.schemas.admin_schemas import (
     ProductCreate, ProductUpdate, ProductResponse, PaginatedResponse
 )

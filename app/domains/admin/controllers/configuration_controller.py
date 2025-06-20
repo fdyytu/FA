@@ -4,7 +4,8 @@ from typing import List, Optional
 import logging
 
 from app.core.database import get_db
-from app.domains.admin.services.admin_service import ConfigurationService, MarginManagementService
+from app.domains.admin.services.configuration_service import ConfigurationService
+from app.domains.admin.services.margin_management_service import MarginManagementService
 from app.domains.admin.schemas.admin_schemas import (
     ConfigCreate, ConfigUpdate, ConfigResponse, MarginConfigCreate, 
     MarginConfigUpdate, MarginConfigResponse, PaginatedResponse,
