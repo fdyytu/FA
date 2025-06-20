@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Admin Panel</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="/static/shared/css/base.css">
+    <link rel="stylesheet" href="/static/shared/css/dashboard-components.css">
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <h1 class="text-2xl font-bold text-gray-900">Analytics Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <select id="dateRangeSelector" class="form-select">
+                            <option value="7">7 Hari Terakhir</option>
+                            <option value="30" selected>30 Hari Terakhir</option>
+                            <option value="90">90 Hari Terakhir</option>
+                        </select>
+                        <button id="exportAnalytics" class="btn btn-primary btn-sm">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Overview Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stats-card">
+                    <div class="stats-card-header">
+                        <h3 class="stats-card-title">Total Revenue</h3>
+                    </div>
+                    <div id="totalRevenue" class="stats-card-value">Rp 0</div>
+                    <div id="revenueChange" class="stats-card-change"></div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-card-header">
+                        <h3 class="stats-card-title">Total Orders</h3>
+                    </div>
+                    <div id="totalOrders" class="stats-card-value">0</div>
+                    <div id="ordersChange" class="stats-card-change"></div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-card-header">
+                        <h3 class="stats-card-title">Conversion Rate</h3>
+                    </div>
+                    <div id="conversionRate" class="stats-card-value">0%</div>
+                    <div id="conversionChange" class="stats-card-change"></div>
+                </div>
+                
+                <div class="stats-card">
+                    <div class="stats-card-header">
+                        <h3 class="stats-card-title">Avg Order Value</h3>
+                    </div>
+                    <div id="avgOrderValue" class="stats-card-value">Rp 0</div>
+                    <div id="aovChange" class="stats-card-change"></div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Revenue Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Revenue Trend</h3>
+                        <button id="refreshRevenue" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-sync-alt mr-1"></i>Refresh
+                        </button>
+                    </div>
+                    <div class="chart-canvas">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Orders Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Orders Overview</h3>
+                        <button id="refreshOrders" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-sync-alt mr-1"></i>Refresh
+                        </button>
+                    </div>
+                    <div class="chart-canvas">
+                        <canvas id="ordersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Shared Utilities -->
+    <script src="/static/shared/js/api-client.js"></script>
+    <script src="/static/shared/js/formatters.js"></script>
+    <script src="/static/shared/js/ui-utils.js"></script>
+    <script src="/static/shared/js/mock-data.js"></script>
+    
+    <!-- Chart Components -->
+    <script src="/static/components/charts/chart-manager.js"></script>
+    <script src="/static/components/charts/analytics-charts.js"></script>
+    
+    <!-- Analytics Module -->
+    <script src="/static/modules/analytics/analytics-data-service.js"></script>
+    <script src="/static/modules/analytics/analytics-ui-controller.js"></script>
+    <script src="/static/modules/analytics/analytics-main.js"></script>
+</body>
+</html>
