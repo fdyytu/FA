@@ -105,6 +105,27 @@ UIUtils.showLoading(true);
 | | `analytics-main.js` (82 lines) |
 | | `chart-manager.js` (51 lines) |
 | | `analytics-charts.js` (98 lines) |
+| `dashboard_discord.js` (793 lines) | Dipecah menjadi: |
+| | `discord-data-service-extended.js` (67 lines) |
+| | `discord-ui-controller.js` (66 lines) |
+| | `discord-bot-manager.js` (58 lines) |
+| | `discord-main.js` (68 lines) |
+| `dashboard_users.js` (769 lines) | Dipecah menjadi: |
+| | `users-data-service.js` (78 lines) |
+| | `users-ui-controller.js` (69 lines) |
+| | `users-main.js` (60 lines) |
+| `dashboard_products.js` (701 lines) | Dipecah menjadi: |
+| | `products-data-service.js` (86 lines) |
+| | `products-ui-controller.js` (69 lines) |
+| | `products-main.js` (67 lines) |
+| `dashboard_settings.js` (673 lines) | Dipecah menjadi: |
+| | `settings-data-service.js` (83 lines) |
+| | `settings-ui-controller.js` (83 lines) |
+| | `settings-main.js` (101 lines) |
+| `dashboard_main.js` (410 lines) | Dipecah menjadi: |
+| | `main-data-service.js` (89 lines) |
+| | `main-ui-controller.js` (119 lines) |
+| | `main-controller.js` (68 lines) |
 
 ### Backward Compatibility
 
@@ -134,10 +155,13 @@ File-file lama masih tersedia untuk backward compatibility, tetapi disarankan un
 
 ## Roadmap
 
-- [ ] Migrasi Discord module
-- [ ] Migrasi Products module  
-- [ ] Migrasi Users module
-- [ ] Migrasi Settings module
+- [x] Migrasi Discord module
+- [x] Migrasi Products module  
+- [x] Migrasi Users module
+- [x] Migrasi Settings module
+- [x] Migrasi Main Dashboard module
 - [ ] Implementasi lazy loading
 - [ ] Unit testing untuk setiap module
 - [ ] Performance monitoring
+- [ ] Migrasi file Android module (dashboard_android.js - 302 lines)
+- [ ] Migrasi file shared dashboard (dashboard_shared.js - 368 lines)
