@@ -33,28 +33,22 @@ async function initDiscordDashboard() {
 // Load Discord statistics
 async function loadDiscordStats() {
     try {
-        const response = await apiRequest('/admin/discord/stats');
+        const response = await apiRequest('/api/v1/discord/monitoring/stats');
         
         if (response && response.ok) {
             const data = await response.json();
             updateDiscordStats(data.data || data);
         } else {
-            // Use mock data if API fails
-            updateDiscordStats({
-                total_bots: 3,
-                discord_users: 2450,
-                live_products: 156,
-                commands_today: 1234
-            });
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading Discord stats:', error);
-        // Use mock data
+        showError('Gagal memuat statistik Discord');
         updateDiscordStats({
-            total_bots: 3,
-            discord_users: 2450,
-            live_products: 156,
-            commands_today: 1234
+            total_bots: 0,
+            discord_users: 0,
+            live_products: 0,
+            commands_today: 0
         });
     }
 }
@@ -69,33 +63,32 @@ function updateDiscordStats(stats) {
     };
     
     if (elements.totalBots) {
-        elements.totalBots.textContent = formatNumber(stats.total_bots || 3);
+        elements.totalBots.textContent = formatNumber(stats.total_bots || 0);
     }
     
     if (elements.discordUsers) {
-        elements.discordUsers.textContent = formatNumber(stats.discord_users || 2450);
+        elements.discordUsers.textContent = formatNumber(stats.discord_users || 0);
     }
     
     if (elements.liveProducts) {
-        elements.liveProducts.textContent = formatNumber(stats.live_products || 156);
+        elements.liveProducts.textContent = formatNumber(stats.live_products || 0);
     }
     
     if (elements.commandsToday) {
-        elements.commandsToday.textContent = formatNumber(stats.commands_today || 1234);
+        elements.commandsToday.textContent = formatNumber(stats.commands_today || 0);
     }
 }
 
 // Load bots
 async function loadBots() {
     try {
-        const response = await apiRequest('/admin/discord/bots');
+        const response = await apiRequest('/api/v1/discord/config/bots');
         
         if (response && response.ok) {
             const data = await response.json();
             bots = data.data || [];
         } else {
-            // Use mock data if API fails
-            bots = generateMockBots();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         renderBotsList();
@@ -103,58 +96,10 @@ async function loadBots() {
         
     } catch (error) {
         console.error('Error loading bots:', error);
-        bots = generateMockBots();
+        bots = [];
         renderBotsList();
         updateBotOptions();
     }
-}
-
-// Generate mock bots data
-function generateMockBots() {
-    return [
-        {
-            id: 1,
-            name: 'FA Store Bot',
-            token: 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTA.XXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXX',
-            prefix: '!',
-            guild_id: '123456789012345678',
-            description: 'Bot utama untuk toko FA',
-            is_active: true,
-            auto_start: true,
-            status: 'online',
-            uptime: '2d 14h 32m',
-            commands_count: 1234,
-            created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-            id: 2,
-            name: 'FA Support Bot',
-            token: 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTE.YYYYYY.YYYYYYYYYYYYYYYYYYYYYYYYYY',
-            prefix: '?',
-            guild_id: '123456789012345679',
-            description: 'Bot untuk customer support',
-            is_active: true,
-            auto_start: false,
-            status: 'online',
-            uptime: '1d 8h 15m',
-            commands_count: 567,
-            created_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-            id: 3,
-            name: 'FA Analytics Bot',
-            token: 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTI.ZZZZZZ.ZZZZZZZZZZZZZZZZZZZZZZZZZZ',
-            prefix: '#',
-            guild_id: '123456789012345680',
-            description: 'Bot untuk analytics dan reporting',
-            is_active: false,
-            auto_start: false,
-            status: 'offline',
-            uptime: '0m',
-            commands_count: 89,
-            created_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-        }
-    ];
 }
 
 // Render bots list
@@ -198,56 +143,22 @@ function renderBotsList() {
 // Load worlds
 async function loadWorlds() {
     try {
-        const response = await apiRequest('/admin/discord/worlds');
+        const response = await apiRequest('/api/v1/discord/config/worlds');
         
         if (response && response.ok) {
             const data = await response.json();
             worlds = data.data || [];
         } else {
-            // Use mock data if API fails
-            worlds = generateMockWorlds();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         renderWorldsList();
         
     } catch (error) {
         console.error('Error loading worlds:', error);
-        worlds = generateMockWorlds();
+        worlds = [];
         renderWorldsList();
     }
-}
-
-// Generate mock worlds data
-function generateMockWorlds() {
-    return [
-        {
-            id: 1,
-            name: 'WORLD1',
-            owner: 'ADMIN123',
-            bot_id: 1,
-            bot_name: 'FA Store Bot',
-            is_active: true,
-            created_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-            id: 2,
-            name: 'WORLD2',
-            owner: 'OWNER456',
-            bot_id: 1,
-            bot_name: 'FA Store Bot',
-            is_active: true,
-            created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-            id: 3,
-            name: 'TESTWORLD',
-            owner: 'TESTER789',
-            bot_id: 2,
-            bot_name: 'FA Support Bot',
-            is_active: false,
-            created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
-        }
-    ];
 }
 
 // Render worlds list
@@ -278,38 +189,22 @@ function renderWorldsList() {
 // Load recent commands
 async function loadRecentCommands() {
     try {
-        const response = await apiRequest('/admin/discord/commands/recent?limit=5');
+        const response = await apiRequest('/api/v1/discord/monitoring/commands/recent?limit=5');
         
         if (response && response.ok) {
             const data = await response.json();
             recentCommands = data.data || [];
         } else {
-            // Use mock data if API fails
-            recentCommands = generateMockCommands();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         renderRecentCommands();
         
     } catch (error) {
         console.error('Error loading recent commands:', error);
-        recentCommands = generateMockCommands();
+        recentCommands = [];
         renderRecentCommands();
     }
-}
-
-// Generate mock commands data
-function generateMockCommands() {
-    const commands = ['!buy', '!balance', '!help', '!products', '!status'];
-    const users = ['User123', 'Player456', 'Customer789', 'Buyer101', 'Member202'];
-    
-    return Array.from({length: 5}, (_, i) => ({
-        id: i + 1,
-        command: commands[Math.floor(Math.random() * commands.length)],
-        user: users[Math.floor(Math.random() * users.length)],
-        bot_name: 'FA Store Bot',
-        success: Math.random() > 0.2,
-        executed_at: new Date(Date.now() - Math.random() * 60 * 60 * 1000).toISOString()
-    }));
 }
 
 // Render recent commands
@@ -339,46 +234,22 @@ function renderRecentCommands() {
 // Load bot logs
 async function loadBotLogs() {
     try {
-        const response = await apiRequest('/admin/discord/logs?limit=10');
+        const response = await apiRequest('/api/v1/discord/monitoring/logs?limit=10');
         
         if (response && response.ok) {
             const data = await response.json();
             botLogs = data.data || [];
         } else {
-            // Use mock data if API fails
-            botLogs = generateMockLogs();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         renderBotLogs();
         
     } catch (error) {
         console.error('Error loading bot logs:', error);
-        botLogs = generateMockLogs();
+        botLogs = [];
         renderBotLogs();
     }
-}
-
-// Generate mock logs data
-function generateMockLogs() {
-    const logTypes = ['info', 'warning', 'error', 'success'];
-    const messages = [
-        'Bot started successfully',
-        'Command executed: !buy',
-        'User joined server',
-        'Payment processed',
-        'Connection timeout',
-        'Database query completed',
-        'Rate limit exceeded',
-        'New product added'
-    ];
-    
-    return Array.from({length: 10}, (_, i) => ({
-        id: i + 1,
-        type: logTypes[Math.floor(Math.random() * logTypes.length)],
-        message: messages[Math.floor(Math.random() * messages.length)],
-        bot_name: 'FA Store Bot',
-        timestamp: new Date(Date.now() - Math.random() * 2 * 60 * 60 * 1000).toISOString()
-    }));
 }
 
 // Render bot logs

@@ -31,28 +31,22 @@ async function initProductsDashboard() {
 // Load product statistics
 async function loadProductStats() {
     try {
-        const response = await apiRequest('/products/stats');
+        const response = await apiRequest('/api/v1/admin/dashboard/stats/products');
         
         if (response && response.ok) {
             const data = await response.json();
             updateProductStats(data.data || data);
         } else {
-            // Use mock data if API fails
-            updateProductStats({
-                total_products: 156,
-                active_products: 142,
-                low_stock_products: 8,
-                total_categories: 12
-            });
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading product stats:', error);
-        // Use mock data
+        showError('Gagal memuat statistik produk');
         updateProductStats({
-            total_products: 156,
-            active_products: 142,
-            low_stock_products: 8,
-            total_categories: 12
+            total_products: 0,
+            active_products: 0,
+            low_stock_products: 0,
+            total_categories: 0
         });
     }
 }
@@ -67,19 +61,19 @@ function updateProductStats(stats) {
     };
     
     if (elements.totalProducts) {
-        elements.totalProducts.textContent = formatNumber(stats.total_products || 156);
+        elements.totalProducts.textContent = formatNumber(stats.total_products || 0);
     }
     
     if (elements.activeProducts) {
-        elements.activeProducts.textContent = formatNumber(stats.active_products || 142);
+        elements.activeProducts.textContent = formatNumber(stats.active_products || 0);
     }
     
     if (elements.lowStockProducts) {
-        elements.lowStockProducts.textContent = formatNumber(stats.low_stock_products || 8);
+        elements.lowStockProducts.textContent = formatNumber(stats.low_stock_products || 0);
     }
     
     if (elements.totalCategories) {
-        elements.totalCategories.textContent = formatNumber(stats.total_categories || 12);
+        elements.totalCategories.textContent = formatNumber(stats.total_categories || 0);
     }
 }
 
@@ -92,14 +86,13 @@ async function loadProducts() {
     if (tableContainer) tableContainer.classList.add('hidden');
     
     try {
-        const response = await apiRequest('/products');
+        const response = await apiRequest('/api/v1/products');
         
         if (response && response.ok) {
             const data = await response.json();
             products = data.data || [];
         } else {
-            // Use mock data if API fails
-            products = generateMockProducts();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         filteredProducts = [...products];
@@ -109,50 +102,15 @@ async function loadProducts() {
         
     } catch (error) {
         console.error('Error loading products:', error);
-        products = generateMockProducts();
-        filteredProducts = [...products];
-        totalItems = filteredProducts.length;
+        products = [];
+        filteredProducts = [];
+        totalItems = 0;
         renderProductsTable();
         updatePagination();
     } finally {
         if (loadingElement) loadingElement.classList.add('hidden');
         if (tableContainer) tableContainer.classList.remove('hidden');
     }
-}
-
-// Generate mock products data
-function generateMockProducts() {
-    const categories = ['pulsa', 'token_pln', 'paket_data', 'bpjs', 'voucher_game'];
-    const providers = ['Telkomsel', 'Indosat', 'XL', 'Tri', 'Smartfren', 'PLN', 'BPJS'];
-    const statuses = ['active', 'inactive', 'out_of_stock'];
-    
-    const mockProducts = [];
-    
-    for (let i = 1; i <= 50; i++) {
-        const category = categories[Math.floor(Math.random() * categories.length)];
-        const provider = providers[Math.floor(Math.random() * providers.length)];
-        const status = statuses[Math.floor(Math.random() * statuses.length)];
-        const price = Math.floor(Math.random() * 100000) + 10000;
-        const stock = Math.floor(Math.random() * 1000);
-        
-        mockProducts.push({
-            id: i,
-            name: `${provider} ${category.replace('_', ' ').toUpperCase()} ${Math.floor(Math.random() * 100)}K`,
-            code: `${category.toUpperCase()}_${provider.toUpperCase()}_${i}`,
-            category: category,
-            provider: provider,
-            price: price,
-            price_wl: price - 1000,
-            stock_quantity: stock,
-            status: status,
-            is_active: status === 'active',
-            is_featured: Math.random() > 0.8,
-            description: `Produk ${category} dari ${provider}`,
-            created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString()
-        });
-    }
-    
-    return mockProducts;
 }
 
 // Render products table
