@@ -4,11 +4,10 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 
 from app.domains.discord.models.command_log import DiscordCommandLog
-from app.common.base_classes.base_repository import BaseRepository
 
-class CommandLogRepository(BaseRepository[DiscordCommandLog]):
+class CommandLogRepository:
     def __init__(self, db: Session):
-        super().__init__(db, DiscordCommandLog)
+        self.db = db
     
     def create_log(self, log_data: Dict[str, Any]) -> DiscordCommandLog:
         """Buat log command baru"""
