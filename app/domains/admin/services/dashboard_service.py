@@ -142,7 +142,7 @@ class DashboardService(BaseService):
             return self.dashboard_repo.get_dashboard_stats()
         except Exception as e:
             logger.error(f"Error getting overview stats: {e}")
-            return self._get_empty_stats()
+            raise Exception(f"Database connection failed: {str(e)}")
     
     def get_user_statistics(self) -> Dict[str, Any]:
         """Ambil statistik user"""

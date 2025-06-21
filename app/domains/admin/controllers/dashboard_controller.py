@@ -175,15 +175,11 @@ class AdminStatsController:
                 
             except Exception as e:
                 logger.error(f"Error getting admin stats: {e}")
-                # Return mock data jika ada error
-                mock_stats = {
-                    "overview": {"total_users": 1250, "total_transactions": 5670, "total_revenue": 125000.50},
-                    "users": {"active_users": 890, "new_users_today": 25},
-                    "transactions": {"completed": 1100, "pending": 100, "failed": 50},
-                    "products": {"total_products": 150, "active_products": 140},
-                    "timestamp": "2025-01-21T05:30:41Z"
-                }
-                return {"success": True, "data": mock_stats}
+                # Return error response instead of mock data
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Failed to retrieve dashboard statistics: {str(e)}"
+                )
 
 # Initialize stats controller
 admin_stats_controller = AdminStatsController()
