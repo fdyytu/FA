@@ -3,7 +3,7 @@ Stock Display Management API - Core Operations
 """
 from fastapi import APIRouter, HTTPException, Depends
 from app.domains.discord.services.stock_display_service import StockDisplayService
-from app.core.dependencies import get_current_user
+from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/stock-display", tags=["Stock Display Management"])
 

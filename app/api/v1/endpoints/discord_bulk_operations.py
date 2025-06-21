@@ -4,7 +4,7 @@ Enhanced Bot Management API - Core Operations
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from app.domains.discord.services.bulk_operations import BulkOperationsService
-from app.core.dependencies import get_current_user
+from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/bot-management", tags=["Enhanced Bot Management"])
 

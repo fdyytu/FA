@@ -4,7 +4,7 @@ Discord Bulk Messaging API Endpoints
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from app.domains.discord.services.bulk_messaging import BulkMessagingService
-from app.core.dependencies import get_current_user
+from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/bot-messaging", tags=["Bot Messaging"])
 

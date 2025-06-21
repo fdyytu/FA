@@ -6,7 +6,7 @@ from app.domains.discord.schemas.discord_config_schemas import (
     DiscordConfigUpdate, DiscordConfigResponse
 )
 from app.domains.discord.services.discord_config_service import DiscordConfigService
-from app.core.dependencies import get_current_user
+from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/bot-config", tags=["Bot Configuration Management"])
 

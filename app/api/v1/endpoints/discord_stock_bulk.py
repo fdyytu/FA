@@ -4,7 +4,7 @@ Stock Display Bulk Operations API
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
 from app.domains.discord.services.stock_display_bulk import StockDisplayBulkService
-from app.core.dependencies import get_current_user
+from app.api.deps import get_current_user
 
 router = APIRouter(prefix="/stock-display-bulk", tags=["Stock Display Bulk"])
 

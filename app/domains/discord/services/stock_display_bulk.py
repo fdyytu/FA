@@ -3,7 +3,7 @@ Stock Display Bulk Operations
 """
 from typing import Dict, Any, List
 from app.domains.discord.services.stock_display_service import StockDisplayService
-from app.core.logging import get_logger
+from app.common.logging.logging_config import get_logger
 
 logger = get_logger(__name__)
 
