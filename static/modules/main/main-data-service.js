@@ -15,14 +15,13 @@ class MainDashboardDataService {
             if (response && response.ok) {
                 const data = await response.json();
                 this.data.stats = data.data || data;
+                return this.data.stats;
             } else {
-                this.data.stats = this.generateMockStats();
+                throw new Error(`API Error: ${response.status} - ${response.statusText}`);
             }
-            return this.data.stats;
         } catch (error) {
             console.error('Error loading dashboard stats:', error);
-            this.data.stats = this.generateMockStats();
-            return this.data.stats;
+            throw new Error(`Failed to load dashboard statistics: ${error.message}`);
         }
     }
 
@@ -42,14 +41,13 @@ class MainDashboardDataService {
             if (response && response.ok) {
                 const data = await response.json();
                 this.data.recentTransactions = data.data || [];
+                return this.data.recentTransactions;
             } else {
-                this.data.recentTransactions = this.generateMockTransactions();
+                throw new Error(`API Error: ${response.status} - ${response.statusText}`);
             }
-            return this.data.recentTransactions;
         } catch (error) {
             console.error('Error loading recent transactions:', error);
-            this.data.recentTransactions = this.generateMockTransactions();
-            return this.data.recentTransactions;
+            throw new Error(`Failed to load recent transactions: ${error.message}`);
         }
     }
 
@@ -67,14 +65,13 @@ class MainDashboardDataService {
             if (response && response.ok) {
                 const data = await response.json();
                 this.data.chartData = data.data || data;
+                return this.data.chartData;
             } else {
-                this.data.chartData = this.generateMockChartData();
+                throw new Error(`API Error: ${response.status} - ${response.statusText}`);
             }
-            return this.data.chartData;
         } catch (error) {
             console.error('Error loading chart data:', error);
-            this.data.chartData = this.generateMockChartData();
-            return this.data.chartData;
+            throw new Error(`Failed to load chart data: ${error.message}`);
         }
     }
 
