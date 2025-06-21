@@ -147,6 +147,24 @@ except ImportError as e:
     log_module_import_error("app.domains.analytics.controllers.analytics_controller.admin_analytics_router", e, "Admin analytics controller registration")
     router_logger.warning("⚠️ Admin analytics controller not available")
 
+# Include Admin Analytics endpoints (specific endpoints)
+try:
+    from app.domains.analytics.controllers.admin_analytics_controller import admin_analytics_controller
+    api_router.include_router(admin_analytics_controller.router, prefix="/admin/analytics", tags=["admin-analytics-specific"])
+    router_logger.info("✅ Admin analytics specific controller registered")
+except ImportError as e:
+    log_module_import_error("app.domains.analytics.controllers.admin_analytics_controller", e, "Admin analytics specific controller registration")
+    router_logger.warning("⚠️ Admin analytics specific controller not available")
+
+# Include Admin Stats endpoints
+try:
+    from app.domains.admin.controllers.dashboard_controller import admin_stats_controller
+    api_router.include_router(admin_stats_controller.router, prefix="/admin/stats", tags=["admin-stats"])
+    router_logger.info("✅ Admin stats controller registered")
+except ImportError as e:
+    log_module_import_error("app.domains.admin.controllers.dashboard_controller.admin_stats_controller", e, "Admin stats controller registration")
+    router_logger.warning("⚠️ Admin stats controller not available")
+
 # Include Transaction endpoints - use correct path without duplication
 try:
     from app.domains.admin.controllers.transaction_controller import transaction_controller

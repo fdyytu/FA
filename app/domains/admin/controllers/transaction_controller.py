@@ -59,12 +59,12 @@ class TransactionController:
                 except Exception as audit_error:
                     logger.warning(f"Failed to log audit for recent transactions: {audit_error}")
                 
-                return APIResponse.success(data=recent_transactions)
+                return {"success": True, "data": recent_transactions}
                 
             except Exception as e:
                 logger.error(f"Error getting recent transactions: {e}")
                 # Return empty data instead of raising exception
-                return APIResponse.success(data=[], message="Data transaksi terbaru tidak tersedia saat ini")
+                return {"success": True, "data": [], "message": "Data transaksi terbaru tidak tersedia saat ini"}
         
         @self.router.get("/")
         async def get_transactions(
@@ -116,13 +116,13 @@ class TransactionController:
                     })
                 )
                 
-                return APIResponse.success(data={
+                return {"success": True, "data": {
                     "items": transactions,
                     "total": total,
                     "page": page,
                     "limit": limit,
                     "pages": (total + limit - 1) // limit
-                })
+                }}
                 
             except Exception as e:
                 logger.error(f"Error getting transactions: {e}")
@@ -164,7 +164,7 @@ class TransactionController:
                     new_values=json.dumps({"action": "viewed_transaction_detail"})
                 )
                 
-                return APIResponse.success(data=transaction)
+                return {"success": True, "data": transaction}
                 
             except Exception as e:
                 logger.error(f"Error getting transaction {transaction_id}: {e}")
@@ -201,9 +201,10 @@ class TransactionController:
                     })
                 )
                 
-                return APIResponse.success(
-                    message=f"Status transaksi {transaction_id} berhasil diupdate ke {new_status}"
-                )
+                return {
+                    "success": True,
+                    "message": f"Status transaksi {transaction_id} berhasil diupdate ke {new_status}"
+                }
                 
             except Exception as e:
                 logger.error(f"Error updating transaction status {transaction_id}: {e}")
@@ -239,12 +240,13 @@ class TransactionController:
                     new_values=json.dumps({"action": "viewed_transaction_summary"})
                 )
                 
-                return APIResponse.success(data=summary)
+                return {"success": True, "data": summary}
                 
             except Exception as e:
                 logger.error(f"Error getting transaction summary: {e}")
-                return APIResponse.success(
-                    data={
+                return {
+                    "success": True,
+                    "data": {
                         "total_transactions": 0,
                         "total_amount": 0,
                         "completed_transactions": 0,
@@ -254,8 +256,8 @@ class TransactionController:
                         "today_amount": 0,
                         "monthly_growth": 0
                     },
-                    message="Data statistik transaksi tidak tersedia saat ini"
-                )
+                    "message": "Data statistik transaksi tidak tersedia saat ini"
+                }
 
 
 # Initialize controller
