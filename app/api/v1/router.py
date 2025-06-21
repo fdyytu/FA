@@ -295,5 +295,14 @@ except ImportError as e:
     log_module_import_error("app.domains.discord.controllers.bot_config_management", e, "Discord bot config management controller registration")
     router_logger.warning("⚠️ Discord bot config management controller not available")
 
+# Include Dashboard Integration Controller
+try:
+    from app.domains.discord.controllers.dashboard_integration import dashboard_integration
+    api_router.include_router(dashboard_integration.router, prefix="/discord", tags=["discord-dashboard-integration"])
+    router_logger.info("✅ Discord dashboard integration controller registered")
+except ImportError as e:
+    log_module_import_error("app.domains.discord.controllers.dashboard_integration", e, "Discord dashboard integration controller registration")
+    router_logger.warning("⚠️ Discord dashboard integration controller not available")
+
 # Log router setup completion
 router_logger.info("🎯 Router setup completed - All available endpoints registered")
