@@ -30,6 +30,14 @@ except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_config", e, "Discord config API router registration")
     router_logger.warning("⚠️ Discord config API endpoints not available")
 
+try:
+    from app.api.v1.endpoints.discord_monitoring import router as discord_monitoring_router
+    api_router.include_router(discord_monitoring_router, prefix="/api/discord", tags=["discord-monitoring-api"])
+    router_logger.info("✅ Discord monitoring API endpoints registered")
+except ImportError as e:
+    log_module_import_error("app.api.v1.endpoints.discord_monitoring", e, "Discord monitoring API router registration")
+    router_logger.warning("⚠️ Discord monitoring API endpoints not available")
+
 # Include Discord domain controllers
 try:
     from app.domains.discord.controllers.bot_controller import bot_controller
