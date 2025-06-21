@@ -289,3 +289,6 @@ class DiscordBotController:
 
 # Initialize controller
 bot_controller = DiscordBotController()
+
+# Export router untuk kompatibilitas dengan import
+router = bot_controller.router

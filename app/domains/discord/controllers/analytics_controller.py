@@ -316,3 +316,6 @@ class DiscordAnalyticsController:
 
 # Initialize controller
 analytics_controller = DiscordAnalyticsController()
+
+# Export router untuk kompatibilitas dengan import
+router = analytics_controller.router
