@@ -88,6 +88,31 @@ def setup_logging() -> None:
                 "level": settings.LOG_LEVEL,
                 "handlers": ["console", "file", "error_file"],
                 "propagate": False
+            },
+            "server": {
+                "level": settings.LOG_LEVEL,
+                "handlers": ["console", "file", "error_file"],
+                "propagate": False
+            },
+            "router": {
+                "level": settings.LOG_LEVEL,
+                "handlers": ["console", "file", "error_file"],
+                "propagate": False
+            },
+            "module_import": {
+                "level": "ERROR",
+                "handlers": ["console", "file", "error_file"],
+                "propagate": False
+            },
+            "request_logger": {
+                "level": settings.LOG_LEVEL,
+                "handlers": ["console", "file"],
+                "propagate": False
+            },
+            "endpoint": {
+                "level": settings.LOG_LEVEL,
+                "handlers": ["console", "file", "error_file"],
+                "propagate": False
             }
         }
     }
