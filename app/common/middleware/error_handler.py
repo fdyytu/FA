@@ -11,14 +11,15 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from pydantic import ValidationError
-from app.core.constants import StatusMessages
-from app.utils.exceptions import (
+from app.infrastructure.config.constants import StatusMessages
+from app.common.exceptions.custom_exceptions import (
     BaseCustomException, ValidationException, NotFoundError,
     UnauthorizedError, ForbiddenError, ConflictError, InternalServerError
 )
 import logging
 
 logger = logging.getLogger(__name__)
+module_logger = logging.getLogger("module_import")
 
 
 class ErrorHandlerMiddleware(BaseHTTPMiddleware):
@@ -45,6 +46,8 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
             UnauthorizedError: self._handle_unauthorized_error,
             ForbiddenError: self._handle_forbidden_error,
             ConflictError: self._handle_conflict_error,
+            ModuleNotFoundError: self._handle_module_not_found_error,
+            ImportError: self._handle_import_error,
             ValueError: self._handle_value_error,
             KeyError: self._handle_key_error,
             AttributeError: self._handle_attribute_error,
@@ -244,6 +247,60 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                 "message": StatusMessages.INTERNAL_ERROR,
                 "error_code": "ATTRIBUTE_ERROR",
                 "error_id": error_id if self.debug else None
+            }
+        )
+    
+    async def _handle_module_not_found_error(self, exc: ModuleNotFoundError, request: Request, error_id: str) -> JSONResponse:
+        """Handle ModuleNotFoundError"""
+        # Log detailed module error
+        module_logger.error(
+            f"🚫 MODULE NOT FOUND [{error_id}]: {str(exc)} - {request.method} {request.url.path}",
+            extra={
+                "error_context": {
+                    "error_id": error_id,
+                    "module_error": str(exc),
+                    "endpoint": request.url.path,
+                    "method": request.method,
+                    "traceback": traceback.format_exc()
+                }
+            }
+        )
+        
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "message": "Module tidak ditemukan - terjadi kesalahan konfigurasi sistem",
+                "error_code": "MODULE_NOT_FOUND",
+                "error_id": error_id if self.debug else None,
+                "details": str(exc) if self.debug else None
+            }
+        )
+    
+    async def _handle_import_error(self, exc: ImportError, request: Request, error_id: str) -> JSONResponse:
+        """Handle ImportError"""
+        # Log detailed import error
+        module_logger.error(
+            f"🚫 IMPORT ERROR [{error_id}]: {str(exc)} - {request.method} {request.url.path}",
+            extra={
+                "error_context": {
+                    "error_id": error_id,
+                    "import_error": str(exc),
+                    "endpoint": request.url.path,
+                    "method": request.method,
+                    "traceback": traceback.format_exc()
+                }
+            }
+        )
+        
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "message": "Gagal mengimpor module - terjadi kesalahan konfigurasi sistem",
+                "error_code": "IMPORT_ERROR",
+                "error_id": error_id if self.debug else None,
+                "details": str(exc) if self.debug else None
             }
         )
     

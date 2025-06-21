@@ -25,6 +25,13 @@ class StatusMessages:
     COMPLETED = "completed"
     CANCELLED = "cancelled"
     RATE_LIMIT_EXCEEDED = "Rate limit exceeded. Please try again later."
+    VALIDATION_ERROR = "Data yang diberikan tidak valid"
+    INTERNAL_ERROR = "Terjadi kesalahan sistem internal"
+    DATABASE_ERROR = "Terjadi kesalahan pada database"
+    NOT_FOUND = "Data tidak ditemukan"
+    UNAUTHORIZED = "Akses tidak diizinkan"
+    FORBIDDEN = "Akses ditolak"
+    CONFLICT = "Data sudah ada atau konflik"
 
 class ErrorCodes:
     """Error code constants"""
