@@ -7,6 +7,7 @@ from app.domains.admin.services.dashboard_service import DashboardService
 from app.domains.admin.schemas.admin_schemas import DashboardResponse
 from app.common.dependencies.admin_auth_deps import get_current_admin
 from app.domains.admin.models.admin import Admin
+from app.common.responses.api_response import APIResponse
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ class DashboardController:
             
             stats = dashboard_service.get_overview_stats()
             
-            return {"success": True, "data": stats}
+            return APIResponse.success(data=stats)
         
         @self.router.get("/stats/users")
         async def get_user_stats(
@@ -57,7 +58,7 @@ class DashboardController:
             
             stats = dashboard_service.get_user_statistics()
             
-            return {"success": True, "data": stats}
+            return APIResponse.success(data=stats)
         
         @self.router.get("/stats/transactions")
         async def get_transaction_stats(
@@ -69,7 +70,7 @@ class DashboardController:
             
             stats = dashboard_service.get_transaction_statistics()
             
-            return {"success": True, "data": stats}
+            return APIResponse.success(data=stats)
         
         @self.router.get("/stats/products")
         async def get_product_stats(
@@ -81,7 +82,7 @@ class DashboardController:
             
             stats = dashboard_service.get_product_statistics()
             
-            return {"success": True, "data": stats}
+            return APIResponse.success(data=stats)
         
         @self.router.get("/stats/revenue")
         async def get_revenue_stats(
@@ -94,7 +95,7 @@ class DashboardController:
             
             stats = dashboard_service.get_revenue_statistics(period)
             
-            return {"success": True, "data": stats}
+            return APIResponse.success(data=stats)
         
         @self.router.get("/recent-activities")
         async def get_recent_activities(
@@ -107,7 +108,7 @@ class DashboardController:
             
             activities = dashboard_service.get_recent_activities(limit)
             
-            return {"success": True, "data": activities}
+            return APIResponse.success(data=activities)
         
         @self.router.get("/system-health")
         async def get_system_health(
@@ -119,7 +120,7 @@ class DashboardController:
             
             health = dashboard_service.get_system_health()
             
-            return {"success": True, "data": health}
+            return APIResponse.success(data=health)
         
         @self.router.get("/alerts")
         async def get_system_alerts(
@@ -131,7 +132,7 @@ class DashboardController:
             
             alerts = dashboard_service.get_system_alerts()
             
-            return {"success": True, "data": alerts}
+            return APIResponse.success(data=alerts)
 
 
 # Initialize controller
