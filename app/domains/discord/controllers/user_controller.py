@@ -293,3 +293,6 @@ class DiscordUserController:
 
 # Initialize controller
 user_controller = DiscordUserController()
+
+# Export router untuk kompatibilitas dengan import
+router = user_controller.router

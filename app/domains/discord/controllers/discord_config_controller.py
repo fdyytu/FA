@@ -225,3 +225,6 @@ class DiscordConfigController:
 
 # Initialize controller
 discord_config_controller = DiscordConfigController()
+
+# Export router untuk kompatibilitas dengan import
+router = discord_config_controller.router
