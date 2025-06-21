@@ -37,7 +37,7 @@ async function loadDashboardStats() {
     const token = localStorage.getItem('adminToken');
     
     try {
-        const response = await fetch(`${API_BASE_URL}/dashboard/stats`, {
+        const response = await fetch(`${API_BASE_URL}/dashboard/`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -45,72 +45,102 @@ async function loadDashboardStats() {
         
         if (response.ok) {
             const data = await response.json();
-            updateStatsCards(data);
+            if (data.stats) {
+                updateStatsCards(data.stats);
+            } else {
+                throw new Error('Invalid response format');
+            }
         } else {
-            // Use mock data if API fails
-            updateStatsCards({
-                total_users: 1250,
-                total_transactions: 3420,
-                total_products: 156,
-                total_revenue: 45000000
-            });
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading stats:', error);
-        // Use mock data
+        showError('Gagal memuat statistik dashboard');
+        // Set default empty values instead of mock data
         updateStatsCards({
-            total_users: 1250,
-            total_transactions: 3420,
-            total_products: 156,
-            total_revenue: 45000000
+            total_users: 0,
+            total_transactions: 0,
+            total_products: 0,
+            total_revenue: 0
         });
     }
 }
 
 // Update stats cards
 function updateStatsCards(stats) {
-    document.getElementById('totalUsers').textContent = stats.total_users?.toLocaleString() || '1,250';
-    document.getElementById('totalTransactions').textContent = stats.total_transactions?.toLocaleString() || '3,420';
-    document.getElementById('totalProducts').textContent = stats.total_products?.toLocaleString() || '156';
+    document.getElementById('totalUsers').textContent = stats.total_users?.toLocaleString() || '0';
+    document.getElementById('totalTransactions').textContent = stats.total_transactions?.toLocaleString() || '0';
+    document.getElementById('totalProducts').textContent = stats.total_products?.toLocaleString() || '0';
     
-    const revenue = stats.total_revenue || 45000000;
+    const revenue = stats.total_revenue || 0;
     document.getElementById('totalRevenue').textContent = 'Rp ' + (revenue / 1000000).toFixed(1) + 'M';
+}
+
+// Format date helper function
+function formatDate(dateString) {
+    if (!dateString) return 'Tidak diketahui';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Baru saja';
+    if (diffMins < 60) return `${diffMins} menit lalu`;
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    if (diffDays < 7) return `${diffDays} hari lalu`;
+    
+    return date.toLocaleDateString('id-ID');
 }
 
 // Load recent transactions
 async function loadRecentTransactions() {
     const container = document.getElementById('recentTransactions');
+    const token = localStorage.getItem('adminToken');
     
-    // Mock data for demonstration
-    const transactions = [
-        { id: 1, user: 'John Doe', product: 'Pulsa Telkomsel 50K', amount: 52000, status: 'success', time: '2 menit lalu' },
-        { id: 2, user: 'Jane Smith', product: 'Token PLN 100K', amount: 102500, status: 'pending', time: '5 menit lalu' },
-        { id: 3, user: 'Bob Johnson', product: 'Paket Data XL 5GB', amount: 65000, status: 'success', time: '10 menit lalu' },
-        { id: 4, user: 'Alice Brown', product: 'Pulsa Indosat 25K', amount: 26500, status: 'failed', time: '15 menit lalu' },
-        { id: 5, user: 'Charlie Wilson', product: 'BPJS Kesehatan', amount: 150000, status: 'success', time: '20 menit lalu' }
-    ];
-    
-    container.innerHTML = transactions.map(tx => `
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div class="flex items-center">
-                <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <i class="fas fa-user text-white text-sm"></i>
+    try {
+        const response = await fetch(`${API_BASE_URL}/dashboard/recent-activities`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const transactions = data.data?.activities || [];
+            
+            if (transactions.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-4">Tidak ada transaksi terbaru</p>';
+                return;
+            }
+            
+            container.innerHTML = transactions.map(tx => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-exchange-alt text-white text-sm"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">${tx.description || 'Transaksi'}</p>
+                            <p class="text-xs text-gray-500">${formatDate(tx.created_at)}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${tx.type || 'transaction'}
+                        </span>
+                    </div>
                 </div>
-                <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-900">${tx.user}</p>
-                    <p class="text-xs text-gray-500">${tx.product}</p>
-                </div>
-            </div>
-            <div class="text-right">
-                <p class="text-sm font-medium text-gray-900">Rp ${tx.amount.toLocaleString()}</p>
-                <div class="flex items-center justify-end">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusClass(tx.status)}">
-                        ${getStatusText(tx.status)}
-                    </span>
-                </div>
-            </div>
-        </div>
-    `).join('');
+            `).join('');
+        } else {
+            throw new Error(`API Error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error loading recent transactions:', error);
+        container.innerHTML = '<p class="text-red-500 text-center py-4">Gagal memuat transaksi terbaru</p>';
+    }
 }
 
 // Get status class for transaction

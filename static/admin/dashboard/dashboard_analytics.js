@@ -34,34 +34,31 @@ async function initAnalyticsDashboard() {
 // Load overview statistics
 async function loadOverviewStats() {
     try {
-        const response = await apiRequest(`/analytics/overview?days=${currentDateRange}`);
+        const response = await apiRequest(`/dashboard/stats/overview`);
         
         if (response && response.ok) {
             const data = await response.json();
             updateOverviewStats(data.data || data);
         } else {
-            // Use mock data if API fails
-            updateOverviewStats(generateMockOverviewStats());
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading overview stats:', error);
-        updateOverviewStats(generateMockOverviewStats());
+        showError('Gagal memuat statistik overview');
+        updateOverviewStats({
+            total_revenue: 0,
+            revenue_change: 0,
+            total_orders: 0,
+            orders_change: 0,
+            conversion_rate: 0,
+            conversion_change: 0,
+            avg_order_value: 0,
+            aov_change: 0
+        });
     }
 }
 
-// Generate mock overview stats
-function generateMockOverviewStats() {
-    return {
-        total_revenue: 125000000,
-        revenue_change: 12.5,
-        total_orders: 1847,
-        orders_change: 8.2,
-        conversion_rate: 3.4,
-        conversion_change: 2.1,
-        avg_order_value: 67500,
-        aov_change: 5.7
-    };
-}
+
 
 // Update overview statistics cards
 function updateOverviewStats(stats) {
@@ -124,102 +121,33 @@ function updateChangeIndicator(element, change) {
 // Load chart data
 async function loadChartData() {
     try {
-        const [revenueResponse, ordersResponse, userGrowthResponse, paymentMethodsResponse] = await Promise.all([
-            apiRequest(`/analytics/revenue?days=${currentDateRange}`),
-            apiRequest(`/analytics/orders?days=${currentDateRange}`),
-            apiRequest(`/analytics/user-growth?days=${currentDateRange}`),
-            apiRequest(`/analytics/payment-methods?days=${currentDateRange}`)
+        const [revenueResponse, transactionResponse] = await Promise.all([
+            apiRequest(`/dashboard/stats/revenue?period=daily`),
+            apiRequest(`/dashboard/stats/transactions`)
         ]);
         
         analyticsData.revenue = revenueResponse && revenueResponse.ok ? 
-            await revenueResponse.json() : { data: generateMockRevenueData() };
+            await revenueResponse.json() : { data: [] };
         
-        analyticsData.orders = ordersResponse && ordersResponse.ok ? 
-            await ordersResponse.json() : { data: generateMockOrdersData() };
+        analyticsData.transactions = transactionResponse && transactionResponse.ok ? 
+            await transactionResponse.json() : { data: [] };
         
-        analyticsData.userGrowth = userGrowthResponse && userGrowthResponse.ok ? 
-            await userGrowthResponse.json() : { data: generateMockUserGrowthData() };
-        
-        analyticsData.paymentMethods = paymentMethodsResponse && paymentMethodsResponse.ok ? 
-            await paymentMethodsResponse.json() : { data: generateMockPaymentMethodsData() };
+        // Set empty data for other charts until real endpoints are available
+        analyticsData.userGrowth = { data: [] };
+        analyticsData.paymentMethods = { data: [] };
         
     } catch (error) {
         console.error('Error loading chart data:', error);
         analyticsData = {
-            revenue: { data: generateMockRevenueData() },
-            orders: { data: generateMockOrdersData() },
-            userGrowth: { data: generateMockUserGrowthData() },
-            paymentMethods: { data: generateMockPaymentMethodsData() }
+            revenue: { data: [] },
+            transactions: { data: [] },
+            userGrowth: { data: [] },
+            paymentMethods: { data: [] }
         };
     }
 }
 
-// Generate mock revenue data
-function generateMockRevenueData() {
-    const data = [];
-    const now = new Date();
-    
-    for (let i = currentDateRange - 1; i >= 0; i--) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - i);
-        
-        data.push({
-            date: date.toISOString().split('T')[0],
-            revenue: Math.floor(Math.random() * 5000000) + 1000000
-        });
-    }
-    
-    return data;
-}
 
-// Generate mock orders data
-function generateMockOrdersData() {
-    const data = [];
-    const now = new Date();
-    
-    for (let i = currentDateRange - 1; i >= 0; i--) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - i);
-        
-        data.push({
-            date: date.toISOString().split('T')[0],
-            orders: Math.floor(Math.random() * 100) + 20,
-            completed: Math.floor(Math.random() * 80) + 15,
-            cancelled: Math.floor(Math.random() * 10) + 2
-        });
-    }
-    
-    return data;
-}
-
-// Generate mock user growth data
-function generateMockUserGrowthData() {
-    const data = [];
-    const now = new Date();
-    
-    for (let i = currentDateRange - 1; i >= 0; i--) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - i);
-        
-        data.push({
-            date: date.toISOString().split('T')[0],
-            new_users: Math.floor(Math.random() * 50) + 5,
-            active_users: Math.floor(Math.random() * 200) + 100
-        });
-    }
-    
-    return data;
-}
-
-// Generate mock payment methods data
-function generateMockPaymentMethodsData() {
-    return [
-        { method: 'QRIS', count: 450, percentage: 35 },
-        { method: 'Bank Transfer', count: 380, percentage: 30 },
-        { method: 'E-Wallet', count: 320, percentage: 25 },
-        { method: 'Credit Card', count: 130, percentage: 10 }
-    ];
-}
 
 // Initialize charts
 function initCharts() {
@@ -424,29 +352,18 @@ function formatChartDate(dateString) {
 // Load top products
 async function loadTopProducts() {
     try {
-        const response = await apiRequest(`/analytics/top-products?days=${currentDateRange}&limit=5`);
+        const response = await apiRequest(`/dashboard/stats/products`);
         
         if (response && response.ok) {
             const data = await response.json();
-            renderTopProducts(data.data || []);
+            renderTopProducts(data.data?.top_products || []);
         } else {
-            renderTopProducts(generateMockTopProducts());
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading top products:', error);
-        renderTopProducts(generateMockTopProducts());
+        renderTopProducts([]);
     }
-}
-
-// Generate mock top products
-function generateMockTopProducts() {
-    return [
-        { id: 1, name: 'Diamond Mobile Legends', sales: 450, revenue: 22500000 },
-        { id: 2, name: 'UC PUBG Mobile', sales: 380, revenue: 19000000 },
-        { id: 3, name: 'Voucher Game Steam', sales: 320, revenue: 16000000 },
-        { id: 4, name: 'Robux Roblox', sales: 280, revenue: 14000000 },
-        { id: 5, name: 'Coins FIFA Mobile', sales: 250, revenue: 12500000 }
-    ];
 }
 
 // Render top products
@@ -476,31 +393,18 @@ function renderTopProducts(products) {
 // Load recent activity
 async function loadRecentActivity() {
     try {
-        const response = await apiRequest('/analytics/recent-activity?limit=10');
+        const response = await apiRequest('/dashboard/recent-activities?limit=10');
         
         if (response && response.ok) {
             const data = await response.json();
-            renderRecentActivity(data.data || []);
+            renderRecentActivity(data.data?.activities || []);
         } else {
-            renderRecentActivity(generateMockRecentActivity());
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading recent activity:', error);
-        renderRecentActivity(generateMockRecentActivity());
+        renderRecentActivity([]);
     }
-}
-
-// Generate mock recent activity
-function generateMockRecentActivity() {
-    const activities = [
-        { type: 'order', message: 'Order baru dari user123', time: new Date(Date.now() - 5 * 60 * 1000) },
-        { type: 'payment', message: 'Pembayaran berhasil untuk order #1234', time: new Date(Date.now() - 10 * 60 * 1000) },
-        { type: 'user', message: 'User baru mendaftar: newuser456', time: new Date(Date.now() - 15 * 60 * 1000) },
-        { type: 'product', message: 'Produk Diamond ML ditambahkan', time: new Date(Date.now() - 30 * 60 * 1000) },
-        { type: 'order', message: 'Order dibatalkan oleh customer789', time: new Date(Date.now() - 45 * 60 * 1000) }
-    ];
-    
-    return activities;
 }
 
 // Render recent activity
@@ -546,29 +450,24 @@ function getActivityIcon(type) {
 // Load performance metrics
 async function loadPerformanceMetrics() {
     try {
-        const response = await apiRequest(`/analytics/performance-metrics?days=${currentDateRange}`);
+        const response = await apiRequest(`/dashboard/system-health`);
         
         if (response && response.ok) {
             const data = await response.json();
             renderPerformanceMetrics(data.data || {});
         } else {
-            renderPerformanceMetrics(generateMockPerformanceMetrics());
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading performance metrics:', error);
-        renderPerformanceMetrics(generateMockPerformanceMetrics());
+        renderPerformanceMetrics({
+            response_time: 0,
+            uptime: 0,
+            error_rate: 0,
+            customer_satisfaction: 0,
+            refund_rate: 0
+        });
     }
-}
-
-// Generate mock performance metrics
-function generateMockPerformanceMetrics() {
-    return {
-        response_time: 245,
-        uptime: 99.8,
-        error_rate: 0.2,
-        customer_satisfaction: 4.7,
-        refund_rate: 1.5
-    };
 }
 
 // Render performance metrics
@@ -600,29 +499,12 @@ function renderPerformanceMetrics(metrics) {
 // Load geographic data
 async function loadGeographicData() {
     try {
-        const response = await apiRequest(`/analytics/geographic?days=${currentDateRange}`);
-        
-        if (response && response.ok) {
-            const data = await response.json();
-            renderGeographicData(data.data || []);
-        } else {
-            renderGeographicData(generateMockGeographicData());
-        }
+        // Geographic data endpoint not available yet, skip for now
+        renderGeographicData([]);
     } catch (error) {
         console.error('Error loading geographic data:', error);
-        renderGeographicData(generateMockGeographicData());
+        renderGeographicData([]);
     }
-}
-
-// Generate mock geographic data
-function generateMockGeographicData() {
-    return [
-        { region: 'Jakarta', users: 450, percentage: 35 },
-        { region: 'Surabaya', users: 280, percentage: 22 },
-        { region: 'Bandung', users: 220, percentage: 17 },
-        { region: 'Medan', users: 180, percentage: 14 },
-        { region: 'Lainnya', users: 150, percentage: 12 }
-    ];
 }
 
 // Render geographic data
