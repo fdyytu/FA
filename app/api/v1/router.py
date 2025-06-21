@@ -245,5 +245,55 @@ except ImportError as e:
     log_module_import_error("app.domains.ppob.controllers.ppob_controller", e, "PPOB controller registration")
     router_logger.warning("⚠️ PPOB controller not available")
 
+# Include new Discord endpoints from FASE 2
+try:
+    from app.api.v1.endpoints.discord_bulk_operations import router as bulk_ops_router
+    api_router.include_router(bulk_ops_router, prefix="/api/discord", tags=["discord-bulk-operations"])
+    router_logger.info("✅ Discord bulk operations endpoints registered")
+except ImportError as e:
+    log_module_import_error("app.api.v1.endpoints.discord_bulk_operations", e, "Discord bulk operations router registration")
+    router_logger.warning("⚠️ Discord bulk operations endpoints not available")
+
+try:
+    from app.api.v1.endpoints.discord_bulk_messaging import router as bulk_msg_router
+    api_router.include_router(bulk_msg_router, prefix="/api/discord", tags=["discord-bulk-messaging"])
+    router_logger.info("✅ Discord bulk messaging endpoints registered")
+except ImportError as e:
+    log_module_import_error("app.api.v1.endpoints.discord_bulk_messaging", e, "Discord bulk messaging router registration")
+    router_logger.warning("⚠️ Discord bulk messaging endpoints not available")
+
+try:
+    from app.api.v1.endpoints.discord_stock_display import router as stock_display_router
+    api_router.include_router(stock_display_router, prefix="/api/discord", tags=["discord-stock-display"])
+    router_logger.info("✅ Discord stock display endpoints registered")
+except ImportError as e:
+    log_module_import_error("app.api.v1.endpoints.discord_stock_display", e, "Discord stock display router registration")
+    router_logger.warning("⚠️ Discord stock display endpoints not available")
+
+try:
+    from app.api.v1.endpoints.discord_stock_bulk import router as stock_bulk_router
+    api_router.include_router(stock_bulk_router, prefix="/api/discord", tags=["discord-stock-bulk"])
+    router_logger.info("✅ Discord stock bulk endpoints registered")
+except ImportError as e:
+    log_module_import_error("app.api.v1.endpoints.discord_stock_bulk", e, "Discord stock bulk router registration")
+    router_logger.warning("⚠️ Discord stock bulk endpoints not available")
+
+# Include new Discord controllers from FASE 2
+try:
+    from app.domains.discord.controllers.bot_config_controller import router as bot_config_router
+    api_router.include_router(bot_config_router, prefix="/discord", tags=["discord-bot-config"])
+    router_logger.info("✅ Discord bot config controller registered")
+except ImportError as e:
+    log_module_import_error("app.domains.discord.controllers.bot_config_controller", e, "Discord bot config controller registration")
+    router_logger.warning("⚠️ Discord bot config controller not available")
+
+try:
+    from app.domains.discord.controllers.bot_config_management import router as bot_config_mgmt_router
+    api_router.include_router(bot_config_mgmt_router, prefix="/discord", tags=["discord-bot-config-mgmt"])
+    router_logger.info("✅ Discord bot config management controller registered")
+except ImportError as e:
+    log_module_import_error("app.domains.discord.controllers.bot_config_management", e, "Discord bot config management controller registration")
+    router_logger.warning("⚠️ Discord bot config management controller not available")
+
 # Log router setup completion
 router_logger.info("🎯 Router setup completed - All available endpoints registered")

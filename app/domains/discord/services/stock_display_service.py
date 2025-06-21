@@ -3,7 +3,7 @@ Stock Display Service - Core Operations
 """
 from typing import Dict, Any
 from app.domains.discord.services.discord_bot_service import DiscordBotService
-from app.core.logging import get_logger
+from app.common.logging.logging_config import get_logger
 
 logger = get_logger(__name__)
 
