@@ -165,6 +165,15 @@ except ImportError as e:
     log_module_import_error("app.domains.admin.controllers.dashboard_controller.admin_stats_controller", e, "Admin stats controller registration")
     router_logger.warning("⚠️ Admin stats controller not available")
 
+# Include Admin Discord endpoints
+try:
+    from app.domains.admin.controllers.admin_discord_controller import admin_discord_controller
+    api_router.include_router(admin_discord_controller.router, prefix="/admin/discord", tags=["admin-discord"])
+    router_logger.info("✅ Admin Discord controller registered")
+except ImportError as e:
+    log_module_import_error("app.domains.admin.controllers.admin_discord_controller", e, "Admin Discord controller registration")
+    router_logger.warning("⚠️ Admin Discord controller not available")
+
 # Include Transaction endpoints - use correct path without duplication
 try:
     from app.domains.admin.controllers.transaction_controller import transaction_controller
