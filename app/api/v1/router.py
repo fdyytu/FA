@@ -297,11 +297,11 @@ except ImportError as e:
 
 # Include Dashboard Integration Controller
 try:
-    from app.domains.discord.controllers.dashboard_integration import dashboard_integration
+    from app.domains.discord.controllers.dashboard_integration_simple import dashboard_integration
     api_router.include_router(dashboard_integration.router, prefix="/discord", tags=["discord-dashboard-integration"])
     router_logger.info("✅ Discord dashboard integration controller registered")
 except ImportError as e:
-    log_module_import_error("app.domains.discord.controllers.dashboard_integration", e, "Discord dashboard integration controller registration")
+    log_module_import_error("app.domains.discord.controllers.dashboard_integration_simple", e, "Discord dashboard integration controller registration")
     router_logger.warning("⚠️ Discord dashboard integration controller not available")
 
 # Log router setup completion
