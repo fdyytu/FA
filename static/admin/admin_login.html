@@ -422,7 +422,7 @@
                     
                     // Redirect after delay
                     setTimeout(() => {
-                        window.location.href = 'dashboard/dashboard_main.html';
+                        window.location.href = 'dashboard.html';
                     }, 1500);
                 } else {
                     showErrorMessage(data.detail || data.message || 'Login gagal. Periksa username dan password Anda.');
@@ -473,7 +473,7 @@
                 })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = 'dashboard/dashboard_main.html';
+                        window.location.href = 'dashboard.html';
                     }
                 })
                 .catch(() => {
