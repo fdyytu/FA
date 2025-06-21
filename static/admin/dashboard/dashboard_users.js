@@ -31,28 +31,22 @@ async function initUsersDashboard() {
 // Load user statistics
 async function loadUserStats() {
     try {
-        const response = await apiRequest('/users/stats');
+        const response = await apiRequest('/api/v1/admin/dashboard/stats/users');
         
         if (response && response.ok) {
             const data = await response.json();
             updateUserStats(data.data || data);
         } else {
-            // Use mock data if API fails
-            updateUserStats({
-                total_users: 1250,
-                active_users: 892,
-                premium_users: 156,
-                new_users_today: 23
-            });
+            throw new Error(`API Error: ${response.status}`);
         }
     } catch (error) {
         console.error('Error loading user stats:', error);
-        // Use mock data
+        showError('Gagal memuat statistik users');
         updateUserStats({
-            total_users: 1250,
-            active_users: 892,
-            premium_users: 156,
-            new_users_today: 23
+            total_users: 0,
+            active_users: 0,
+            premium_users: 0,
+            new_users_today: 0
         });
     }
 }
@@ -67,19 +61,19 @@ function updateUserStats(stats) {
     };
     
     if (elements.totalUsers) {
-        elements.totalUsers.textContent = formatNumber(stats.total_users || 1250);
+        elements.totalUsers.textContent = formatNumber(stats.total_users || 0);
     }
     
     if (elements.activeUsers) {
-        elements.activeUsers.textContent = formatNumber(stats.active_users || 892);
+        elements.activeUsers.textContent = formatNumber(stats.active_users || 0);
     }
     
     if (elements.premiumUsers) {
-        elements.premiumUsers.textContent = formatNumber(stats.premium_users || 156);
+        elements.premiumUsers.textContent = formatNumber(stats.premium_users || 0);
     }
     
     if (elements.newUsersToday) {
-        elements.newUsersToday.textContent = formatNumber(stats.new_users_today || 23);
+        elements.newUsersToday.textContent = formatNumber(stats.new_users_today || 0);
     }
 }
 
@@ -92,14 +86,13 @@ async function loadUsers() {
     if (tableContainer) tableContainer.classList.add('hidden');
     
     try {
-        const response = await apiRequest('/users');
+        const response = await apiRequest('/api/v1/users');
         
         if (response && response.ok) {
             const data = await response.json();
             users = data.data || [];
         } else {
-            // Use mock data if API fails
-            users = generateMockUsers();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         filteredUsers = [...users];
@@ -109,53 +102,15 @@ async function loadUsers() {
         
     } catch (error) {
         console.error('Error loading users:', error);
-        users = generateMockUsers();
-        filteredUsers = [...users];
-        totalItems = filteredUsers.length;
+        users = [];
+        filteredUsers = [];
+        totalItems = 0;
         renderUsersTable();
         updatePagination();
     } finally {
         if (loadingElement) loadingElement.classList.add('hidden');
         if (tableContainer) tableContainer.classList.remove('hidden');
     }
-}
-
-// Generate mock users data
-function generateMockUsers() {
-    const roles = ['user', 'premium', 'vip', 'admin'];
-    const statuses = ['active', 'inactive', 'banned'];
-    const firstNames = ['John', 'Jane', 'Bob', 'Alice', 'Charlie', 'Diana', 'Eve', 'Frank', 'Grace', 'Henry'];
-    const lastNames = ['Doe', 'Smith', 'Johnson', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson'];
-    
-    const mockUsers = [];
-    
-    for (let i = 1; i <= 100; i++) {
-        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const username = `${firstName.toLowerCase()}${lastName.toLowerCase()}${i}`;
-        const email = `${username}@example.com`;
-        const role = roles[Math.floor(Math.random() * roles.length)];
-        const status = statuses[Math.floor(Math.random() * statuses.length)];
-        const balance = Math.floor(Math.random() * 1000000);
-        const transactionCount = Math.floor(Math.random() * 100);
-        
-        mockUsers.push({
-            id: i,
-            username: username,
-            email: email,
-            phone: `+62${Math.floor(Math.random() * 900000000) + 100000000}`,
-            role: role,
-            balance: balance,
-            transaction_count: transactionCount,
-            status: status,
-            is_active: status === 'active',
-            is_verified: Math.random() > 0.3,
-            last_login: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-            created_at: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString()
-        });
-    }
-    
-    return mockUsers;
 }
 
 // Render users table
