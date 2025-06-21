@@ -5,7 +5,7 @@ from decimal import Decimal
 import json
 
 from app.common.base_classes.base_service import BaseService
-from app.domains.admin.models.admin import PPOBMarginConfig, MarginType
+from app.domains.ppob.models.ppob import PPOBMarginConfig
 from app.domains.admin.repositories.admin_repository import PPOBMarginRepository, AuditLogRepository
 from app.domains.admin.schemas.admin_schemas import MarginConfigCreate, MarginConfigUpdate
 
@@ -38,9 +38,9 @@ class MarginManagementService(BaseService):
             return base_price
         
         # Calculate margin
-        if margin_config.margin_type == MarginType.PERCENTAGE:
+        if margin_config.margin_type == "percentage":
             margin_amount = base_price * (margin_config.margin_value / 100)
-        else:  # NOMINAL
+        else:  # fixed
             margin_amount = margin_config.margin_value
         
         return base_price + margin_amount
@@ -81,7 +81,7 @@ class MarginManagementService(BaseService):
         
         # Store old values
         old_values = {
-            "margin_type": config.margin_type.value if config.margin_type else None,
+            "margin_type": config.margin_type if config.margin_type else None,
             "margin_value": str(config.margin_value),
             "description": config.description,
             "is_active": config.is_active

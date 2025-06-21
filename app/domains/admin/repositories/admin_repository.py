@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 import json
 
 from app.common.base_classes.base_repository import BaseRepository
-from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog
+from app.domains.admin.models.admin import Admin, AdminConfig, AdminAuditLog
+from app.domains.ppob.models.ppob import PPOBMarginConfig
 from app.domains.auth.models.user import User
 from app.domains.ppob.models.ppob import PPOBProduct, PPOBTransaction, TransactionStatus
 from app.domains.wallet.models.wallet import WalletTransaction

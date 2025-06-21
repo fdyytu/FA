@@ -6,7 +6,7 @@ Repository untuk data access PPOB margin configuration
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from app.domains.admin.models.admin import PPOBMarginConfig
+from app.domains.ppob.models.ppob import PPOBMarginConfig
 
 
 class PPOBMarginRepository:

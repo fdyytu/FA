@@ -15,11 +15,11 @@ def import_all_models():
     try:
         # Admin models - WAJIB untuk sistem admin
         from app.domains.admin.models.admin import (
-            Admin, AdminConfig, PPOBMarginConfig, 
+            Admin, AdminConfig, 
             AdminAuditLog, AdminNotificationSetting
         )
         models_imported.extend([
-            "Admin", "AdminConfig", "PPOBMarginConfig", 
+            "Admin", "AdminConfig", 
             "AdminAuditLog", "AdminNotificationSetting"
         ])
         logger.info("Admin models imported successfully")
@@ -80,8 +80,8 @@ def import_all_models():
         
     try:
         # PPOB models
-        from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct
-        models_imported.extend(["PPOBTransaction", "PPOBProduct"])
+        from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBMarginConfig
+        models_imported.extend(["PPOBTransaction", "PPOBProduct", "PPOBMarginConfig"])
         logger.info("PPOB models imported successfully")
     except ImportError as e:
         logger.warning(f"PPOB models not available: {e}")
