@@ -4,11 +4,6 @@ from app.common.base_classes.base import BaseModel
 import enum
 from datetime import datetime
 
-class MarginType(enum.Enum):
-    """Enum untuk tipe margin - Interface Segregation"""
-    PERCENTAGE = "percentage"
-    NOMINAL = "nominal"
-
 class AdminRole(enum.Enum):
     """Enum untuk role admin"""
     SUPER_ADMIN = "SUPER_ADMIN"
@@ -46,19 +41,7 @@ class AdminConfig(BaseModel):
     description = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True)
 
-class PPOBMarginConfig(BaseModel):
-    __table_args__ = {'extend_existing': True}
-    """
-    Model untuk konfigurasi margin PPOB - Single Responsibility: Mengelola margin pricing
-    """
-    __tablename__ = "ppob_margin_configs"
-    
-    category = Column(String(50), nullable=False)  # kategori PPOB atau 'global'
-    product_code = Column(String(50), nullable=True)  # null untuk margin global kategori
-    margin_type = Column(Enum(MarginType), nullable=False)
-    margin_value = Column(Numeric(15, 2), nullable=False)
-    is_active = Column(Boolean, default=True)
-    description = Column(Text, nullable=True)
+
 
 class AdminAuditLog(BaseModel):
     """

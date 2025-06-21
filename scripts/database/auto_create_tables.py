@@ -38,8 +38,8 @@ def import_all_models():
     
     try:
         # Admin models - import semua model admin
-        from app.domains.admin.models.admin import Admin, AdminConfig, PPOBMarginConfig, AdminAuditLog, AdminNotificationSetting
-        models_imported.extend(["Admin", "AdminConfig", "PPOBMarginConfig", "AdminAuditLog", "AdminNotificationSetting"])
+        from app.domains.admin.models.admin import Admin, AdminConfig, AdminAuditLog, AdminNotificationSetting
+        models_imported.extend(["Admin", "AdminConfig", "AdminAuditLog", "AdminNotificationSetting"])
         print("✅ Admin models imported")
     except ImportError as e:
         print(f"⚠️  Admin models import error: {e}")
@@ -78,8 +78,8 @@ def import_all_models():
     
     try:
         # PPOB models - tambahkan model PPOB yang hilang
-        from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct
-        models_imported.extend(["PPOBTransaction", "PPOBProduct"])
+        from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBMarginConfig
+        models_imported.extend(["PPOBTransaction", "PPOBProduct", "PPOBMarginConfig"])
         print("✅ PPOB models imported")
     except ImportError as e:
         print(f"⚠️  PPOB models import error: {e}")
