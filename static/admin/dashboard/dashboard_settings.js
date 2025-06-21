@@ -25,74 +25,21 @@ async function initSettingsDashboard() {
 // Load all settings
 async function loadAllSettings() {
     try {
-        const response = await apiRequest('/settings');
+        const response = await apiRequest('/api/v1/admin/settings');
         
         if (response && response.ok) {
             const data = await response.json();
             currentSettings = data.data || {};
         } else {
-            // Use mock data if API fails
-            currentSettings = generateMockSettings();
+            throw new Error(`API Error: ${response.status}`);
         }
         
         populateSettingsForms();
     } catch (error) {
         console.error('Error loading settings:', error);
-        currentSettings = generateMockSettings();
+        currentSettings = {};
         populateSettingsForms();
     }
-}
-
-// Generate mock settings data
-function generateMockSettings() {
-    return {
-        general: {
-            site_name: 'FA Application',
-            site_description: 'Platform jual beli game online terpercaya',
-            site_url: 'https://fa-application.com',
-            contact_email: 'admin@fa-application.com',
-            currency: 'IDR',
-            timezone: 'Asia/Jakarta',
-            language: 'id',
-            maintenance_mode: false
-        },
-        payment: {
-            midtrans_enabled: true,
-            midtrans_server_key: 'SB-Mid-server-***',
-            midtrans_client_key: 'SB-Mid-client-***',
-            xendit_enabled: false,
-            xendit_secret_key: '',
-            xendit_webhook_token: '',
-            min_amount: 10000,
-            max_amount: 10000000,
-            payment_timeout: 60,
-            auto_confirm: true
-        },
-        notification: {
-            smtp_host: 'smtp.gmail.com',
-            smtp_port: 587,
-            smtp_security: 'tls',
-            smtp_username: 'noreply@fa-application.com',
-            smtp_password: '',
-            from_email: 'noreply@fa-application.com',
-            discord_webhook: '',
-            notify_new_order: true,
-            notify_payment_success: true,
-            notify_new_user: false,
-            notify_low_stock: true
-        },
-        security: {
-            session_timeout: 120,
-            max_login_attempts: 5,
-            lockout_duration: 30,
-            require_two_factor: false,
-            enable_captcha: true
-        },
-        api: {
-            api_key: 'fa_live_***',
-            webhook_secret: 'whsec_***'
-        }
-    };
 }
 
 // Populate settings forms
