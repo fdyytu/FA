@@ -6,7 +6,7 @@ from datetime import datetime
 from app.domains.discord.services.bot_monitor import BotMonitor
 from app.domains.discord.services.command_tracker import CommandTracker
 from app.domains.discord.services.websocket_service import WebSocketService
-from app.domains.discord.services.bulk_operations import BulkOperations
+from app.domains.discord.services.bulk_operations import BulkOperationsService
 from app.domains.discord.services.stock_display_service import StockDisplayService
 from app.domains.discord.services.audit_logger import AuditLogger
 from app.domains.discord.services.log_filter_service import LogFilterService
@@ -23,7 +23,7 @@ class DashboardIntegrationController:
         self.bot_monitor = BotMonitor()
         self.command_tracker = CommandTracker()
         self.websocket_service = WebSocketService()
-        self.bulk_operations = BulkOperations()
+        self.bulk_operations = BulkOperationsService()
         self.stock_display = StockDisplayService()
         self.audit_logger = AuditLogger()
         self.log_filter = LogFilterService()
