@@ -653,13 +653,129 @@ async function refreshDiscordDashboard() {
     }
 }
 
+// Discord Module Bridge Integration
+async function initDiscordDashboardWithBridge() {
+    const token = checkAuth();
+    if (!token) return;
+
+    showLoading(true);
+    
+    try {
+        // Wait for module bridge to initialize
+        if (window.DashboardBridge && !window.DashboardBridge.isInitialized) {
+            console.log('⏳ Waiting for Discord module bridge to initialize...');
+            await new Promise(resolve => {
+                const checkBridge = setInterval(() => {
+                    if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+                        clearInterval(checkBridge);
+                        resolve();
+                    }
+                }, 100);
+                
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkBridge);
+                    resolve();
+                }, 5000);
+            });
+        }
+
+        // Load Discord modules if available
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            console.log('🤖 Loading Discord modules via bridge...');
+            await window.DashboardBridge.loadDiscordModules();
+        }
+
+        await Promise.all([
+            loadDiscordStatsWithBridge(),
+            loadBots(),
+            loadWorlds(),
+            loadRecentCommands(),
+            loadBotLogs()
+        ]);
+        
+        initEventListeners();
+        showToast('Dashboard Discord berhasil dimuat', 'success', 3000);
+    } catch (error) {
+        console.error('Error loading Discord dashboard:', error);
+        showToast('Gagal memuat data Discord', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function loadDiscordStatsWithBridge() {
+    try {
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            console.log('📊 Loading Discord stats via module bridge...');
+            await window.DashboardBridge.loadDiscordStats();
+        } else {
+            console.log('📊 Loading Discord stats via fallback...');
+            await loadDiscordStats();
+        }
+    } catch (error) {
+        console.error('Error loading Discord stats via bridge:', error);
+        // Fallback to original implementation
+        await loadDiscordStats();
+    }
+}
+
+async function refreshDiscordDashboardWithBridge() {
+    showLoading(true);
+    try {
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            console.log('🔄 Refreshing Discord dashboard via module bridge...');
+            
+            // Use bridge if Discord module is loaded
+            const discordInstance = window.DashboardBridge.getModuleInstance('discord');
+            if (discordInstance) {
+                await Promise.all([
+                    discordInstance.loadDiscordStats(),
+                    discordInstance.loadBots(),
+                    loadWorlds(),
+                    loadRecentCommands(),
+                    loadBotLogs()
+                ]);
+            } else {
+                // Fallback to mixed approach
+                await Promise.all([
+                    loadDiscordStatsWithBridge(),
+                    loadBots(),
+                    loadWorlds(),
+                    loadRecentCommands(),
+                    loadBotLogs()
+                ]);
+            }
+        } else {
+            console.log('🔄 Refreshing Discord dashboard via fallback...');
+            await refreshDiscordDashboard();
+        }
+        showToast('Dashboard Discord berhasil diperbarui', 'success', 3000);
+    } catch (error) {
+        showToast('Gagal memperbarui dashboard Discord', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    initDiscordDashboard();
+    // Use bridge initialization if available, fallback to original
+    if (window.DashboardBridge) {
+        initDiscordDashboardWithBridge();
+    } else {
+        initDiscordDashboard();
+    }
     
-    // Auto-refresh every 30 seconds
+    // Auto-refresh every 30 seconds using bridge
     setInterval(() => {
-        loadRecentCommands();
-        loadBotLogs();
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            loadDiscordStatsWithBridge();
+            loadRecentCommands();
+            loadBotLogs();
+        } else {
+            loadRecentCommands();
+            loadBotLogs();
+        }
     }, 30000);
 });
