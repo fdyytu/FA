@@ -33,7 +33,7 @@ async function initDiscordDashboard() {
 // Load Discord statistics
 async function loadDiscordStats() {
     try {
-        const response = await apiRequest('/api/v1/discord/monitoring/stats');
+        const response = await apiRequest('/api/v1/discord/analytics/stats');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -193,7 +193,7 @@ async function loadRecentCommands() {
         
         if (response && response.ok) {
             const data = await response.json();
-            recentCommands = data.data || [];
+            recentCommands = data.data?.commands || [];
         } else {
             throw new Error(`API Error: ${response.status}`);
         }
@@ -219,13 +219,13 @@ function renderRecentCommands() {
                     <i class="fas ${cmd.success ? 'fa-check' : 'fa-times'} text-xs"></i>
                 </div>
                 <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-900">${cmd.command}</p>
-                    <p class="text-xs text-gray-500">by ${cmd.user}</p>
+                    <p class="text-sm font-medium text-gray-900">${cmd.command_name || cmd.command}</p>
+                    <p class="text-xs text-gray-500">by ${cmd.user_id || cmd.user}</p>
                 </div>
             </div>
             <div class="text-right">
-                <p class="text-xs text-gray-400">${formatRelativeTime(cmd.executed_at)}</p>
-                <p class="text-xs text-gray-500">${cmd.bot_name}</p>
+                <p class="text-xs text-gray-400">${cmd.execution_time || '0ms'}</p>
+                <p class="text-xs text-gray-500">${new Date(cmd.timestamp).toLocaleTimeString()}</p>
             </div>
         </div>
     `).join('');
@@ -238,7 +238,7 @@ async function loadBotLogs() {
         
         if (response && response.ok) {
             const data = await response.json();
-            botLogs = data.data || [];
+            botLogs = data.data?.logs || [];
         } else {
             throw new Error(`API Error: ${response.status}`);
         }
@@ -260,8 +260,8 @@ function renderBotLogs() {
     container.innerHTML = botLogs.map(log => `
         <div class="flex items-start space-x-2 text-xs">
             <span class="text-gray-400 font-mono">${new Date(log.timestamp).toLocaleTimeString()}</span>
-            <span class="px-2 py-0.5 rounded text-xs font-medium ${getLogTypeClass(log.type)}">
-                ${log.type.toUpperCase()}
+            <span class="px-2 py-0.5 rounded text-xs font-medium ${getLogTypeClass(log.level || log.type)}">
+                ${(log.level || log.type || 'INFO').toUpperCase()}
             </span>
             <span class="text-gray-700 flex-1">${log.message}</span>
         </div>
@@ -270,7 +270,8 @@ function renderBotLogs() {
 
 // Get log type CSS class
 function getLogTypeClass(type) {
-    switch (type) {
+    const lowerType = (type || 'info').toLowerCase();
+    switch (lowerType) {
         case 'info': return 'bg-blue-100 text-blue-800';
         case 'warning': return 'bg-yellow-100 text-yellow-800';
         case 'error': return 'bg-red-100 text-red-800';

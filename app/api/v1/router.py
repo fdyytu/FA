@@ -16,7 +16,7 @@ router_logger.info("✅ Basic endpoints registered: health, cache")
 # Include Discord endpoints (API endpoints)
 try:
     from app.api.v1.endpoints.discord_bot import router as discord_bot_router
-    api_router.include_router(discord_bot_router, prefix="/api/discord/bot", tags=["discord-bot-api"])
+    api_router.include_router(discord_bot_router, prefix="/discord/bot", tags=["discord-bot-api"])
     router_logger.info("✅ Discord bot API endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_bot", e, "Discord bot API router registration")
@@ -24,7 +24,7 @@ except ImportError as e:
 
 try:
     from app.api.v1.endpoints.discord_config import router as discord_config_router
-    api_router.include_router(discord_config_router, prefix="/api/discord/config", tags=["discord-config-api"])
+    api_router.include_router(discord_config_router, prefix="/discord/config", tags=["discord-config-api"])
     router_logger.info("✅ Discord config API endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_config", e, "Discord config API router registration")
@@ -32,7 +32,7 @@ except ImportError as e:
 
 try:
     from app.api.v1.endpoints.discord_monitoring import router as discord_monitoring_router
-    api_router.include_router(discord_monitoring_router, prefix="/api/discord", tags=["discord-monitoring-api"])
+    api_router.include_router(discord_monitoring_router, prefix="/discord", tags=["discord-monitoring-api"])
     router_logger.info("✅ Discord monitoring API endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_monitoring", e, "Discord monitoring API router registration")
@@ -248,7 +248,7 @@ except ImportError as e:
 # Include new Discord endpoints from FASE 2
 try:
     from app.api.v1.endpoints.discord_bulk_operations import router as bulk_ops_router
-    api_router.include_router(bulk_ops_router, prefix="/api/discord", tags=["discord-bulk-operations"])
+    api_router.include_router(bulk_ops_router, prefix="/discord", tags=["discord-bulk-operations"])
     router_logger.info("✅ Discord bulk operations endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_bulk_operations", e, "Discord bulk operations router registration")
@@ -256,7 +256,7 @@ except ImportError as e:
 
 try:
     from app.api.v1.endpoints.discord_bulk_messaging import router as bulk_msg_router
-    api_router.include_router(bulk_msg_router, prefix="/api/discord", tags=["discord-bulk-messaging"])
+    api_router.include_router(bulk_msg_router, prefix="/discord", tags=["discord-bulk-messaging"])
     router_logger.info("✅ Discord bulk messaging endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_bulk_messaging", e, "Discord bulk messaging router registration")
@@ -264,7 +264,7 @@ except ImportError as e:
 
 try:
     from app.api.v1.endpoints.discord_stock_display import router as stock_display_router
-    api_router.include_router(stock_display_router, prefix="/api/discord", tags=["discord-stock-display"])
+    api_router.include_router(stock_display_router, prefix="/discord", tags=["discord-stock-display"])
     router_logger.info("✅ Discord stock display endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_stock_display", e, "Discord stock display router registration")
@@ -272,7 +272,7 @@ except ImportError as e:
 
 try:
     from app.api.v1.endpoints.discord_stock_bulk import router as stock_bulk_router
-    api_router.include_router(stock_bulk_router, prefix="/api/discord", tags=["discord-stock-bulk"])
+    api_router.include_router(stock_bulk_router, prefix="/discord", tags=["discord-stock-bulk"])
     router_logger.info("✅ Discord stock bulk endpoints registered")
 except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_stock_bulk", e, "Discord stock bulk router registration")
