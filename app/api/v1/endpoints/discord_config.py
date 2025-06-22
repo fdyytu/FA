@@ -74,3 +74,61 @@ async def activate_discord_config(
 ) -> Dict[str, Any]:
     """Aktifkan konfigurasi Discord"""
     return await DiscordConfigController.activate_config(config_id, db)
+
+@router.get("/bots")
+async def get_discord_bots(
+    db: Session = Depends(get_db)
+) -> Dict[str, Any]:
+    """Ambil semua bot Discord"""
+    try:
+        # Mock data untuk bot Discord
+        bots = [
+            {
+                "id": 1,
+                "name": "PPOB Bot",
+                "token": "BOT_TOKEN_1",
+                "prefix": "!",
+                "status": "online",
+                "uptime": "99.9%",
+                "commands_count": 1234,
+                "last_seen": "2025-01-16T10:00:00Z",
+                "guild_count": 5,
+                "user_count": 150
+            },
+            {
+                "id": 2,
+                "name": "Support Bot",
+                "token": "BOT_TOKEN_2", 
+                "prefix": "?",
+                "status": "online",
+                "uptime": "98.5%",
+                "commands_count": 567,
+                "last_seen": "2025-01-16T09:58:00Z",
+                "guild_count": 3,
+                "user_count": 89
+            },
+            {
+                "id": 3,
+                "name": "Analytics Bot",
+                "token": "BOT_TOKEN_3",
+                "prefix": "$",
+                "status": "maintenance",
+                "uptime": "95.2%",
+                "commands_count": 89,
+                "last_seen": "2025-01-16T08:30:00Z",
+                "guild_count": 1,
+                "user_count": 25
+            }
+        ]
+        
+        return {
+            "success": True,
+            "data": bots,
+            "total": len(bots)
+        }
+        
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Gagal mengambil data bot: {str(e)}"
+        }
