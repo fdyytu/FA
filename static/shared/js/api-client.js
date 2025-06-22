@@ -51,7 +51,32 @@ class ApiClient {
 // Global API client instance
 const apiClient = new ApiClient('/api/v1');
 
-// Legacy compatibility function
-function apiRequest(endpoint, options = {}) {
-    return apiClient.request(endpoint, options);
+// Legacy compatibility function with response format handling
+async function apiRequest(endpoint, options = {}) {
+    try {
+        const response = await apiClient.request(endpoint, options);
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('adminToken');
+                window.location.href = 'login_android.html';
+                throw new Error('Unauthorized access');
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Handle API response format consistency
+        // If response has success and data properties, return the data
+        if (data && typeof data === 'object' && data.hasOwnProperty('success') && data.hasOwnProperty('data')) {
+            return data;
+        }
+        
+        return data;
+        
+    } catch (error) {
+        console.error('API request error:', error);
+        throw error;
+    }
 }

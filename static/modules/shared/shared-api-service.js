@@ -36,6 +36,13 @@ class SharedAPIService {
             }
             
             const data = await response.json();
+            
+            // Handle API response format consistency
+            // If response has success and data properties, return the data
+            if (data && typeof data === 'object' && data.hasOwnProperty('success') && data.hasOwnProperty('data')) {
+                return data;
+            }
+            
             return data;
             
         } catch (error) {
