@@ -6,9 +6,9 @@ class MainDashboardController {
     }
 
     async initDashboard() {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('adminToken');
         if (!token) {
-            window.location.href = '/login';
+            window.location.href = '../login_android.html';
             return;
         }
 
@@ -63,6 +63,9 @@ class MainDashboardController {
         }
     }
 }
+
+// Export class untuk digunakan oleh module bridge
+window.MainController = MainDashboardController;
 
 // Global instance
 const mainDashboardController = new MainDashboardController();

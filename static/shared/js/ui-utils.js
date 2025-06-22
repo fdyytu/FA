@@ -1,11 +1,16 @@
 // UI Utilities
 class UIUtils {
     static showLoading(show = true) {
-        const loader = document.getElementById('loadingSpinner') || 
+        const loader = document.getElementById('loadingOverlay') || 
+                      document.getElementById('loadingSpinner') || 
                       document.querySelector('.loading-spinner');
         
         if (loader) {
-            loader.style.display = show ? 'block' : 'none';
+            if (show) {
+                loader.classList.remove('hidden');
+            } else {
+                loader.classList.add('hidden');
+            }
         }
     }
 
@@ -47,9 +52,9 @@ class UIUtils {
     }
 
     static checkAuth() {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('adminToken');
         if (!token) {
-            window.location.href = '/admin/login';
+            window.location.href = '../login_android.html';
             return null;
         }
         return token;
