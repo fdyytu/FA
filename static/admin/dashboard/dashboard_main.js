@@ -141,16 +141,133 @@ async function refreshDashboard() {
 
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    initDashboard();
-    initFloatingActionButton();
-    loadDiscordStats();
+    // Use bridge initialization if available, fallback to original
+    if (window.DashboardBridge) {
+        initDashboardWithBridge();
+        loadDiscordStatsWithBridge();
+    } else {
+        initDashboard();
+        if (window.loadDiscordStats) {
+            loadDiscordStats();
+        }
+    }
     
-    // Auto-refresh setiap 15 detik
+    initFloatingActionButton();
+    
+    // Auto-refresh setiap 15 detik using bridge
     setInterval(() => {
-        refreshDashboard();
-        loadDiscordStats();
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            refreshDashboardWithBridge();
+            loadDiscordStatsWithBridge();
+        } else {
+            refreshDashboard();
+            if (window.loadDiscordStats) {
+                loadDiscordStats();
+            }
+        }
     }, 15 * 1000);
 });
+
+// Module Bridge Integration Functions
+async function loadDashboardStatsWithBridge() {
+    try {
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            console.log('📊 Loading dashboard stats via module bridge...');
+            await window.DashboardBridge.loadDashboardStats();
+        } else {
+            console.log('📊 Loading dashboard stats via fallback...');
+            await loadDashboardStats();
+        }
+    } catch (error) {
+        console.error('Error loading dashboard stats via bridge:', error);
+        // Fallback to original implementation
+        await loadDashboardStats();
+    }
+}
+
+async function loadDiscordStatsWithBridge() {
+    try {
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            console.log('🤖 Loading Discord stats via module bridge...');
+            await window.DashboardBridge.loadDiscordStats();
+        } else {
+            console.log('🤖 Loading Discord stats via fallback...');
+            if (window.loadDiscordStats) {
+                await window.loadDiscordStats();
+            }
+        }
+    } catch (error) {
+        console.error('Error loading Discord stats via bridge:', error);
+        // Fallback to original implementation
+        if (window.loadDiscordStats) {
+            await window.loadDiscordStats();
+        }
+    }
+}
+
+async function refreshDashboardWithBridge() {
+    showLoading(true);
+    try {
+        if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+            console.log('🔄 Refreshing dashboard via module bridge...');
+            await window.DashboardBridge.refreshDashboard();
+        } else {
+            console.log('🔄 Refreshing dashboard via fallback...');
+            await Promise.all([
+                loadDashboardStats(),
+                loadRecentTransactions(),
+                initCharts()
+            ]);
+        }
+        showToast('Dashboard berhasil diperbarui', 'success', 3000);
+    } catch (error) {
+        showToast('Gagal memperbarui dashboard', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// Enhanced initialization with module bridge
+async function initDashboardWithBridge() {
+    const token = checkAuth();
+    if (!token) return;
+
+    showLoading(true);
+    
+    try {
+        // Wait for module bridge to initialize
+        if (window.DashboardBridge && !window.DashboardBridge.isInitialized) {
+            console.log('⏳ Waiting for module bridge to initialize...');
+            await new Promise(resolve => {
+                const checkBridge = setInterval(() => {
+                    if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+                        clearInterval(checkBridge);
+                        resolve();
+                    }
+                }, 100);
+                
+                // Timeout after 5 seconds
+                setTimeout(() => {
+                    clearInterval(checkBridge);
+                    resolve();
+                }, 5000);
+            });
+        }
+
+        await Promise.all([
+            loadDashboardStatsWithBridge(),
+            loadRecentTransactions(),
+            initCharts()
+        ]);
+        
+        showToast('Dashboard berhasil dimuat', 'success', 3000);
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        showToast('Gagal memuat data dashboard', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
 
 // Cleanup charts when page unloads
 window.addEventListener('beforeunload', () => {
