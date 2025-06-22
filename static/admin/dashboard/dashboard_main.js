@@ -26,7 +26,7 @@ async function initDashboard() {
 // Load dashboard statistics
 async function loadDashboardStats() {
     try {
-        const response = await apiRequest('/admin/stats');
+        const response = await apiRequest('/admin/stats/');
         if (!response || !response.data) {
             throw new Error('Invalid response format');
         }
