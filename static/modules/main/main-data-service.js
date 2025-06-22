@@ -10,7 +10,7 @@ class MainDashboardDataService {
 
     async loadDashboardStats() {
         try {
-            const response = await apiClient.get('/admin/stats');
+            const response = await apiClient.get('/admin/stats/');
             
             if (response && response.ok) {
                 const data = await response.json();
@@ -60,7 +60,7 @@ class MainDashboardDataService {
 
     async loadChartData() {
         try {
-            const response = await apiClient.get('/admin/charts/data');
+            const response = await apiClient.get('/admin/dashboard/charts/data');
             
             if (response && response.ok) {
                 const data = await response.json();
