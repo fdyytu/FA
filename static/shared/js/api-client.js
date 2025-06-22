@@ -1,6 +1,6 @@
 // API Client utilities
 class ApiClient {
-    constructor(baseUrl = '') {
+    constructor(baseUrl = 'api/v1/') {
         this.baseUrl = baseUrl;
     }
 
