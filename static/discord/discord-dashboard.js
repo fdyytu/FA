@@ -4,7 +4,7 @@
  */
 
 // API Base URL
-const API_BASE = '/api/v1';
+const API_BASE = '/api/v1/discord';
 
 // Global state
 let refreshInterval;
@@ -123,10 +123,11 @@ function updateButtonStates(isRunning) {
     const restartBtn = document.getElementById('restartBtn');
     const sendBtn = document.getElementById('sendBtn');
     
-    startBtn.disabled = isRunning;
-    stopBtn.disabled = !isRunning;
-    restartBtn.disabled = false; // Always allow restart
-    sendBtn.disabled = !isRunning;
+    // Check if elements exist before updating
+    if (startBtn) startBtn.disabled = isRunning;
+    if (stopBtn) stopBtn.disabled = !isRunning;
+    if (restartBtn) restartBtn.disabled = false; // Always allow restart
+    if (sendBtn) sendBtn.disabled = !isRunning;
 }
 
 /**
@@ -371,6 +372,189 @@ function showConfigStatus(type, message) {
     
     statusText.textContent = message;
     statusDiv.classList.remove('hidden');
+}
+
+/**
+ * Start Discord bot
+ */
+async function startBot() {
+    try {
+        showLoading('Memulai bot...');
+        
+        const response = await fetch(`${API_BASE}/bot/start`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Bot berhasil dimulai', 'success');
+            setTimeout(refreshData, 2000); // Refresh after 2 seconds
+        } else {
+            throw new Error(data.detail || data.message || 'Gagal memulai bot');
+        }
+        
+    } catch (error) {
+        console.error('Error starting bot:', error);
+        showToast('Gagal memulai bot: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Stop Discord bot
+ */
+async function stopBot() {
+    try {
+        showLoading('Menghentikan bot...');
+        
+        const response = await fetch(`${API_BASE}/bot/stop`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Bot berhasil dihentikan', 'success');
+            setTimeout(refreshData, 2000); // Refresh after 2 seconds
+        } else {
+            throw new Error(data.detail || data.message || 'Gagal menghentikan bot');
+        }
+        
+    } catch (error) {
+        console.error('Error stopping bot:', error);
+        showToast('Gagal menghentikan bot: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Restart Discord bot
+ */
+async function restartBot() {
+    try {
+        showLoading('Merestart bot...');
+        
+        const response = await fetch(`${API_BASE}/bot/restart`, {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Bot berhasil direstart', 'success');
+            setTimeout(refreshData, 3000); // Refresh after 3 seconds
+        } else {
+            throw new Error(data.detail || data.message || 'Gagal merestart bot');
+        }
+        
+    } catch (error) {
+        console.error('Error restarting bot:', error);
+        showToast('Gagal merestart bot: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Test Discord configuration
+ */
+async function testDiscordConfig() {
+    const token = document.getElementById('discordToken').value;
+    const guildId = document.getElementById('guildId').value;
+    
+    if (!token) {
+        showToast('Discord Bot Token harus diisi', 'warning');
+        return;
+    }
+    
+    try {
+        showLoading('Testing koneksi Discord...');
+        
+        const response = await fetch(`${API_BASE}/config/test-token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token,
+                guild_id: guildId || null
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showConfigStatus('Token valid dan bot berhasil terhubung!', 'success');
+            showToast('Koneksi Discord berhasil!', 'success');
+        } else {
+            throw new Error(data.detail || data.message || 'Token tidak valid');
+        }
+        
+    } catch (error) {
+        console.error('Error testing Discord config:', error);
+        showConfigStatus('Error: ' + error.message, 'error');
+        showToast('Gagal test koneksi: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+/**
+ * Save Discord configuration
+ */
+async function saveDiscordConfig() {
+    const configName = document.getElementById('configName').value;
+    const token = document.getElementById('discordToken').value;
+    const guildId = document.getElementById('guildId').value;
+    const commandPrefix = document.getElementById('commandPrefix').value;
+    
+    if (!configName || !token) {
+        showToast('Nama konfigurasi dan Discord Bot Token harus diisi', 'warning');
+        return;
+    }
+    
+    try {
+        showLoading('Menyimpan konfigurasi...');
+        
+        const response = await fetch(`${API_BASE}/config/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: configName,
+                token: token,
+                guild_id: guildId || null,
+                command_prefix: commandPrefix || '!',
+                is_active: true
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showConfigStatus('Konfigurasi berhasil disimpan!', 'success');
+            showToast('Konfigurasi Discord berhasil disimpan!', 'success');
+            
+            // Clear sensitive data
+            document.getElementById('discordToken').value = '';
+            
+            // Refresh data to show new config
+            setTimeout(refreshData, 1000);
+        } else {
+            throw new Error(data.detail || data.message || 'Gagal menyimpan konfigurasi');
+        }
+        
+    } catch (error) {
+        console.error('Error saving Discord config:', error);
+        showConfigStatus('Error: ' + error.message, 'error');
+        showToast('Gagal menyimpan konfigurasi: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
 }
 
 /**

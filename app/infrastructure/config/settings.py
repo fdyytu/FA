@@ -86,6 +86,13 @@ class Settings(BaseSettings):
     ADMIN_USERNAME: str = "admin"
     ADMIN_PASSWORD: str = "admin123"
     
+    # Discord Bot settings
+    DISCORD_BOT_TOKEN: str = ""
+    DISCORD_GUILD_ID: Optional[str] = None
+    DISCORD_ADMIN_ID: str = ""
+    DISCORD_COMMAND_PREFIX: str = "!"
+    DISCORD_BOT_ENABLED: bool = True
+    
     # Redis settings (optional - untuk caching)
     REDIS_URL: str = "redis://localhost:6379/0"
     REDIS_PASSWORD: Optional[str] = None
