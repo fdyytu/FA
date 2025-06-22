@@ -5,7 +5,7 @@ class ApiClient {
     }
 
     async request(endpoint, options = {}) {
-        const token = localStorage.getItem('admin_token');
+        const token = localStorage.getItem('adminToken');
         const defaultHeaders = {
             'Content-Type': 'application/json',
             ...(token && { 'Authorization': `Bearer ${token}` })
@@ -49,7 +49,7 @@ class ApiClient {
 }
 
 // Global API client instance
-const apiClient = new ApiClient();
+const apiClient = new ApiClient('/api/v1');
 
 // Legacy compatibility function
 function apiRequest(endpoint, options = {}) {
