@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dashboard Modules</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-section {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .test-pass { border-color: #10b981; background-color: #f0fdf4; }
+        .test-fail { border-color: #ef4444; background-color: #fef2f2; }
+        .test-pending { border-color: #f59e0b; background-color: #fffbeb; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">Dashboard Modules Test</h1>
+        
+        <!-- Test Results Container -->
+        <div id="testResults" class="space-y-4">
+            <div class="test-section test-pending">
+                <h2 class="text-xl font-semibold mb-4">🧪 Running Tests...</h2>
+                <div id="testProgress">Initializing tests...</div>
+            </div>
+        </div>
+
+        <!-- Mock Dashboard Elements -->
+        <div class="hidden">
+            <div id="totalUsers">0</div>
+            <div id="totalTransactions">0</div>
+            <div id="totalProducts">0</div>
+            <div id="totalRevenue">0</div>
+            <canvas id="transactionChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Load Dashboard Modules -->
+    <script src="/static/modules/dashboard/api/dashboard-api-service.js"></script>
+    <script src="/static/modules/dashboard/ui/dashboard-stats-ui.js"></script>
+    <script src="/static/modules/dashboard/components/dashboard-chart.js"></script>
+    <script src="/static/modules/dashboard/utils/dashboard-notifications.js"></script>
+    <script src="/static/modules/dashboard/utils/dashboard-auth.js"></script>
+    <script src="/static/modules/dashboard/dashboard-main-controller.js"></script>
+
+    <script>
+        // Test Suite
+        class DashboardModuleTest {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+                this.testContainer = document.getElementById('testResults');
+                this.progressElement = document.getElementById('testProgress');
+            }
+
+            addTest(name, testFunction) {
+                this.tests.push({ name, testFunction });
+            }
+
+            async runTests() {
+                this.updateProgress('Starting test suite...');
+                
+                for (let i = 0; i < this.tests.length; i++) {
+                    const test = this.tests[i];
+                    this.updateProgress(`Running test ${i + 1}/${this.tests.length}: ${test.name}`);
+                    
+                    try {
+                        await test.testFunction();
+                        this.results.push({ name: test.name, status: 'pass', error: null });
+                    } catch (error) {
+                        this.results.push({ name: test.name, status: 'fail', error: error.message });
+                    }
+                }
+
+                this.displayResults();
+            }
+
+            updateProgress(message) {
+                this.progressElement.textContent = message;
+            }
+
+            displayResults() {
+                const passCount = this.results.filter(r => r.status === 'pass').length;
+                const failCount = this.results.filter(r => r.status === 'fail').length;
+                
+                let html = `
+                    <div class="test-section ${failCount === 0 ? 'test-pass' : 'test-fail'}">
+                        <h2 class="text-xl font-semibold mb-4">
+                            📊 Test Results: ${passCount}/${this.results.length} Passed
+                        </h2>
+                        <div class="space-y-2">
+                `;
+
+                this.results.forEach(result => {
+                    const icon = result.status === 'pass' ? '✅' : '❌';
+                    const colorClass = result.status === 'pass' ? 'text-green-700' : 'text-red-700';
+                    
+                    html += `
+                        <div class="${colorClass}">
+                            ${icon} ${result.name}
+                            ${result.error ? `<br><span class="text-sm ml-6">Error: ${result.error}</span>` : ''}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+
+                this.testContainer.innerHTML = html;
+            }
+        }
+
+        // Initialize test suite
+        const testSuite = new DashboardModuleTest();
+
+        // Test 1: Check if all classes are loaded
+        testSuite.addTest('Module Classes Loaded', async () => {
+            if (!window.DashboardApiService) throw new Error('DashboardApiService not loaded');
+            if (!window.DashboardStatsUI) throw new Error('DashboardStatsUI not loaded');
+            if (!window.DashboardChart) throw new Error('DashboardChart not loaded');
+            if (!window.DashboardNotifications) throw new Error('DashboardNotifications not loaded');
+            if (!window.DashboardAuth) throw new Error('DashboardAuth not loaded');
+            if (!window.DashboardMainController) throw new Error('DashboardMainController not loaded');
+        });
+
+        // Test 2: API Service instantiation
+        testSuite.addTest('API Service Instantiation', async () => {
+            const apiService = new DashboardApiService();
+            if (!apiService.apiBaseUrl) throw new Error('API base URL not set');
+            if (apiService.apiBaseUrl !== '/api/v1/admin') throw new Error('Incorrect API base URL');
+        });
+
+        // Test 3: Stats UI functionality
+        testSuite.addTest('Stats UI Functionality', async () => {
+            const statsUI = new DashboardStatsUI();
+            if (!statsUI.formatters) throw new Error('Formatters not initialized');
+            
+            // Test formatters
+            const formattedNumber = statsUI.formatters.number(1234567);
+            if (!formattedNumber.includes('1.234.567')) throw new Error('Number formatter failed');
+            
+            const formattedCurrency = statsUI.formatters.currency(1000000);
+            if (!formattedCurrency.includes('Rp')) throw new Error('Currency formatter failed');
+        });
+
+        // Test 4: Chart component
+        testSuite.addTest('Chart Component', async () => {
+            const chart = new DashboardChart();
+            if (chart.chart !== null) throw new Error('Chart should be null initially');
+            
+            // Test with mock data
+            const mockTrends = [
+                { date: '2024-01-01', count: 10 },
+                { date: '2024-01-02', count: 15 }
+            ];
+            
+            chart.updateTransactionChart(mockTrends);
+            if (!chart.chart) throw new Error('Chart not created after update');
+            
+            chart.destroy();
+            if (chart.chart !== null) throw new Error('Chart not destroyed properly');
+        });
+
+        // Test 5: Notifications
+        testSuite.addTest('Notification System', async () => {
+            const notifications = new DashboardNotifications();
+            
+            // Test error notification
+            notifications.showError('Test error');
+            const errorDiv = document.getElementById('dashboard-error');
+            if (!errorDiv) throw new Error('Error notification not created');
+            
+            // Test success notification
+            notifications.showSuccess('Test success');
+            const successDiv = document.getElementById('dashboard-success');
+            if (!successDiv) throw new Error('Success notification not created');
+            
+            // Test warning notification
+            notifications.showWarning('Test warning');
+            const warningDiv = document.getElementById('dashboard-warning');
+            if (!warningDiv) throw new Error('Warning notification not created');
+        });
+
+        // Test 6: Authentication utility
+        testSuite.addTest('Authentication Utility', async () => {
+            const auth = new DashboardAuth();
+            
+            // Test token methods
+            const testToken = 'test-token-123';
+            auth.updateToken(testToken);
+            if (auth.getToken() !== testToken) throw new Error('Token update/get failed');
+            
+            // Test localStorage
+            const storedToken = localStorage.getItem('adminToken');
+            if (storedToken !== testToken) throw new Error('Token not stored in localStorage');
+        });
+
+        // Test 7: Stats UI update with mock data
+        testSuite.addTest('Stats UI Update', async () => {
+            const statsUI = new DashboardStatsUI();
+            const mockStats = {
+                total_users: 1234,
+                total_transactions: 5678,
+                active_users: 90,
+                total_revenue: 1000000
+            };
+            
+            statsUI.updateStatsCards(mockStats);
+            
+            // Check if elements were updated
+            const totalUsers = document.getElementById('totalUsers');
+            const totalTransactions = document.getElementById('totalTransactions');
+            const totalProducts = document.getElementById('totalProducts');
+            const totalRevenue = document.getElementById('totalRevenue');
+            
+            if (totalUsers.textContent !== '1.234') throw new Error('Total users not updated correctly');
+            if (totalTransactions.textContent !== '5.678') throw new Error('Total transactions not updated correctly');
+            if (totalProducts.textContent !== '90') throw new Error('Total products not updated correctly');
+            if (!totalRevenue.textContent.includes('Rp')) throw new Error('Total revenue not formatted correctly');
+        });
+
+        // Run tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testSuite.runTests();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
