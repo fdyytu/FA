@@ -33,7 +33,7 @@ async function initDiscordDashboard() {
 // Load Discord statistics
 async function loadDiscordStats() {
     try {
-        const response = await apiRequest('/api/v1/discord/analytics/stats');
+        const response = await apiRequest('/discord/analytics/stats');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -82,7 +82,7 @@ function updateDiscordStats(stats) {
 // Load bots
 async function loadBots() {
     try {
-        const response = await apiRequest('/api/v1/discord/config/bots');
+        const response = await apiRequest('/discord/config/bots');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -143,7 +143,7 @@ function renderBotsList() {
 // Load worlds
 async function loadWorlds() {
     try {
-        const response = await apiRequest('/api/v1/discord/config/worlds');
+        const response = await apiRequest('/discord/config/worlds');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -189,7 +189,7 @@ function renderWorldsList() {
 // Load recent commands
 async function loadRecentCommands() {
     try {
-        const response = await apiRequest('/api/v1/discord/monitoring/commands/recent?limit=5');
+        const response = await apiRequest('/discord/monitoring/commands/recent?limit=5');
         
         if (response && response.ok) {
             const data = await response.json();
@@ -234,7 +234,7 @@ function renderRecentCommands() {
 // Load bot logs
 async function loadBotLogs() {
     try {
-        const response = await apiRequest('/api/v1/discord/monitoring/logs?limit=10');
+        const response = await apiRequest('/discord/monitoring/logs?limit=10');
         
         if (response && response.ok) {
             const data = await response.json();
