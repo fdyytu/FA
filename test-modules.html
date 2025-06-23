@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modular Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Test Modular Dashboard</h1>
+        
+        <!-- Test Products Module -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">
+                <i class="fas fa-box text-blue-600 mr-2"></i>
+                Products Module Test
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Total Products</div>
+                    <div class="text-2xl font-bold text-blue-600" id="totalProducts">-</div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Active Products</div>
+                    <div class="text-2xl font-bold text-green-600" id="activeProducts">-</div>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Low Stock</div>
+                    <div class="text-2xl font-bold text-yellow-600" id="lowStockProducts">-</div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Categories</div>
+                    <div class="text-2xl font-bold text-purple-600" id="totalCategories">-</div>
+                </div>
+            </div>
+            <button id="testProductsBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <i class="fas fa-play mr-2"></i>Test Products Module
+            </button>
+            <div id="productsTestResult" class="mt-4"></div>
+        </div>
+
+        <!-- Test Settings Module -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">
+                <i class="fas fa-cog text-green-600 mr-2"></i>
+                Settings Module Test
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">General Settings</div>
+                    <div class="text-lg font-semibold" id="generalStatus">Not Loaded</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Payment Settings</div>
+                    <div class="text-lg font-semibold" id="paymentStatus">Not Loaded</div>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="text-sm text-gray-600">Security Settings</div>
+                    <div class="text-lg font-semibold" id="securityStatus">Not Loaded</div>
+                </div>
+            </div>
+            <button id="testSettingsBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                <i class="fas fa-play mr-2"></i>Test Settings Module
+            </button>
+            <div id="settingsTestResult" class="mt-4"></div>
+        </div>
+
+        <!-- Test Results -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-semibold mb-4">
+                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                Test Results
+            </h2>
+            <div id="overallTestResult" class="space-y-2">
+                <div class="text-gray-600">Click the test buttons above to verify module functionality</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mock API and Utility Functions -->
+    <script>
+        // Mock API request function
+        window.apiRequest = async function(url, options = {}) {
+            console.log(`Mock API Request: ${url}`, options);
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Mock responses based on URL
+            if (url.includes('/products')) {
+                return {
+                    ok: true,
+                    json: async () => ({
+                        data: [
+                            { id: 1, name: 'Product 1', price: 100000, stock_quantity: 50, status: 'active', category: 'electronics' },
+                            { id: 2, name: 'Product 2', price: 75000, stock_quantity: 5, status: 'active', category: 'fashion' },
+                            { id: 3, name: 'Product 3', price: 200000, stock_quantity: 0, status: 'out_of_stock', category: 'electronics' }
+                        ]
+                    })
+                };
+            }
+            
+            if (url.includes('/settings')) {
+                return {
+                    ok: true,
+                    json: async () => ({
+                        data: {
+                            general: { site_name: 'Test Site', site_description: 'Test Description' },
+                            payment: { midtrans_enabled: true, xendit_enabled: false },
+                            security: { two_factor_enabled: true, session_timeout: 3600 }
+                        }
+                    })
+                };
+            }
+            
+            return { ok: true, json: async () => ({ data: {} }) };
+        };
+
+        // Mock utility functions
+        window.formatCurrency = function(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR'
+            }).format(amount);
+        };
+
+        window.formatNumber = function(num) {
+            return new Intl.NumberFormat('id-ID').format(num);
+        };
+
+        window.showToast = function(message, type = 'info', duration = 3000) {
+            console.log(`Toast [${type}]: ${message}`);
+            const resultDiv = document.getElementById('overallTestResult');
+            const toastDiv = document.createElement('div');
+            toastDiv.className = `p-3 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 
+                                                   type === 'error' ? 'bg-red-100 text-red-800' : 
+                                                   'bg-blue-100 text-blue-800'}`;
+            toastDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'} mr-2"></i>${message}`;
+            resultDiv.appendChild(toastDiv);
+            
+            setTimeout(() => {
+                toastDiv.remove();
+            }, duration);
+        };
+
+        window.showLoading = function(show) {
+            console.log(`Loading: ${show}`);
+        };
+
+        window.checkAuth = function() {
+            return 'mock-token';
+        };
+
+        // Test Products Module
+        document.getElementById('testProductsBtn').addEventListener('click', async function() {
+            const btn = this;
+            const resultDiv = document.getElementById('productsTestResult');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+            
+            try {
+                // Load Products Module
+                const script1 = document.createElement('script');
+                script1.src = '/static/modules/products/products-module-loader.js';
+                document.head.appendChild(script1);
+                
+                await new Promise(resolve => {
+                    script1.onload = resolve;
+                    script1.onerror = resolve;
+                });
+                
+                // Test if module loader exists
+                if (window.productsModuleLoader) {
+                    await window.productsModuleLoader.loadModules();
+                    
+                    // Test API Service
+                    if (window.productsApiService) {
+                        const products = await window.productsApiService.loadProducts();
+                        
+                        // Update stats
+                        document.getElementById('totalProducts').textContent = products.length;
+                        document.getElementById('activeProducts').textContent = products.filter(p => p.status === 'active').length;
+                        document.getElementById('lowStockProducts').textContent = products.filter(p => p.stock_quantity < 10).length;
+                        document.getElementById('totalCategories').textContent = [...new Set(products.map(p => p.category))].length;
+                        
+                        resultDiv.innerHTML = '<div class="bg-green-100 text-green-800 p-3 rounded-lg"><i class="fas fa-check mr-2"></i>Products Module loaded and tested successfully!</div>';
+                        showToast('Products Module test passed!', 'success');
+                    } else {
+                        throw new Error('Products API Service not loaded');
+                    }
+                } else {
+                    throw new Error('Products Module Loader not found');
+                }
+                
+            } catch (error) {
+                console.error('Products Module Test Error:', error);
+                resultDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded-lg"><i class="fas fa-times mr-2"></i>Test failed: ${error.message}</div>`;
+                showToast('Products Module test failed!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play mr-2"></i>Test Products Module';
+            }
+        });
+
+        // Test Settings Module
+        document.getElementById('testSettingsBtn').addEventListener('click', async function() {
+            const btn = this;
+            const resultDiv = document.getElementById('settingsTestResult');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Testing...';
+            
+            try {
+                // Load Settings Module
+                const script2 = document.createElement('script');
+                script2.src = '/static/modules/settings/settings-module-loader.js';
+                document.head.appendChild(script2);
+                
+                await new Promise(resolve => {
+                    script2.onload = resolve;
+                    script2.onerror = resolve;
+                });
+                
+                // Test if module loader exists
+                if (window.settingsModuleLoader) {
+                    await window.settingsModuleLoader.loadModules();
+                    
+                    // Test API Service
+                    if (window.settingsApiService) {
+                        const settings = await window.settingsApiService.loadAllSettings();
+                        
+                        // Update status
+                        document.getElementById('generalStatus').textContent = settings.general ? 'Loaded ✓' : 'Failed ✗';
+                        document.getElementById('paymentStatus').textContent = settings.payment ? 'Loaded ✓' : 'Failed ✗';
+                        document.getElementById('securityStatus').textContent = settings.security ? 'Loaded ✓' : 'Failed ✗';
+                        
+                        resultDiv.innerHTML = '<div class="bg-green-100 text-green-800 p-3 rounded-lg"><i class="fas fa-check mr-2"></i>Settings Module loaded and tested successfully!</div>';
+                        showToast('Settings Module test passed!', 'success');
+                    } else {
+                        throw new Error('Settings API Service not loaded');
+                    }
+                } else {
+                    throw new Error('Settings Module Loader not found');
+                }
+                
+            } catch (error) {
+                console.error('Settings Module Test Error:', error);
+                resultDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded-lg"><i class="fas fa-times mr-2"></i>Test failed: ${error.message}</div>`;
+                showToast('Settings Module test failed!', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-play mr-2"></i>Test Settings Module';
+            }
+        });
+    </script>
+</body>
+</html>
