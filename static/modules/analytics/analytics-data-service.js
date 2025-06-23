@@ -13,11 +13,21 @@ class AnalyticsDataService {
                 const data = await response.json();
                 return data.data || data;
             } else {
-                return MockDataGenerator.generateOverviewStats();
+                return {
+                    totalRevenue: 0,
+                    totalOrders: 0,
+                    conversionRate: 0,
+                    avgOrderValue: 0
+                };
             }
         } catch (error) {
             console.error('Error loading overview stats:', error);
-            return MockDataGenerator.generateOverviewStats();
+            return {
+                totalRevenue: 0,
+                totalOrders: 0,
+                conversionRate: 0,
+                avgOrderValue: 0
+            };
         }
     }
 
@@ -31,25 +41,25 @@ class AnalyticsDataService {
             ]);
             
             this.data.revenue = revenueResponse && revenueResponse.ok ? 
-                await revenueResponse.json() : { data: MockDataGenerator.generateRevenueData(this.currentDateRange) };
+                await revenueResponse.json() : { data: [] };
             
             this.data.orders = ordersResponse && ordersResponse.ok ? 
-                await ordersResponse.json() : { data: MockDataGenerator.generateOrdersData(this.currentDateRange) };
+                await ordersResponse.json() : { data: [] };
             
             this.data.userGrowth = userGrowthResponse && userGrowthResponse.ok ? 
-                await userGrowthResponse.json() : { data: MockDataGenerator.generateUserGrowthData(this.currentDateRange) };
+                await userGrowthResponse.json() : { data: [] };
             
             this.data.paymentMethods = paymentMethodsResponse && paymentMethodsResponse.ok ? 
-                await paymentMethodsResponse.json() : { data: MockDataGenerator.generatePaymentMethodsData() };
+                await paymentMethodsResponse.json() : { data: [] };
             
             return this.data;
         } catch (error) {
             console.error('Error loading chart data:', error);
             this.data = {
-                revenue: { data: MockDataGenerator.generateRevenueData(this.currentDateRange) },
-                orders: { data: MockDataGenerator.generateOrdersData(this.currentDateRange) },
-                userGrowth: { data: MockDataGenerator.generateUserGrowthData(this.currentDateRange) },
-                paymentMethods: { data: MockDataGenerator.generatePaymentMethodsData() }
+                revenue: { data: [] },
+                orders: { data: [] },
+                userGrowth: { data: [] },
+                paymentMethods: { data: [] }
             };
             return this.data;
         }

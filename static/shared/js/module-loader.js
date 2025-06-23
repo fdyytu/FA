@@ -8,25 +8,24 @@ class ModuleLoader {
             'api-client': [],
             'formatters': [],
             'ui-utils': [],
-            'mock-data': [],
             
             // Chart components
             'chart-manager': ['api-client', 'formatters', 'ui-utils'],
-            'analytics-charts': ['chart-manager', 'mock-data'],
+            'analytics-charts': ['chart-manager'],
             
             // Analytics module
-            'analytics-data-service': ['api-client', 'mock-data'],
+            'analytics-data-service': ['api-client'],
             'analytics-ui-controller': ['ui-utils', 'formatters'],
             'analytics-main': ['analytics-data-service', 'analytics-ui-controller', 'analytics-charts'],
             
             // Android module
-            'android-data-service': ['api-client', 'mock-data'],
+            'android-data-service': ['api-client'],
             'android-ui-controller': ['ui-utils', 'formatters'],
             'android-chart-manager': ['chart-manager'],
             'android-main': ['android-data-service', 'android-ui-controller', 'android-chart-manager'],
             
             // Discord module
-            'discord-data-service': ['api-client', 'mock-data'],
+            'discord-data-service': ['api-client'],
             'discord-data-service-extended': ['discord-data-service'],
             'discord-ui-controller': ['ui-utils', 'formatters'],
             'discord-bot-manager': ['discord-data-service'],
@@ -40,19 +39,19 @@ class ModuleLoader {
             'shared-main': ['shared-auth-service', 'shared-ui-service', 'shared-api-service', 'shared-utilities-service'],
             
             // Other modules
-            'products-data-service': ['api-client', 'mock-data'],
+            'products-data-service': ['api-client'],
             'products-ui-controller': ['ui-utils', 'formatters'],
             'products-main': ['products-data-service', 'products-ui-controller'],
             
-            'users-data-service': ['api-client', 'mock-data'],
+            'users-data-service': ['api-client'],
             'users-ui-controller': ['ui-utils', 'formatters'],
             'users-main': ['users-data-service', 'users-ui-controller'],
             
-            'settings-data-service': ['api-client', 'mock-data'],
+            'settings-data-service': ['api-client'],
             'settings-ui-controller': ['ui-utils', 'formatters'],
             'settings-main': ['settings-data-service', 'settings-ui-controller'],
             
-            'main-data-service': ['api-client', 'mock-data'],
+            'main-data-service': ['api-client'],
             'main-ui-controller': ['ui-utils', 'formatters'],
             'main-controller': ['main-data-service', 'main-ui-controller'],
         };
@@ -62,7 +61,6 @@ class ModuleLoader {
             'api-client': '/static/shared/js/api-client.js',
             'formatters': '/static/shared/js/formatters.js',
             'ui-utils': '/static/shared/js/ui-utils.js',
-            'mock-data': '/static/shared/js/mock-data.js',
             
             // Chart components
             'chart-manager': '/static/components/charts/chart-manager.js',
@@ -200,7 +198,7 @@ class ModuleLoader {
 
     async loadModuleGroup(groupName) {
         const groups = {
-            'shared': ['api-client', 'formatters', 'ui-utils', 'mock-data'],
+            'shared': ['api-client', 'formatters', 'ui-utils'],
             'charts': ['chart-manager', 'analytics-charts'],
             'analytics': ['analytics-data-service', 'analytics-ui-controller', 'analytics-main'],
             'android': ['android-data-service', 'android-ui-controller', 'android-chart-manager', 'android-main'],
