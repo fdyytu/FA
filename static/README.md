@@ -25,6 +25,11 @@ static/
 │   │   ├── analytics-data-service.js
 │   │   ├── analytics-ui-controller.js
 │   │   └── analytics-main.js
+│   ├── charts/          # Charts module (BARU)
+│   │   ├── api/         # Charts API services
+│   │   ├── components/  # Chart components
+│   │   ├── ui/          # Chart UI components
+│   │   └── utils/       # Chart utilities
 │   ├── dashboard/       # Dashboard main module
 │   │   ├── api/         # Dashboard API services
 │   │   ├── components/  # Dashboard components
