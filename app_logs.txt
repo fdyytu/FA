@@ -1,83 +1,69 @@
-🚫 Failed to import module 'app.api.v1.endpoints.discord_bot': ImportError: cannot import name 'router' from 'app.domains.discord.controllers.discord_config_controller' (/home/user/workspace/app/domains/discord/controllers/discord_config_controller.py)
-⚠️ Discord bot API endpoints not available
-🚫 Failed to import module 'app.domains.discord.controllers.bot_controller': ImportError: cannot import name 'router' from 'app.domains.discord.controllers.discord_config_controller' (/home/user/workspace/app/domains/discord/controllers/discord_config_controller.py)
-⚠️ Discord bot controller not available
-🚫 Failed to import module 'app.domains.discord.controllers.analytics_controller': ImportError: cannot import name 'router' from 'app.domains.discord.controllers.discord_config_controller' (/home/user/workspace/app/domains/discord/controllers/discord_config_controller.py)
-⚠️ Discord analytics controller not available
-🚫 Failed to import module 'app.domains.discord.controllers.user_controller': ImportError: cannot import name 'router' from 'app.domains.discord.controllers.discord_config_controller' (/home/user/workspace/app/domains/discord/controllers/discord_config_controller.py)
-⚠️ Discord user controller not available
-🚫 Failed to import module 'app.domains.discord.controllers.product_controller': ImportError: cannot import name 'router' from 'app.domains.discord.controllers.discord_config_controller' (/home/user/workspace/app/domains/discord/controllers/discord_config_controller.py)
-⚠️ Discord product controller not available
-🚫 Failed to import module 'app.domains.analytics.controllers.analytics_controller': ModuleNotFoundError: No module named 'app.domains.analytics.controllers.analytics_controller'
-⚠️ Analytics controller not available
-🚫 Failed to import module 'app.domains.analytics.controllers.analytics_tracking_controller': ModuleNotFoundError: No module named 'app.domains.analytics.controllers.analytics_controller'
-⚠️ Analytics tracking controller not available
-🚫 Failed to import module 'app.domains.analytics.controllers.analytics_controller.admin_analytics_router': ModuleNotFoundError: No module named 'app.domains.analytics.controllers.analytics_controller'
-⚠️ Admin analytics controller not available
-🚫 Failed to import module 'app.domains.product.controllers.product_controller': ModuleNotFoundError: No module named 'app.domains.product.controllers.product_controller'
-⚠️ Product controller not available
-🚫 Failed to import module 'app.domains.wallet.controllers.wallet_controller': ImportError: cannot import name 'WalletBalanceController' from 'app.domains.wallet.controllers.wallet_balance_controller' (/home/user/workspace/app/domains/wallet/controllers/wallet_balance_controller.py)
-⚠️ Wallet controller not available
-2025-06-21 04:24:59 - app.common.logging.logging_config - INFO - Logging system initialized
-2025-06-21 04:24:59 - app.common.logging.logging_config - INFO - Log level: INFO
-2025-06-21 04:24:59 - server - INFO - 🚀 Starting FA Application initialization...
-2025-06-21 04:24:59 - app.common.logging.logging_config - INFO - Logging system initialized
-2025-06-21 04:24:59 - app.common.logging.logging_config - INFO - Log level: INFO
-2025-06-21 04:24:59 - server - INFO - Starting FA Application with new structure...
-2025-06-21 04:24:59 - server - INFO - Base FA Application initialized
-2025-06-21 04:24:59 - server - INFO - ✅ Base application created
-2025-06-21 04:24:59 - server - INFO - ✅ Error handler middleware added
-2025-06-21 04:24:59 - server - INFO - ✅ Request logging middleware added
-2025-06-21 04:24:59 - server - INFO - ✅ Endpoint logging middleware added
-2025-06-21 04:24:59 - server - INFO - ✅ CORS middleware added
-2025-06-21 04:24:59 - server - INFO - ✅ Rate limiting middleware added
-2025-06-21 04:24:59 - server - INFO - 🎯 All middleware setup completed
-2025-06-21 04:24:59 - app.infrastructure.database.database_manager - INFO - Importing all database models...
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Admin models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - User models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Discord models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Wallet models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Product models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Voucher models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - WARNING - Analytics models not available: No module named 'app.domains.analytics.models.analytic'
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - PPOB models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Transaction models imported successfully
-2025-06-21 04:24:59 - app.infrastructure.database.models_registry - INFO - Total models imported: 17 - ['Admin', 'AdminConfig', 'AdminAuditLog', 'AdminNotificationSetting', 'User', 'DiscordConfig', 'WalletTransaction', 'Transfer', 'TopUpRequest', 'Product', 'Voucher', 'VoucherUsage', 'PPOBTransaction', 'PPOBProduct', 'PPOBMarginConfig', 'Transaction', 'TransactionLog']
-2025-06-21 04:24:59 - app.infrastructure.database.database_manager - INFO - Creating database tables...
-2025-06-21 04:24:59 - app.infrastructure.database.database_manager - INFO - Database tables verified: 19 tables
-2025-06-21 04:24:59 - app.infrastructure.database.database_manager - INFO - Models imported: 17 models
-2025-06-21 04:24:59 - app.infrastructure.database.database_manager - INFO - Checking admin existence...
-2025-06-21 04:24:59 - app.infrastructure.database.init_admin - INFO - Tidak ada admin di database, membuat admin default...
-2025-06-21 04:24:59 - app.infrastructure.database.init_admin - INFO - Admin default berhasil dibuat: admin
-2025-06-21 04:24:59 - app.infrastructure.database.init_admin - INFO - Login credentials - Username: admin, Password: admin123
-2025-06-21 04:24:59 - server - INFO - Database tables created/verified
-2025-06-21 04:25:00 - server - INFO - API routes registered
-2025-06-21 04:25:00 - server - INFO - Static files mounted from: /home/user/workspace/static
-2025-06-21 04:25:00 - server - INFO - ✅ Static files setup completed
-2025-06-21 04:25:00 - server - INFO - 🎯 FA Application initialization completed successfully!
-2025-06-21 04:25:00 - server - INFO - 📊 Enhanced logging system active - All requests and errors will be logged
-2025-06-21 04:25:00 - app.domains.file_monitor.services.file_watcher - INFO - Started watching directory: monitored_files
-2025-06-21 04:25:23 - endpoint..api.v1.health - INFO - Accessing endpoint: GET /api/v1/health
-2025-06-21 04:25:23 - request_logger - INFO - 🔵 INCOMING REQUEST [340e0560] GET /api/v1/health
-2025-06-21 04:25:23 - request_logger - INFO - 🟢 RESPONSE [340e0560] 200 GET /api/v1/health (9.88ms)
-INFO:     127.0.0.1:38342 - "GET /api/v1/health HTTP/1.1" 200 OK
-2025-06-21 04:25:36 - endpoint..api.v1.nonexistent - INFO - Accessing endpoint: GET /api/v1/nonexistent
-2025-06-21 04:25:36 - request_logger - INFO - 🔵 INCOMING REQUEST [c2d5a8d5] GET /api/v1/nonexistent
-2025-06-21 04:25:36 - request_logger - WARNING - 🟡 RESPONSE [c2d5a8d5] 404 GET /api/v1/nonexistent (3.70ms)
-INFO:     127.0.0.1:37276 - "GET /api/v1/nonexistent HTTP/1.1" 404 Not Found
-2025-06-21 04:25:50 - endpoint..api.v1.admin.auth.login - INFO - Accessing endpoint: POST /api/v1/admin/auth/login
-2025-06-21 04:25:50 - request_logger - INFO - 🔵 INCOMING REQUEST [9cc21c7c] POST /api/v1/admin/auth/login
-2025-06-21 04:25:50 - endpoint.api.v1.admin.auth.login - INFO - 🔵 Accessing POST /api/v1/admin/auth/login
-2025-06-21 04:25:50 - app.domains.admin.controllers.auth.admin_login_controller - INFO - 🔐 Admin login attempt for username: admin
-2025-06-21 04:25:50 - app.domains.admin.controllers.auth.admin_login_controller - INFO - ✅ Successful admin login for: admin
-2025-06-21 04:25:50 - endpoint.api.v1.admin.auth.login - INFO - ✅ Successfully processed /api/v1/admin/auth/login
-2025-06-21 04:25:50 - request_logger - INFO - 🟢 RESPONSE [9cc21c7c] 200 POST /api/v1/admin/auth/login (454.23ms)
-INFO:     127.0.0.1:41938 - "POST /api/v1/admin/auth/login HTTP/1.1" 200 OK
-2025-06-21 04:26:05 - endpoint..api.v1.admin.auth.login - INFO - Accessing endpoint: POST /api/v1/admin/auth/login
-2025-06-21 04:26:05 - request_logger - INFO - 🔵 INCOMING REQUEST [f87ea4f1] POST /api/v1/admin/auth/login
-2025-06-21 04:26:05 - endpoint.api.v1.admin.auth.login - INFO - 🔵 Accessing POST /api/v1/admin/auth/login
-2025-06-21 04:26:05 - app.domains.admin.controllers.auth.admin_login_controller - INFO - 🔐 Admin login attempt for username: admin
-2025-06-21 04:26:05 - app.domains.admin.controllers.auth.admin_login_controller - WARNING - 🚫 Failed login attempt for username: admin
-2025-06-21 04:26:05 - endpoint.api.v1.admin.auth.login - WARNING - 🟡 HTTP Error 401 in /api/v1/admin/auth/login: Username atau password salah
-2025-06-21 04:26:05 - request_logger - WARNING - 🟡 RESPONSE [f87ea4f1] 401 POST /api/v1/admin/auth/login (338.17ms)
-INFO:     127.0.0.1:37282 - "POST /api/v1/admin/auth/login HTTP/1.1" 401 Unauthorized
+2025-06-23 05:09:45 - app.common.logging.logging_config - INFO - Logging system initialized
+2025-06-23 05:09:45 - app.common.logging.logging_config - INFO - Log level: INFO
+2025-06-23 05:09:45 - server - INFO - 🚀 Starting FA Application initialization...
+2025-06-23 05:09:45 - app.common.logging.logging_config - INFO - Logging system initialized
+2025-06-23 05:09:45 - app.common.logging.logging_config - INFO - Log level: INFO
+2025-06-23 05:09:45 - server - INFO - Starting FA Application with new structure...
+2025-06-23 05:09:45 - server - INFO - Base FA Application initialized
+2025-06-23 05:09:45 - server - INFO - ✅ Base application created
+2025-06-23 05:09:45 - server - INFO - ✅ Error handler middleware added
+2025-06-23 05:09:45 - server - INFO - ✅ Request logging middleware added
+2025-06-23 05:09:45 - server - INFO - ✅ Endpoint logging middleware added
+2025-06-23 05:09:45 - server - INFO - ✅ CORS middleware added
+2025-06-23 05:09:45 - server - INFO - ✅ Rate limiting middleware added
+2025-06-23 05:09:45 - server - INFO - 🎯 All middleware setup completed
+2025-06-23 05:09:45 - app.infrastructure.database.database_manager - INFO - Importing all database models...
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Admin models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - User models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Discord models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Wallet models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Product models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Voucher models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Analytics models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - PPOB models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Transaction models imported successfully
+2025-06-23 05:09:45 - app.infrastructure.database.models_registry - INFO - Total models imported: 21 - ['Admin', 'AdminConfig', 'AdminAuditLog', 'AdminNotificationSetting', 'User', 'DiscordConfig', 'WalletTransaction', 'Transfer', 'TopUpRequest', 'Product', 'Voucher', 'VoucherUsage', 'AnalyticsEvent', 'ProductAnalytics', 'VoucherAnalytics', 'DashboardMetrics', 'PPOBTransaction', 'PPOBProduct', 'PPOBMarginConfig', 'Transaction', 'TransactionLog']
+2025-06-23 05:09:45 - app.infrastructure.database.database_manager - INFO - Creating database tables...
+2025-06-23 05:09:45 - app.infrastructure.database.database_manager - INFO - Database tables verified: 24 tables
+2025-06-23 05:09:45 - app.infrastructure.database.database_manager - INFO - Models imported: 21 models
+2025-06-23 05:09:45 - app.infrastructure.database.database_manager - INFO - Checking admin existence...
+2025-06-23 05:09:45 - app.infrastructure.database.init_admin - INFO - Database sudah memiliki 1 admin
+2025-06-23 05:09:45 - server - INFO - Database tables created/verified
+2025-06-23 05:09:46 - server - INFO - API routes registered
+2025-06-23 05:09:46 - server - INFO - Static files mounted from: /home/user/workspace/static
+2025-06-23 05:09:46 - server - INFO - ✅ Static files setup completed
+2025-06-23 05:09:46 - server - INFO - 🎯 FA Application initialization completed successfully!
+2025-06-23 05:09:46 - server - INFO - 📊 Enhanced logging system active - All requests and errors will be logged
+2025-06-23 05:09:46 - app.domains.file_monitor.services.file_watcher - INFO - Started watching directory: monitored_files
+2025-06-23 05:10:31 - endpoint..api.v1.health - INFO - Accessing endpoint: GET /api/v1/health
+2025-06-23 05:10:31 - request_logger - INFO - 🔵 INCOMING REQUEST [cd617afd] GET /api/v1/health
+2025-06-23 05:10:31 - request_logger - INFO - 🟢 RESPONSE [cd617afd] 200 GET /api/v1/health (9.58ms)
+INFO:     127.0.0.1:52714 - "GET /api/v1/health HTTP/1.1" 200 OK
+2025-06-23 05:10:44 - endpoint..api.v1.health - INFO - Accessing endpoint: GET /api/v1/health
+2025-06-23 05:10:44 - request_logger - INFO - 🔵 INCOMING REQUEST [b70b9c7f] GET /api/v1/health
+2025-06-23 05:10:44 - request_logger - INFO - 🟢 RESPONSE [b70b9c7f] 200 GET /api/v1/health (4.70ms)
+INFO:     127.0.0.1:57172 - "GET /api/v1/health HTTP/1.1" 200 OK
+2025-06-23 05:10:59 - endpoint..api.v1.discord.config.bots - INFO - Accessing endpoint: GET /api/v1/discord/config/bots
+2025-06-23 05:10:59 - request_logger - INFO - 🔵 INCOMING REQUEST [72101454] GET /api/v1/discord/config/bots
+2025-06-23 05:10:59 - request_logger - INFO - 🟢 RESPONSE [72101454] 200 GET /api/v1/discord/config/bots (5.32ms)
+INFO:     127.0.0.1:33354 - "GET /api/v1/discord/config/bots HTTP/1.1" 200 OK
+2025-06-23 05:11:12 - endpoint..api.v1.discord.config.worlds - INFO - Accessing endpoint: GET /api/v1/discord/config/worlds
+2025-06-23 05:11:12 - request_logger - INFO - 🔵 INCOMING REQUEST [afb74fc3] GET /api/v1/discord/config/worlds
+2025-06-23 05:11:12 - request_logger - INFO - 🟢 RESPONSE [afb74fc3] 200 GET /api/v1/discord/config/worlds (4.33ms)
+INFO:     127.0.0.1:49642 - "GET /api/v1/discord/config/worlds HTTP/1.1" 200 OK
+2025-06-23 05:11:29 - endpoint..api.v1.discord.monitoring.health - INFO - Accessing endpoint: GET /api/v1/discord/monitoring/health
+2025-06-23 05:11:29 - request_logger - INFO - 🔵 INCOMING REQUEST [997d18f6] GET /api/v1/discord/monitoring/health
+2025-06-23 05:11:29 - request_logger - INFO - 🟢 RESPONSE [997d18f6] 200 GET /api/v1/discord/monitoring/health (10.42ms)
+INFO:     127.0.0.1:32868 - "GET /api/v1/discord/monitoring/health HTTP/1.1" 200 OK
+2025-06-23 05:11:39 - endpoint..api.v1.discord.analytics.stats - INFO - Accessing endpoint: GET /api/v1/discord/analytics/stats
+2025-06-23 05:11:39 - request_logger - INFO - 🔵 INCOMING REQUEST [45a510b5] GET /api/v1/discord/analytics/stats
+2025-06-23 05:11:39 - request_logger - INFO - 🟢 RESPONSE [45a510b5] 200 GET /api/v1/discord/analytics/stats (2.98ms)
+INFO:     127.0.0.1:44590 - "GET /api/v1/discord/analytics/stats HTTP/1.1" 200 OK
+2025-06-23 05:11:56 - endpoint..api.v1.discord.dashboard.overview - INFO - Accessing endpoint: GET /api/v1/discord/dashboard/overview
+2025-06-23 05:11:56 - request_logger - INFO - 🔵 INCOMING REQUEST [b71f2673] GET /api/v1/discord/dashboard/overview
+2025-06-23 05:11:56 - request_logger - INFO - 🟢 RESPONSE [b71f2673] 200 GET /api/v1/discord/dashboard/overview (1.94ms)
+INFO:     127.0.0.1:34884 - "GET /api/v1/discord/dashboard/overview HTTP/1.1" 200 OK
+2025-06-23 05:12:13 - endpoint..api.v1.discord.monitoring.logs - INFO - Accessing endpoint: GET /api/v1/discord/monitoring/logs
+2025-06-23 05:12:13 - request_logger - INFO - 🔵 INCOMING REQUEST [e75d37d7] GET /api/v1/discord/monitoring/logs
+2025-06-23 05:12:13 - request_logger - INFO - 🟢 RESPONSE [e75d37d7] 200 GET /api/v1/discord/monitoring/logs (4.63ms)
+INFO:     127.0.0.1:57444 - "GET /api/v1/discord/monitoring/logs HTTP/1.1" 200 OK

@@ -91,29 +91,22 @@ async def get_monitoring_logs(
 ) -> Dict[str, Any]:
     """Get monitoring logs for dashboard"""
     try:
-        # Mock response for now - in real implementation, this would query actual logs
-        logs = [
-            {
-                "id": f"log_{i}",
-                "timestamp": "2025-01-16T10:00:00Z",
-                "level": "INFO" if i % 3 == 0 else ("WARNING" if i % 3 == 1 else "ERROR"),
-                "message": f"Discord bot log message {i}",
-                "bot_id": f"bot_{i % 3 + 1}",
-                "guild_id": f"guild_{i % 2 + 1}",
-                "user_id": f"user_{i}" if i % 2 == 0 else None
-            }
-            for i in range(1, limit + 1)
-        ]
+        # Get real logs from database
+        repo = CommandLogRepository(db)
+        logs = repo.get_recent_logs(limit)
         
-        # Apply level filter if provided
-        if level:
-            logs = [log for log in logs if log["level"] == level.upper()]
+        # Convert to dict format and apply level filter if provided
+        log_data = []
+        for log in logs:
+            log_dict = log.to_dict()
+            if level is None or log_dict.get("level", "").upper() == level.upper():
+                log_data.append(log_dict)
         
         return {
             "success": True,
             "data": {
-                "logs": logs,
-                "total": len(logs),
+                "logs": log_data,
+                "total": len(log_data),
                 "limit": limit
             }
         }
@@ -128,21 +121,26 @@ async def get_recent_commands_monitoring(
 ) -> Dict[str, Any]:
     """Get recent commands for monitoring dashboard"""
     try:
-        # Mock response for now - in real implementation, this would query actual command logs
-        commands = [
-            {
-                "id": f"cmd_{i}",
-                "command_name": f"command_{i}",
-                "user_id": f"user_{i}",
-                "guild_id": f"guild_{i % 2 + 1}",
-                "channel_id": f"channel_{i}",
-                "success": i % 3 != 0,
-                "execution_time": f"{100 + i * 10}ms",
-                "timestamp": "2025-01-16T10:00:00Z",
-                "error_message": f"Error in command {i}" if i % 3 == 0 else None
+        # Get real command logs from database
+        repo = CommandLogRepository(db)
+        logs = repo.get_recent_logs(limit)
+        
+        # Convert to command format
+        commands = []
+        for log in logs:
+            log_dict = log.to_dict()
+            command_data = {
+                "id": log_dict.get("id"),
+                "command_name": log_dict.get("command_name", "unknown"),
+                "user_id": log_dict.get("user_id"),
+                "guild_id": log_dict.get("guild_id"),
+                "channel_id": log_dict.get("channel_id"),
+                "success": log_dict.get("success", True),
+                "execution_time": f"{log_dict.get('execution_time', 0)}ms",
+                "timestamp": log_dict.get("timestamp"),
+                "error_message": log_dict.get("error_message")
             }
-            for i in range(1, limit + 1)
-        ]
+            commands.append(command_data)
         
         return {
             "success": True,
