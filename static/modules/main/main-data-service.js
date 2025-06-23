@@ -83,4 +83,7 @@ class MainDashboardDataService {
     }
 }
 
+// Export class untuk digunakan oleh module bridge
+window.MainDashboardDataService = MainDashboardDataService;
+
 const mainDashboardDataService = new MainDashboardDataService();

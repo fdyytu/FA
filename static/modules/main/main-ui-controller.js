@@ -9,10 +9,10 @@ class MainDashboardUIController {
     initElements() {
         this.elements = {
             totalRevenue: document.getElementById('totalRevenue'),
-            totalOrders: document.getElementById('totalOrders'),
+            totalTransactions: document.getElementById('totalTransactions'),
             totalUsers: document.getElementById('totalUsers'),
             totalProducts: document.getElementById('totalProducts'),
-            recentTransactionsList: document.getElementById('recentTransactionsList'),
+            recentTransactions: document.getElementById('recentTransactions'),
             transactionChart: document.getElementById('transactionChart'),
             categoryChart: document.getElementById('categoryChart')
         };
@@ -23,8 +23,8 @@ class MainDashboardUIController {
             this.elements.totalRevenue.textContent = Formatters.formatCurrency(stats.total_revenue || 0);
         }
         
-        if (this.elements.totalOrders) {
-            this.elements.totalOrders.textContent = Formatters.formatNumber(stats.total_orders || 0);
+        if (this.elements.totalTransactions) {
+            this.elements.totalTransactions.textContent = Formatters.formatNumber(stats.total_transactions || 0);
         }
         
         if (this.elements.totalUsers) {
@@ -37,28 +37,35 @@ class MainDashboardUIController {
     }
 
     renderRecentTransactions(transactions) {
-        if (!this.elements.recentTransactionsList) return;
+        if (!this.elements.recentTransactions) return;
         
-        this.elements.recentTransactionsList.innerHTML = transactions.map(transaction => `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    #${transaction.id}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${transaction.user}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${Formatters.formatCurrency(transaction.amount)}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${transaction.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
-                        ${transaction.status}
-                    </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${Formatters.formatDate(transaction.date)}
-                </td>
-            </tr>
+        if (!transactions || transactions.length === 0) {
+            this.elements.recentTransactions.innerHTML = '<p class="text-gray-500 text-center py-4">Tidak ada transaksi terbaru</p>';
+            return;
+        }
+        
+        this.elements.recentTransactions.innerHTML = transactions.map(transaction => `
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">${transaction.user || transaction.username || 'Unknown User'}</p>
+                        <p class="text-xs text-gray-500">${transaction.product || transaction.product_name || 'Unknown Product'}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-medium text-gray-900">${Formatters.formatCurrency(transaction.amount)}</p>
+                    <div class="flex items-center justify-end mt-1">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${transaction.status === 'success' ? 'bg-green-100 text-green-800' : transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                            <i class="fas ${transaction.status === 'success' ? 'fa-check' : transaction.status === 'pending' ? 'fa-clock' : 'fa-times'} mr-1"></i>
+                            ${transaction.status === 'success' ? 'Berhasil' : transaction.status === 'pending' ? 'Pending' : 'Gagal'}
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">${Formatters.formatRelativeTime(transaction.created_at)}</p>
+                </div>
+            </div>
         `).join('');
     }
 
@@ -115,5 +122,8 @@ class MainDashboardUIController {
         });
     }
 }
+
+// Export class untuk digunakan oleh module bridge
+window.MainDashboardUIController = MainDashboardUIController;
 
 const mainDashboardUIController = new MainDashboardUIController();
