@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Charts Module</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Charts Module</h1>
+        
+        <div class="status info">
+            <strong>Status:</strong> <span id="loadStatus">Loading modules...</span>
+        </div>
+        
+        <div>
+            <button onclick="testLoadModules()">Test Load Modules</button>
+            <button onclick="testInitCharts()">Test Init Charts</button>
+            <button onclick="testAPIServices()">Test API Services</button>
+            <button onclick="clearCharts()">Clear Charts</button>
+        </div>
+        
+        <h2>Transaction Chart</h2>
+        <div class="chart-container">
+            <canvas id="transactionChart"></canvas>
+        </div>
+        
+        <h2>Category Chart</h2>
+        <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+        </div>
+        
+        <div id="testResults"></div>
+    </div>
+
+    <!-- Mock API functions for testing -->
+    <script>
+        // Mock API function for testing
+        window.apiRequest = async function(endpoint) {
+            console.log('Mock API request to:', endpoint);
+            
+            if (endpoint.includes('transactions/weekly')) {
+                return {
+                    data: [
+                        { week: 'Sen', total_transactions: 120 },
+                        { week: 'Sel', total_transactions: 150 },
+                        { week: 'Rab', total_transactions: 180 },
+                        { week: 'Kam', total_transactions: 200 },
+                        { week: 'Jum', total_transactions: 250 },
+                        { week: 'Sab', total_transactions: 300 },
+                        { week: 'Min', total_transactions: 180 }
+                    ]
+                };
+            }
+            
+            if (endpoint.includes('categories')) {
+                return {
+                    data: [
+                        { category_name: 'Pulsa', total_sales: 1250 },
+                        { category_name: 'Paket Data', total_sales: 890 },
+                        { category_name: 'Token Listrik', total_sales: 567 },
+                        { category_name: 'E-Wallet', total_sales: 432 },
+                        { category_name: 'Game', total_sales: 321 }
+                    ]
+                };
+            }
+            
+            return { data: [] };
+        };
+        
+        // Test functions
+        async function testLoadModules() {
+            updateStatus('Testing module loading...', 'info');
+            try {
+                // Load modules sequentially
+                await loadScript('/static/modules/charts/utils/charts-config.js');
+                await loadScript('/static/modules/charts/api/charts-api-service.js');
+                await loadScript('/static/modules/charts/components/transaction-chart.js');
+                await loadScript('/static/modules/charts/components/category-chart.js');
+                await loadScript('/static/modules/charts/charts-main-controller.js');
+                
+                updateStatus('✅ All modules loaded successfully!', 'success');
+                addTestResult('Module Loading', 'SUCCESS', 'All chart modules loaded without errors');
+            } catch (error) {
+                updateStatus('❌ Error loading modules: ' + error.message, 'error');
+                addTestResult('Module Loading', 'FAILED', error.message);
+            }
+        }
+        
+        async function testInitCharts() {
+            updateStatus('Testing chart initialization...', 'info');
+            try {
+                if (typeof initCharts === 'function') {
+                    await initCharts();
+                    updateStatus('✅ Charts initialized successfully!', 'success');
+                    addTestResult('Chart Initialization', 'SUCCESS', 'Charts created and rendered');
+                } else {
+                    throw new Error('initCharts function not found');
+                }
+            } catch (error) {
+                updateStatus('❌ Error initializing charts: ' + error.message, 'error');
+                addTestResult('Chart Initialization', 'FAILED', error.message);
+            }
+        }
+        
+        async function testAPIServices() {
+            updateStatus('Testing API services...', 'info');
+            try {
+                if (typeof ChartsAPIService !== 'undefined') {
+                    const transactionData = await ChartsAPIService.getTransactionData();
+                    const categoryData = await ChartsAPIService.getCategoryData();
+                    
+                    if (transactionData.labels.length > 0 && categoryData.labels.length > 0) {
+                        updateStatus('✅ API services working correctly!', 'success');
+                        addTestResult('API Services', 'SUCCESS', 
+                            `Transaction data: ${transactionData.labels.length} items, Category data: ${categoryData.labels.length} items`);
+                    } else {
+                        throw new Error('API services returned empty data');
+                    }
+                } else {
+                    throw new Error('ChartsAPIService not found');
+                }
+            } catch (error) {
+                updateStatus('❌ Error testing API services: ' + error.message, 'error');
+                addTestResult('API Services', 'FAILED', error.message);
+            }
+        }
+        
+        function clearCharts() {
+            if (typeof cleanupCharts === 'function') {
+                cleanupCharts();
+                updateStatus('Charts cleared', 'info');
+                addTestResult('Chart Cleanup', 'SUCCESS', 'Charts destroyed successfully');
+            }
+        }
+        
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('loadStatus');
+            const statusContainer = statusEl.parentElement;
+            statusContainer.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+        
+        function addTestResult(testName, status, details) {
+            const resultsEl = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `status ${status === 'SUCCESS' ? 'success' : 'error'}`;
+            resultDiv.innerHTML = `<strong>${testName}:</strong> ${status} - ${details}`;
+            resultsEl.appendChild(resultDiv);
+        }
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = () => reject(new Error(`Failed to load ${src}`));
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Auto-start testing
+        window.addEventListener('load', () => {
+            updateStatus('Ready for testing', 'info');
+        });
+    </script>
+</body>
+</html>
