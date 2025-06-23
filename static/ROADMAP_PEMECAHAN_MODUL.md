@@ -2,6 +2,31 @@
 
 ## Status Pemecahan Modul Dashboard
 
+### 🗑️ FILE DUPLIKAT YANG DIHAPUS (Batch Terbaru)
+
+#### File Dashboard yang Sudah Digantikan Modul:
+- `dashboard_analytics.js` (751 baris) → Digantikan oleh `/modules/analytics/`
+- `dashboard_analytics.html` → Digantikan oleh modul analytics
+- `dashboard_android.js` (332 baris) → Digantikan oleh `/modules/android/`
+- `dashboard_android.html` → Digantikan oleh modul android
+- `dashboard_products.js` (659 baris) → Digantikan oleh `/modules/products/`
+- `dashboard_products.html` → Digantikan oleh modul products
+- `dashboard_settings.js` (620 baris) → Digantikan oleh `/modules/settings/`
+- `dashboard_settings.html` → Digantikan oleh modul settings
+- `dashboard_users.js` (724 baris) → Digantikan oleh `/modules/users/`
+- `dashboard_users.html` → Digantikan oleh modul users
+- `dashboard_main.js` (275 baris) → Digantikan oleh `/modules/main/`
+- `dashboard_main.html` → Digantikan oleh modul main
+- `dashboard_discord.js` (57 baris) → Digantikan oleh `/modules/admin/discord/`
+- `dashboard_discord.html` → Digantikan oleh modul discord
+- `dashboard_charts.js` (223 baris) → Dipecah menjadi `/modules/charts/`
+- `dashboard_shared.js` (375 baris) → Digantikan oleh `/modules/shared/`
+- `dashboard_shared.css` (429 baris) → Digantikan oleh `/shared/css/`
+
+#### File Backup yang Dihapus:
+- `dashboard_main_backup.js` → Tidak diperlukan lagi
+- `discord_handlers_backup.js` → Tidak diperlukan lagi
+
 ### ✅ SELESAI DIPECAH
 
 #### 1. Discord Module
@@ -48,16 +73,22 @@
 - **Status**: ✅ SELESAI
 - **Lokasi**: `/static/modules/shared/`
 - **Jumlah Modul**: 7+ file kecil
-- **Backup**: File backup dihapus
 
-#### 7. Android Module
+#### 7. Charts Module (BARU)
+- **File Asli**: `dashboard_charts.js` (223 baris)
+- **Status**: ✅ SELESAI
+- **Lokasi**: `/static/modules/charts/`
+- **Jumlah Modul**: 6 file kecil
+- **Backup**: `dashboard_charts_backup.js`
+
+#### 8. Android Module
 - **File Asli**: `dashboard_android.js` (332 baris)
 - **Status**: ✅ SELESAI
 - **Lokasi**: `/static/modules/android/`
 - **Jumlah Modul**: 5+ file kecil
 - **Backup**: File backup dihapus
 
-#### 8. Main Module
+#### 9. Main Module
 - **File Asli**: `dashboard_main.js` (275 baris)
 - **Status**: ✅ SELESAI
 - **Lokasi**: `/static/modules/main/`
