@@ -1,71 +1,76 @@
 // Main Dashboard Controller
-class MainDashboardController {
-    constructor() {
-        this.dataService = new MainDashboardDataService();
-        this.uiController = new MainDashboardUIController();
-    }
+// Maksimal 50 baris per file
 
-    async initDashboard() {
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-            window.location.href = '../login_android.html';
-            return;
-        }
+class MainController {
+    static async initDashboard() {
+        const token = AuthService.checkAuth();
+        if (!token) return;
 
-        UIUtils.showLoading(true);
+        NotificationService.showLoading(true);
         
         try {
-            await Promise.all([
-                this.loadDashboardStats(),
-                this.loadRecentTransactions(),
-                this.loadChartData()
+            const [stats, transactions] = await Promise.all([
+                MainAPIService.loadDashboardStats(),
+                MainAPIService.loadRecentTransactions()
             ]);
             
-            UIUtils.showToast('Dashboard berhasil dimuat', 'success', 3000);
+            MainUIService.updateStatsCards(stats);
+            MainUIService.renderRecentTransactions(transactions);
+            
+            NotificationService.showToast('Dashboard berhasil dimuat', 'success', 3000);
         } catch (error) {
             console.error('Error loading dashboard:', error);
-            UIUtils.showToast('Gagal memuat data dashboard', 'error');
+            NotificationService.showToast('Gagal memuat data dashboard', 'error');
         } finally {
-            UIUtils.showLoading(false);
+            NotificationService.showLoading(false);
         }
     }
 
-    async loadDashboardStats() {
-        const stats = await this.dataService.loadDashboardStats();
-        this.uiController.updateStatsCards(stats);
-    }
+    static async initDashboardWithBridge() {
+        const token = AuthService.checkAuth();
+        if (!token) return;
 
-    async loadRecentTransactions() {
-        const transactions = await this.dataService.loadRecentTransactions();
-        this.uiController.renderRecentTransactions(transactions);
-    }
-
-    async loadChartData() {
-        const chartData = await this.dataService.loadChartData();
-        this.uiController.initCharts(chartData);
-    }
-
-    async refreshDashboard() {
-        UIUtils.showLoading(true);
+        NotificationService.showLoading(true);
         
         try {
+            // Wait for module bridge to initialize
+            if (window.DashboardBridge && !window.DashboardBridge.isInitialized) {
+                console.log('⏳ Waiting for module bridge to initialize...');
+                await this.waitForBridge();
+            }
+
             await Promise.all([
-                this.loadDashboardStats(),
-                this.loadRecentTransactions()
+                MainBridgeService.loadDashboardStatsWithBridge(),
+                MainAPIService.loadRecentTransactions().then(transactions => 
+                    MainUIService.renderRecentTransactions(transactions)
+                )
             ]);
             
-            UIUtils.showToast('Dashboard berhasil diperbarui', 'success');
+            NotificationService.showToast('Dashboard berhasil dimuat', 'success', 3000);
         } catch (error) {
-            console.error('Error refreshing dashboard:', error);
-            UIUtils.showToast('Gagal memperbarui dashboard', 'error');
+            console.error('Error loading dashboard:', error);
+            NotificationService.showToast('Gagal memuat data dashboard', 'error');
         } finally {
-            UIUtils.showLoading(false);
+            NotificationService.showLoading(false);
         }
+    }
+
+    static waitForBridge() {
+        return new Promise(resolve => {
+            const checkBridge = setInterval(() => {
+                if (window.DashboardBridge && window.DashboardBridge.isInitialized) {
+                    clearInterval(checkBridge);
+                    resolve();
+                }
+            }, 100);
+            
+            // Timeout after 5 seconds
+            setTimeout(() => {
+                clearInterval(checkBridge);
+                resolve();
+            }, 5000);
+        });
     }
 }
 
-// Export class untuk digunakan oleh module bridge
-window.MainController = MainDashboardController;
-
-// Global instance
-const mainDashboardController = new MainDashboardController();
+window.MainController = MainController;
