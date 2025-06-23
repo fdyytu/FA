@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Discord Modules</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-section {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .test-pass { border-color: #10b981; background-color: #f0fdf4; }
+        .test-fail { border-color: #ef4444; background-color: #fef2f2; }
+        .test-pending { border-color: #f59e0b; background-color: #fffbeb; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-8 text-center">Discord Modules Test</h1>
+        
+        <!-- Test Results Container -->
+        <div id="testResults" class="space-y-4">
+            <div class="test-section test-pending">
+                <h2 class="text-xl font-semibold mb-4">🧪 Running Tests...</h2>
+                <div id="testProgress">Initializing tests...</div>
+            </div>
+        </div>
+
+        <!-- Mock Discord Elements -->
+        <div class="hidden">
+            <div id="discordBots"></div>
+            <div id="discordLogs"></div>
+            <div id="discordCommands"></div>
+        </div>
+    </div>
+
+    <!-- Mock shared utilities -->
+    <script>
+        // Mock formatDate function
+        window.formatDate = function(dateString) {
+            if (!dateString) return 'Unknown time';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID') + ' ' + date.toLocaleTimeString('id-ID');
+        };
+
+        // Mock showToast function
+        window.showToast = function(message, type) {
+            console.log(`Toast [${type}]: ${message}`);
+        };
+
+        // Mock apiRequest function
+        window.apiRequest = function(endpoint) {
+            return Promise.resolve({
+                data: {
+                    logs: [],
+                    commands: [],
+                    bots: []
+                }
+            });
+        };
+    </script>
+
+    <!-- Load Discord Modules -->
+    <script src="/static/modules/admin/discord/utils/discord-log-utils.js"></script>
+    <script src="/static/modules/admin/discord/components/discord-bots-updater.js"></script>
+    <script src="/static/modules/admin/discord/handlers/discord-stats-loader.js"></script>
+
+    <script>
+        // Test Suite
+        class DiscordModuleTest {
+            constructor() {
+                this.tests = [];
+                this.results = [];
+                this.testContainer = document.getElementById('testResults');
+                this.progressElement = document.getElementById('testProgress');
+            }
+
+            addTest(name, testFunction) {
+                this.tests.push({ name, testFunction });
+            }
+
+            async runTests() {
+                this.updateProgress('Starting test suite...');
+                
+                for (let i = 0; i < this.tests.length; i++) {
+                    const test = this.tests[i];
+                    this.updateProgress(`Running test ${i + 1}/${this.tests.length}: ${test.name}`);
+                    
+                    try {
+                        await test.testFunction();
+                        this.results.push({ name: test.name, status: 'pass', error: null });
+                    } catch (error) {
+                        this.results.push({ name: test.name, status: 'fail', error: error.message });
+                    }
+                }
+
+                this.displayResults();
+            }
+
+            updateProgress(message) {
+                this.progressElement.textContent = message;
+            }
+
+            displayResults() {
+                const passCount = this.results.filter(r => r.status === 'pass').length;
+                const failCount = this.results.filter(r => r.status === 'fail').length;
+                
+                let html = `
+                    <div class="test-section ${failCount === 0 ? 'test-pass' : 'test-fail'}">
+                        <h2 class="text-xl font-semibold mb-4">
+                            📊 Test Results: ${passCount}/${this.results.length} Passed
+                        </h2>
+                        <div class="space-y-2">
+                `;
+
+                this.results.forEach(result => {
+                    const icon = result.status === 'pass' ? '✅' : '❌';
+                    const colorClass = result.status === 'pass' ? 'text-green-700' : 'text-red-700';
+                    
+                    html += `
+                        <div class="${colorClass}">
+                            ${icon} ${result.name}
+                            ${result.error ? `<br><span class="text-sm ml-6">Error: ${result.error}</span>` : ''}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+
+                this.testContainer.innerHTML = html;
+            }
+        }
+
+        // Initialize test suite
+        const testSuite = new DiscordModuleTest();
+
+        // Test 1: Check if all functions are loaded
+        testSuite.addTest('Discord Functions Loaded', async () => {
+            if (typeof getLogLevelClass !== 'function') throw new Error('getLogLevelClass not loaded');
+            if (typeof updateDiscordBots !== 'function') throw new Error('updateDiscordBots not loaded');
+            if (typeof updateDiscordLogs !== 'function') throw new Error('updateDiscordLogs not loaded');
+            if (typeof updateDiscordCommands !== 'function') throw new Error('updateDiscordCommands not loaded');
+            if (typeof loadDiscordStats !== 'function') throw new Error('loadDiscordStats not loaded');
+        });
+
+        // Test 2: Log level class utility
+        testSuite.addTest('Log Level Class Utility', async () => {
+            const errorClass = getLogLevelClass('error');
+            if (!errorClass.includes('bg-red-100')) throw new Error('Error class incorrect');
+            
+            const warningClass = getLogLevelClass('warning');
+            if (!warningClass.includes('bg-yellow-100')) throw new Error('Warning class incorrect');
+            
+            const infoClass = getLogLevelClass('info');
+            if (!infoClass.includes('bg-blue-100')) throw new Error('Info class incorrect');
+            
+            const debugClass = getLogLevelClass('debug');
+            if (!debugClass.includes('bg-gray-100')) throw new Error('Debug class incorrect');
+            
+            const defaultClass = getLogLevelClass('unknown');
+            if (!defaultClass.includes('bg-gray-100')) throw new Error('Default class incorrect');
+        });
+
+        // Test 3: Update Discord Bots
+        testSuite.addTest('Update Discord Bots', async () => {
+            const mockBots = [
+                { name: 'Test Bot 1', guild_id: '123456', status: 'active' },
+                { name: 'Test Bot 2', guild_id: '789012', status: 'inactive' }
+            ];
+            
+            updateDiscordBots(mockBots);
+            
+            const container = document.getElementById('discordBots');
+            if (!container.innerHTML.includes('Test Bot 1')) throw new Error('Bot 1 not displayed');
+            if (!container.innerHTML.includes('Test Bot 2')) throw new Error('Bot 2 not displayed');
+            if (!container.innerHTML.includes('123456')) throw new Error('Guild ID not displayed');
+        });
+
+        // Test 4: Update Discord Bots - Empty State
+        testSuite.addTest('Update Discord Bots - Empty', async () => {
+            updateDiscordBots([]);
+            
+            const container = document.getElementById('discordBots');
+            if (!container.innerHTML.includes('Tidak ada bot yang aktif')) throw new Error('Empty state not displayed');
+        });
+
+        // Test 5: Update Discord Logs
+        testSuite.addTest('Update Discord Logs', async () => {
+            const mockLogs = [
+                { message: 'Test log message', created_at: '2024-01-01T10:00:00Z', level: 'info' },
+                { message: 'Error log message', created_at: '2024-01-01T11:00:00Z', level: 'error' }
+            ];
+            
+            updateDiscordLogs(mockLogs);
+            
+            const container = document.getElementById('discordLogs');
+            if (!container.innerHTML.includes('Test log message')) throw new Error('Log message not displayed');
+            if (!container.innerHTML.includes('Error log message')) throw new Error('Error log not displayed');
+        });
+
+        // Test 6: Update Discord Commands
+        testSuite.addTest('Update Discord Commands', async () => {
+            const mockCommands = [
+                { command: '/test', user: 'TestUser', created_at: '2024-01-01T10:00:00Z', success: true },
+                { command: '/error', user: 'ErrorUser', created_at: '2024-01-01T11:00:00Z', success: false }
+            ];
+            
+            updateDiscordCommands(mockCommands);
+            
+            const container = document.getElementById('discordCommands');
+            if (!container.innerHTML.includes('/test')) throw new Error('Test command not displayed');
+            if (!container.innerHTML.includes('/error')) throw new Error('Error command not displayed');
+            if (!container.innerHTML.includes('TestUser')) throw new Error('User not displayed');
+        });
+
+        // Test 7: Load Discord Stats
+        testSuite.addTest('Load Discord Stats', async () => {
+            // This should not throw an error
+            await loadDiscordStats();
+            
+            // Check if sections don't have error class (since we mock successful responses)
+            const sections = document.querySelectorAll('.discord-section');
+            sections.forEach(section => {
+                if (section.classList.contains('error')) {
+                    throw new Error('Section has error class when it should not');
+                }
+            });
+        });
+
+        // Run tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testSuite.runTests();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
