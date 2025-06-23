@@ -162,8 +162,11 @@ class EndpointLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         """Log endpoint-specific information"""
         
-        # Log endpoint access
-        endpoint_logger = logging.getLogger(f"endpoint.{request.url.path.replace('/', '.')}")
+        # Log endpoint access - normalize path to avoid duplication
+        normalized_path = request.url.path
+        if normalized_path.startswith('/api/v1/api/v1/'):
+            normalized_path = normalized_path.replace('/api/v1/api/v1/', '/api/v1/')
+        endpoint_logger = logging.getLogger(f"endpoint.{normalized_path.replace('/', '.')}")
         
         endpoint_logger.info(
             f"Accessing endpoint: {request.method} {request.url.path}",

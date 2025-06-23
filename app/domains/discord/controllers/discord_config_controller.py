@@ -141,7 +141,23 @@ class DiscordConfigController:
             """Ambil semua world Discord"""
             try:
                 # Get real world data from database
+                configs = discord_config_service.get_all_configs(db)
                 worlds = []
+                
+                for config in configs:
+                    if config.guild_id:
+                        world_data = {
+                            "id": config.guild_id,
+                            "name": config.guild_name or f"Guild {config.guild_id}",
+                            "config_id": config.id,
+                            "member_count": 0,
+                            "channel_count": 0,
+                            "role_count": 0,
+                            "bot_permissions": [],
+                            "is_active": config.is_active,
+                            "created_at": config.created_at.isoformat() if config.created_at else None
+                        }
+                        worlds.append(world_data)
                 
                 return {
                     "success": True,

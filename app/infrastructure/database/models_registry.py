@@ -67,12 +67,12 @@ def import_all_models():
         logger.warning(f"Voucher models not available: {e}")
         
     try:
-        # Analytics models
-        from app.domains.analytics.models.analytic import (
-            UserAnalytics, ProductAnalytics, VoucherAnalytics, DashboardMetrics
+        # Analytics models - Fixed import path
+        from app.domains.analytics.models.analytics import (
+            AnalyticsEvent, ProductAnalytics, VoucherAnalytics, DashboardMetrics
         )
         models_imported.extend([
-            "UserAnalytics", "ProductAnalytics", "VoucherAnalytics", "DashboardMetrics"
+            "AnalyticsEvent", "ProductAnalytics", "VoucherAnalytics", "DashboardMetrics"
         ])
         logger.info("Analytics models imported successfully")
     except ImportError as e:
