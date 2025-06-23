@@ -14,12 +14,22 @@ static/
 │   ├── modals/          # Modal components (akan ditambahkan)
 │   └── tables/          # Table components (akan ditambahkan)
 ├── modules/             # Module-specific files
+│   ├── admin/           # Admin modules
+│   │   └── discord/     # Discord admin module
+│   │       ├── api/     # Discord API services
+│   │       ├── components/ # Discord UI components
+│   │       ├── handlers/   # Discord data handlers
+│   │       ├── ui/         # Discord UI utilities
+│   │       └── utils/      # Discord utilities
 │   ├── analytics/       # Analytics module
 │   │   ├── analytics-data-service.js
 │   │   ├── analytics-ui-controller.js
 │   │   └── analytics-main.js
-│   ├── discord/         # Discord module
-│   │   └── discord-data-service.js
+│   ├── dashboard/       # Dashboard main module
+│   │   ├── api/         # Dashboard API services
+│   │   ├── components/  # Dashboard components
+│   │   ├── ui/          # Dashboard UI components
+│   │   └── utils/       # Dashboard utilities
 │   ├── android/         # Android module
 │   │   ├── android-data-service.js
 │   │   ├── android-ui-controller.js
@@ -90,6 +100,12 @@ static/
 <script src="/static/modules/analytics/analytics-main.js"></script>
 ```
 
+### Dashboard Main
+```html
+<!-- Load dashboard module loader -->
+<script src="/static/modules/dashboard/dashboard-module-loader.js"></script>
+```
+
 ### Android Dashboard
 ```html
 <!-- Include shared modules first -->
@@ -104,6 +120,12 @@ static/
 <script src="/static/modules/android/android-ui-controller.js"></script>
 <script src="/static/modules/android/android-chart-manager.js"></script>
 <script src="/static/modules/android/android-main.js"></script>
+```
+
+### Discord Admin Dashboard
+```html
+<!-- Load discord admin module loader -->
+<script src="/static/modules/admin/discord/discord-module-loader.js"></script>
 ```
 
 ### Shared Utilities
@@ -132,6 +154,17 @@ UIUtils.showLoading(true);
 | | `analytics-main.js` (82 lines) |
 | | `chart-manager.js` (51 lines) |
 | | `analytics-charts.js` (98 lines) |
+| `dashboard_main.js` (251 lines) | Dipecah menjadi: |
+| | `dashboard-api-service.js` (40 lines) |
+| | `dashboard-stats-ui.js` (45 lines) |
+| | `dashboard-chart.js` (66 lines) |
+| | `dashboard-notifications.js` (68 lines) |
+| | `dashboard-auth.js` (48 lines) |
+| | `dashboard-main-controller.js` (73 lines) |
+| `discord_handlers.js` (127 lines) | Dipindah ke: |
+| | `discord-stats-loader.js` (41 lines) |
+| | `discord-bots-updater.js` (73 lines) |
+| | `discord-log-utils.js` (18 lines) |
 | `dashboard_discord.js` (793 lines) | Dipecah menjadi: |
 | | `discord-data-service-extended.js` (67 lines) |
 | | `discord-ui-controller.js` (66 lines) |
