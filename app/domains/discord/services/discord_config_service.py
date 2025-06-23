@@ -158,7 +158,60 @@ class DiscordConfigService:
             return self._decrypt_token(config.token)
         return config.token
     
+    def activate_config(self, db: Session, config_id: int) -> Optional[DiscordConfig]:
+        """Aktifkan konfigurasi Discord"""
+        try:
+            # Deactivate all configs first
+            discord_config_repository.deactivate_all(db)
+            
+            # Activate the specified config
+            update_data = {"is_active": True}
+            db_config = discord_config_repository.update(db, config_id, update_data)
+            
+            if db_config:
+                logger.info(f"Activated Discord config: {db_config.name}")
+            
+            return db_config
+            
+        except Exception as e:
+            logger.error(f"Error activating Discord config: {e}")
+            db.rollback()
+            raise
 
+    def test_config(self, config_data) -> dict:
+        """Test konfigurasi Discord (synchronous version)"""
+        try:
+            # Simple validation for now
+            if not config_data.token:
+                return {
+                    "success": False,
+                    "message": "Token tidak boleh kosong",
+                    "errors": ["Token Discord diperlukan"]
+                }
+            
+            # Basic token format validation
+            if len(config_data.token) < 50:
+                return {
+                    "success": False,
+                    "message": "Format token tidak valid",
+                    "errors": ["Token Discord harus minimal 50 karakter"]
+                }
+            
+            return {
+                "success": True,
+                "message": "Validasi dasar berhasil",
+                "data": {
+                    "token_length": len(config_data.token),
+                    "guild_id": getattr(config_data, 'guild_id', None)
+                }
+            }
+            
+        except Exception as e:
+            return {
+                "success": False,
+                "message": f"Error testing config: {str(e)}",
+                "errors": [str(e)]
+            }
     
     async def test_token(self, token: str, guild_id: Optional[str] = None) -> dict:
         """Test validitas Discord token"""

@@ -22,13 +22,9 @@ except ImportError as e:
     log_module_import_error("app.api.v1.endpoints.discord_bot", e, "Discord bot API router registration")
     router_logger.warning("⚠️ Discord bot API endpoints not available")
 
-try:
-    from app.api.v1.endpoints.discord_config import router as discord_config_router
-    api_router.include_router(discord_config_router, prefix="/discord/config", tags=["discord-config-api"])
-    router_logger.info("✅ Discord config API endpoints registered")
-except ImportError as e:
-    log_module_import_error("app.api.v1.endpoints.discord_config", e, "Discord config API router registration")
-    router_logger.warning("⚠️ Discord config API endpoints not available")
+# Discord config endpoints sudah dihandle oleh domain controller di bawah
+# Menghapus duplikasi registrasi untuk menghindari konflik path
+router_logger.info("ℹ️ Discord config endpoints will be handled by domain controller")
 
 try:
     from app.api.v1.endpoints.discord_monitoring import router as discord_monitoring_router
