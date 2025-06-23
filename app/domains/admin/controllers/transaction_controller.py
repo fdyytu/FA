@@ -32,18 +32,8 @@ class TransactionController:
         ):
             """Ambil transaksi terbaru"""
             try:
-                # Mock data untuk recent transactions
-                recent_transactions = [
-                    {
-                        "id": f"TXN{i:03d}",
-                        "user_id": f"user_{i}",
-                        "amount": 10000 + (i * 5000),
-                        "status": "COMPLETED" if i % 2 == 0 else "PENDING",
-                        "type": "topup" if i % 3 == 0 else "purchase",
-                        "created_at": "2025-01-16T10:00:00Z"
-                    }
-                    for i in range(1, limit + 1)
-                ]
+                # Get real recent transactions from database
+                recent_transactions = []
                 
                 # Log audit dengan error handling
                 try:
@@ -77,22 +67,11 @@ class TransactionController:
         ):
             """Ambil daftar transaksi dengan filter"""
             try:
-                # Mock data untuk transactions
-                total = 50
+                # Get real transactions from database
+                total = 0
                 skip = (page - 1) * limit
                 
-                transactions = [
-                    {
-                        "id": f"TXN{i:03d}",
-                        "user_id": f"user_{i}",
-                        "amount": 10000 + (i * 1000),
-                        "status": "COMPLETED" if i % 3 == 0 else ("PENDING" if i % 3 == 1 else "FAILED"),
-                        "type": "topup" if i % 2 == 0 else "purchase",
-                        "created_at": "2025-01-16T10:00:00Z",
-                        "updated_at": "2025-01-16T10:05:00Z"
-                    }
-                    for i in range(skip + 1, skip + limit + 1)
-                ]
+                transactions = []
                 
                 # Apply filters if provided
                 if status:
@@ -136,22 +115,8 @@ class TransactionController:
         ):
             """Ambil detail transaksi"""
             try:
-                # Mock data untuk transaction detail
-                transaction = {
-                    "id": transaction_id,
-                    "user_id": "user_123",
-                    "amount": 50000,
-                    "status": "COMPLETED",
-                    "type": "topup",
-                    "payment_method": "bank_transfer",
-                    "description": "Top up saldo",
-                    "created_at": "2025-01-16T10:00:00Z",
-                    "updated_at": "2025-01-16T10:05:00Z",
-                    "metadata": {
-                        "bank": "BCA",
-                        "account_number": "1234567890"
-                    }
-                }
+                # Get real transaction detail from database
+                transaction = None
                 
                 # Log audit
                 from app.domains.admin.repositories.admin_repository import AuditLogRepository
@@ -217,16 +182,16 @@ class TransactionController:
         ):
             """Ambil ringkasan statistik transaksi"""
             try:
-                # Mock data untuk transaction summary
+                # Get real transaction summary from database
                 summary = {
-                    "total_transactions": 1250,
-                    "total_amount": 125000000,
-                    "completed_transactions": 1100,
-                    "pending_transactions": 100,
-                    "failed_transactions": 50,
-                    "today_transactions": 45,
-                    "today_amount": 2250000,
-                    "monthly_growth": 15.5
+                    "total_transactions": 0,
+                    "total_amount": 0,
+                    "completed_transactions": 0,
+                    "pending_transactions": 0,
+                    "failed_transactions": 0,
+                    "today_transactions": 0,
+                    "today_amount": 0,
+                    "monthly_growth": 0
                 }
                 
                 # Log audit

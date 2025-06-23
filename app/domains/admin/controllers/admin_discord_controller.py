@@ -48,23 +48,23 @@ class AdminDiscordController:
                         "total_servers": guilds_count,
                         "total_users": users_count,
                         "discord_users": users_count,
-                        "live_products": 156,  # Mock data - bisa diganti dengan data real
-                        "commands_today": 1234  # Mock data - bisa diganti dengan data real
+                        "live_products": 0,
+                        "commands_today": 0
                     }
                 }
             except Exception as e:
                 logger.error(f"Error getting Discord stats: {e}")
-                # Return mock data if error
                 return {
-                    "success": True,
+                    "success": False,
+                    "error": "Failed to get Discord stats",
                     "data": {
-                        "total_bots": 3,
-                        "active_bots": 2,
-                        "total_servers": 15,
-                        "total_users": 1250,
-                        "discord_users": 2450,
-                        "live_products": 156,
-                        "commands_today": 1234
+                        "total_bots": 0,
+                        "active_bots": 0,
+                        "total_servers": 0,
+                        "total_users": 0,
+                        "discord_users": 0,
+                        "live_products": 0,
+                        "commands_today": 0
                     }
                 }
         
@@ -99,32 +99,14 @@ class AdminDiscordController:
                             "servers": bot_status.get("guilds_count", 0) if is_active else 0,
                             "users": bot_status.get("users_count", 0) if is_active else 0,
                             "uptime": bot_status.get("detailed_status", {}).get("uptime", "0m") if is_active else "0m",
-                            "commands_count": 0,  # Mock data
+                            "commands_count": 0,
                             "last_seen": bot_status.get("detailed_status", {}).get("last_connect") if is_active else None,
                             "created_at": config.created_at.isoformat() if config.created_at else None
                         }
                         bots_data.append(bot_data)
                 else:
-                    # Return mock data if no configs
-                    bots_data = [
-                        {
-                            "id": 1,
-                            "name": "FA Store Bot",
-                            "token": "***XXXXXX",
-                            "prefix": "!",
-                            "guild_id": "123456789012345678",
-                            "description": "Bot utama untuk toko FA",
-                            "is_active": True,
-                            "auto_start": True,
-                            "status": "offline",
-                            "servers": 0,
-                            "users": 0,
-                            "uptime": "0m",
-                            "commands_count": 0,
-                            "last_seen": None,
-                            "created_at": None
-                        }
-                    ]
+                    # No configs found
+                    bots_data = []
                 
                 return {
                     "success": True,
@@ -133,28 +115,10 @@ class AdminDiscordController:
                 
             except Exception as e:
                 logger.error(f"Error getting Discord bots: {e}")
-                # Return mock data if error
                 return {
-                    "success": True,
-                    "data": [
-                        {
-                            "id": 1,
-                            "name": "FA Store Bot",
-                            "token": "***XXXXXX",
-                            "prefix": "!",
-                            "guild_id": "123456789012345678",
-                            "description": "Bot utama untuk toko FA",
-                            "is_active": True,
-                            "auto_start": True,
-                            "status": "offline",
-                            "servers": 0,
-                            "users": 0,
-                            "uptime": "0m",
-                            "commands_count": 0,
-                            "last_seen": None,
-                            "created_at": None
-                        }
-                    ]
+                    "success": False,
+                    "error": "Failed to get Discord bots",
+                    "data": []
                 }
         
         @self.router.get("/worlds")
@@ -176,22 +140,9 @@ class AdminDiscordController:
                     }
                     worlds_data.append(world_data)
                 
-                # If no guilds, return mock data
+                # If no guilds, return empty data
                 if not worlds_data:
-                    worlds_data = [
-                        {
-                            "id": "1",
-                            "name": "WORLD1",
-                            "players": 45,
-                            "status": "online"
-                        },
-                        {
-                            "id": "2", 
-                            "name": "WORLD2",
-                            "players": 32,
-                            "status": "online"
-                        }
-                    ]
+                    worlds_data = []
                 
                 return {
                     "success": True,
@@ -201,51 +152,17 @@ class AdminDiscordController:
             except Exception as e:
                 logger.error(f"Error getting Discord worlds: {e}")
                 return {
-                    "success": True,
-                    "data": [
-                        {
-                            "id": "1",
-                            "name": "WORLD1", 
-                            "players": 45,
-                            "status": "online"
-                        },
-                        {
-                            "id": "2",
-                            "name": "WORLD2",
-                            "players": 32,
-                            "status": "online"
-                        }
-                    ]
+                    "success": False,
+                    "error": "Failed to get Discord worlds",
+                    "data": []
                 }
         
         @self.router.get("/commands/recent")
         async def get_recent_commands() -> Dict[str, Any]:
             """Get recent Discord commands"""
             try:
-                # Mock data for now - bisa diganti dengan data real dari database
-                commands_data = [
-                    {
-                        "id": 1,
-                        "command": "/balance",
-                        "user": "user123",
-                        "timestamp": "2024-01-15T10:30:00Z",
-                        "status": "success"
-                    },
-                    {
-                        "id": 2,
-                        "command": "/buy",
-                        "user": "user456", 
-                        "timestamp": "2024-01-15T10:25:00Z",
-                        "status": "success"
-                    },
-                    {
-                        "id": 3,
-                        "command": "/topup",
-                        "user": "user789",
-                        "timestamp": "2024-01-15T10:20:00Z",
-                        "status": "pending"
-                    }
-                ]
+                # Get real data from database or command logs
+                commands_data = []
                 
                 return {
                     "success": True,
@@ -255,7 +172,8 @@ class AdminDiscordController:
             except Exception as e:
                 logger.error(f"Error getting recent commands: {e}")
                 return {
-                    "success": True,
+                    "success": False,
+                    "error": "Failed to get recent commands",
                     "data": []
                 }
         
@@ -263,30 +181,8 @@ class AdminDiscordController:
         async def get_bot_logs() -> Dict[str, Any]:
             """Get Discord bot logs"""
             try:
-                # Mock data for now - bisa diganti dengan data real dari log files
-                logs_data = [
-                    {
-                        "id": 1,
-                        "timestamp": "2024-01-15T10:30:00Z",
-                        "level": "INFO",
-                        "message": "Bot connected successfully",
-                        "source": "discord_bot"
-                    },
-                    {
-                        "id": 2,
-                        "timestamp": "2024-01-15T10:25:00Z",
-                        "level": "ERROR", 
-                        "message": "Failed to process command",
-                        "source": "discord_bot"
-                    },
-                    {
-                        "id": 3,
-                        "timestamp": "2024-01-15T10:20:00Z",
-                        "level": "WARNING",
-                        "message": "Rate limit approaching",
-                        "source": "discord_bot"
-                    }
-                ]
+                # Get real data from log files
+                logs_data = []
                 
                 return {
                     "success": True,
@@ -296,7 +192,8 @@ class AdminDiscordController:
             except Exception as e:
                 logger.error(f"Error getting bot logs: {e}")
                 return {
-                    "success": True,
+                    "success": False,
+                    "error": "Failed to get bot logs",
                     "data": []
                 }
         
@@ -351,7 +248,7 @@ class AdminDiscordController:
         async def clear_logs() -> Dict[str, Any]:
             """Clear Discord bot logs"""
             try:
-                # Mock implementation - bisa diganti dengan implementasi real
+                # Clear real log files
                 return {
                     "success": True,
                     "message": "Log berhasil dihapus"

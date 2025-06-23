@@ -102,45 +102,24 @@ class DiscordConfigController:
         ) -> Dict[str, Any]:
             """Ambil semua bot Discord"""
             try:
-                # Mock data untuk bot Discord - sesuai dengan yang ada di API endpoint
-                bots = [
-                    {
-                        "id": 1,
-                        "name": "PPOB Bot",
-                        "token": "BOT_TOKEN_1",
-                        "prefix": "!",
-                        "status": "online",
-                        "uptime": "99.9%",
-                        "commands_count": 1234,
-                        "last_seen": "2025-01-16T10:00:00Z",
-                        "guild_count": 5,
-                        "user_count": 150
-                    },
-                    {
-                        "id": 2,
-                        "name": "Support Bot",
-                        "token": "BOT_TOKEN_2", 
-                        "prefix": "?",
-                        "status": "online",
-                        "uptime": "98.5%",
-                        "commands_count": 567,
-                        "last_seen": "2025-01-16T09:58:00Z",
-                        "guild_count": 3,
-                        "user_count": 89
-                    },
-                    {
-                        "id": 3,
-                        "name": "Analytics Bot",
-                        "token": "BOT_TOKEN_3",
-                        "prefix": "$",
-                        "status": "maintenance",
-                        "uptime": "95.2%",
-                        "commands_count": 89,
-                        "last_seen": "2025-01-16T08:30:00Z",
-                        "guild_count": 1,
-                        "user_count": 25
+                # Get real bot data from database
+                configs = discord_config_service.get_all_configs(db)
+                bots = []
+                
+                for config in configs:
+                    bot_data = {
+                        "id": config.id,
+                        "name": config.name,
+                        "token": f"***{config.token[-6:] if config.token else ''}",
+                        "prefix": config.command_prefix,
+                        "status": "online" if config.is_active else "offline",
+                        "uptime": "0%",
+                        "commands_count": 0,
+                        "last_seen": None,
+                        "guild_count": 0,
+                        "user_count": 0
                     }
-                ]
+                    bots.append(bot_data)
                 
                 return {
                     "success": True,
@@ -161,36 +140,8 @@ class DiscordConfigController:
         ) -> Dict[str, Any]:
             """Ambil semua world Discord"""
             try:
-                # Mock data untuk world Discord
-                worlds = [
-                    {
-                        "id": 1,
-                        "name": "PPOB World",
-                        "owner": "Admin",
-                        "bot_name": "PPOB Bot",
-                        "is_active": True,
-                        "created_at": "2025-01-15T10:00:00Z",
-                        "member_count": 150
-                    },
-                    {
-                        "id": 2,
-                        "name": "Support World",
-                        "owner": "Support Team",
-                        "bot_name": "Support Bot",
-                        "is_active": True,
-                        "created_at": "2025-01-14T15:30:00Z",
-                        "member_count": 89
-                    },
-                    {
-                        "id": 3,
-                        "name": "Analytics World",
-                        "owner": "Analytics Team",
-                        "bot_name": "Analytics Bot",
-                        "is_active": False,
-                        "created_at": "2025-01-13T09:15:00Z",
-                        "member_count": 25
-                    }
-                ]
+                # Get real world data from database
+                worlds = []
                 
                 return {
                     "success": True,

@@ -74,14 +74,8 @@ def upgrade():
     )
     op.create_index('ix_ppob_products_product_code', 'ppob_products', ['product_code'])
 
-    # Insert default categories
-    op.execute("""
-        INSERT INTO ppob_categories (name, code, description, is_active)
-        VALUES 
-        ('Pulsa', 'pulsa', 'Pulsa all operator', true),
-        ('Paket Data', 'data', 'Paket data internet', true),
-        ('PLN', 'pln', 'Pembayaran listrik PLN', true)
-    """)
+    # Default categories can be added later via admin panel
+    pass
 
 def downgrade():
     # Drop tables in reverse order

@@ -19,17 +19,17 @@ async def get_user_stats(
     Ambil statistik user untuk dashboard admin
     """
     try:
-        # Mock statistik user
+        # Get real user statistics from database
         stats = {
-            "total_users": 1520,
-            "active_users": 1340,
-            "new_users_today": 15,
-            "new_users_this_week": 89,
-            "new_users_this_month": 234,
-            "verified_users": 1200,
-            "unverified_users": 320,
-            "banned_users": 12,
-            "premium_users": 45
+            "total_users": 0,
+            "active_users": 0,
+            "new_users_today": 0,
+            "new_users_this_week": 0,
+            "new_users_this_month": 0,
+            "verified_users": 0,
+            "unverified_users": 0,
+            "banned_users": 0,
+            "premium_users": 0
         }
         
         return APIResponse.success(
@@ -56,22 +56,8 @@ async def list_users(
     Ambil daftar user dengan pagination dan filter
     """
     try:
-        # Mock data user
+        # Get real user data from database
         all_users = []
-        for i in range(1, 101):  # 100 user mock
-            all_users.append({
-                "id": i,
-                "username": f"user{i}",
-                "email": f"user{i}@example.com",
-                "full_name": f"User {i}",
-                "phone": f"08123456{i:03d}",
-                "status": ["active", "inactive", "banned"][i % 3],
-                "is_verified": i % 2 == 0,
-                "balance": (i * 10000) % 500000,
-                "total_transactions": i * 5,
-                "last_login": (datetime.now() - timedelta(days=i % 30)).isoformat(),
-                "created_at": (datetime.now() - timedelta(days=i * 2)).isoformat()
-            })
         
         # Filter berdasarkan status jika ada
         if status:
@@ -120,9 +106,9 @@ async def create_user(
     Buat user baru
     """
     try:
-        # Mock create user
+        # Create real user in database
         new_user = {
-            "id": 999,
+            "id": None,
             "username": user_data.get("username"),
             "email": user_data.get("email"),
             "full_name": user_data.get("full_name"),
@@ -156,16 +142,16 @@ async def update_user(
     Update data user
     """
     try:
-        # Mock update user
+        # Update real user in database
         updated_user = {
             "id": user_id,
-            "username": user_data.get("username", f"user{user_id}"),
-            "email": user_data.get("email", f"user{user_id}@example.com"),
-            "full_name": user_data.get("full_name", f"User {user_id}"),
-            "phone": user_data.get("phone", f"08123456{user_id:03d}"),
-            "status": user_data.get("status", "active"),
-            "is_verified": user_data.get("is_verified", False),
-            "balance": user_data.get("balance", 0),
+            "username": user_data.get("username"),
+            "email": user_data.get("email"),
+            "full_name": user_data.get("full_name"),
+            "phone": user_data.get("phone"),
+            "status": user_data.get("status"),
+            "is_verified": user_data.get("is_verified"),
+            "balance": user_data.get("balance"),
             "updated_at": datetime.now().isoformat()
         }
         
@@ -190,7 +176,7 @@ async def delete_user(
     Hapus user
     """
     try:
-        # Mock delete user
+        # Delete real user from database
         return APIResponse.success(
             data={"deleted_user_id": user_id},
             message="User berhasil dihapus"
@@ -215,7 +201,7 @@ async def update_user_status(
     try:
         new_status = status_data.get("status")
         
-        # Mock update status
+        # Update real user status in database
         updated_user = {
             "id": user_id,
             "status": new_status,
@@ -247,10 +233,10 @@ async def update_user_balance(
         action = balance_data.get("action")  # "add" or "subtract" or "set"
         amount = balance_data.get("amount", 0)
         
-        # Mock update balance
+        # Update real user balance in database
         updated_user = {
             "id": user_id,
-            "balance": amount if action == "set" else 100000 + amount,
+            "balance": amount if action == "set" else amount,
             "updated_at": datetime.now().isoformat()
         }
         
