@@ -1,12 +1,17 @@
 """
-Admin Schemas - Versi baru yang menggunakan components
-Menggantikan admin_schemas.py yang besar dengan composition pattern
+Admin schemas components package
+Berisi semua schema yang sudah dipecah menjadi modul kecil
 """
 
-# Import semua schemas dari components
-from app.domains.admin.schemas.components import *
+# Import semua schemas dari modul terpisah
+from .admin_schemas import *
+from .user_management_schemas import *
+from .product_management_schemas import *
+from .configuration_schemas import *
+from .dashboard_schemas import *
+from .common_schemas import *
+from .discord_schemas import *
 
-# Re-export semua untuk backward compatibility
 __all__ = [
     # Admin schemas
     'AdminRole', 'AdminBase', 'AdminCreate', 'AdminUpdate', 'AdminResponse', 
