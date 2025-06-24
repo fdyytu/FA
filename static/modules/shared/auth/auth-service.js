@@ -7,7 +7,7 @@ class AuthService {
     static checkAuth() {
         const token = localStorage.getItem('adminToken');
         if (!token) {
-            window.location.href = 'login_android.html';
+            window.location.href = '/static/admin/login_android.html';
             return false;
         }
         return token;
@@ -30,7 +30,7 @@ class AuthService {
         }
         
         localStorage.removeItem('adminToken');
-        window.location.href = 'login_android.html';
+        window.location.href = '/static/admin/login_android.html';
     }
 
     static initLogout() {

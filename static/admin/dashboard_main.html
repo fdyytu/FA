@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - FA Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .main-content {
+            transition: margin-left 0.3s ease;
+        }
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+        .nav-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+        }
+        .nav-item.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+        }
+        .stat-card {
+            transition: transform 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-spinner fa-spin text-2xl text-blue-500"></i>
+                <p class="text-lg">Memuat dashboard...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-lg z-40">
+        <div class="p-6 border-b">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-r from-blue-500 to-purple-600 w-10 h-10 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-shield-alt text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">FA Admin</h1>
+                    <p class="text-sm text-gray-600">Dashboard</p>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="p-4 space-y-2">
+            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg active">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg">
+                <i class="fas fa-users mr-3"></i>
+                Users
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg">
+                <i class="fas fa-box mr-3"></i>
+                Products
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg">
+                <i class="fas fa-chart-bar mr-3"></i>
+                Analytics
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 text-gray-700 rounded-lg">
+                <i class="fas fa-cog mr-3"></i>
+                Settings
+            </a>
+            <a href="#" id="logoutBtn" class="nav-item flex items-center px-4 py-3 text-red-600 rounded-lg hover:bg-red-50">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                Logout
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content ml-64 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebarToggle" class="lg:hidden text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-semibold text-gray-800">Dashboard</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-600">
+                        <span id="currentTime"></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700">Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="p-6">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Users</p>
+                            <p id="totalUsers" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Transactions</p>
+                            <p id="totalTransactions" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-exchange-alt text-green-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Products</p>
+                            <p id="totalProducts" class="text-2xl font-bold text-gray-900">0</p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-box text-purple-600"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600">Total Revenue</p>
+                            <p id="totalRevenue" class="text-2xl font-bold text-gray-900">Rp 0</p>
+                        </div>
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-dollar-sign text-yellow-600"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Transaction Trends</h3>
+                    <div style="height: 300px;">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Product Categories</h3>
+                    <div style="height: 300px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Recent Transactions</h3>
+                <div id="recentTransactions" class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Transactions will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Load Required Modules -->
+    <script src="/static/shared/js/api-client.js"></script>
+    <script src="/static/modules/shared/auth/auth-service.js"></script>
+    <script src="/static/modules/shared/shared-api-service.js"></script>
+    <script src="/static/modules/shared/bridge/dashboard-bridge-main.js"></script>
+    <script src="/static/modules/dashboard/utils/dashboard-auth.js"></script>
+
+    <script>
+        // Dashboard initialization
+        class DashboardMain {
+            constructor() {
+                this.auth = new DashboardAuth();
+                this.apiService = new SharedAPIService();
+                this.init();
+            }
+
+            async init() {
+                // Check authentication
+                if (!this.auth.checkAuthentication()) {
+                    return;
+                }
+
+                // Setup logout functionality
+                this.setupLogout();
+                
+                // Setup sidebar toggle
+                this.setupSidebarToggle();
+                
+                // Update time
+                this.updateTime();
+                setInterval(() => this.updateTime(), 1000);
+                
+                // Load dashboard data
+                await this.loadDashboardData();
+                
+                // Hide loading overlay
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                
+                // Setup auto-refresh
+                setInterval(() => this.loadDashboardData(), 30000); // Refresh every 30 seconds
+            }
+
+            setupLogout() {
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (confirm('Apakah Anda yakin ingin logout?')) {
+                            this.auth.logout();
+                        }
+                    });
+                }
+            }
+
+            setupSidebarToggle() {
+                const toggleBtn = document.getElementById('sidebarToggle');
+                const sidebar = document.querySelector('.sidebar');
+                const mainContent = document.querySelector('.main-content');
+                
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', () => {
+                        sidebar.classList.toggle('collapsed');
+                        mainContent.classList.toggle('expanded');
+                    });
+                }
+            }
+
+            updateTime() {
+                const now = new Date();
+                const timeString = now.toLocaleString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                document.getElementById('currentTime').textContent = timeString;
+            }
+
+            async loadDashboardData() {
+                try {
+                    // Load stats
+                    await this.loadStats();
+                    
+                    // Load charts
+                    await this.loadCharts();
+                    
+                    // Load recent transactions
+                    await this.loadRecentTransactions();
+                    
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                    this.showError('Gagal memuat data dashboard');
+                }
+            }
+
+            async loadStats() {
+                try {
+                    const response = await this.apiService.apiRequest('/admin/stats');
+                    const stats = response.data || response;
+                    
+                    document.getElementById('totalUsers').textContent = stats.total_users || 0;
+                    document.getElementById('totalTransactions').textContent = stats.total_transactions || 0;
+                    document.getElementById('totalProducts').textContent = stats.total_products || 0;
+                    document.getElementById('totalRevenue').textContent = 
+                        new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' })
+                            .format(stats.total_revenue || 0);
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+
+            async loadCharts() {
+                try {
+                    // Transaction Chart
+                    const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+                    new Chart(transactionCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Transactions',
+                                data: [12, 19, 3, 5, 2, 3],
+                                borderColor: 'rgb(59, 130, 246)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+
+                    // Category Chart
+                    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                    new Chart(categoryCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['PPOB', 'Games', 'Vouchers'],
+                            datasets: [{
+                                data: [300, 50, 100],
+                                backgroundColor: [
+                                    'rgb(59, 130, 246)',
+                                    'rgb(16, 185, 129)',
+                                    'rgb(139, 92, 246)'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error loading charts:', error);
+                }
+            }
+
+            async loadRecentTransactions() {
+                try {
+                    const response = await this.apiService.apiRequest('/admin/transactions/recent?limit=5');
+                    const transactions = response.data || response;
+                    
+                    const tbody = document.getElementById('transactionTableBody');
+                    tbody.innerHTML = '';
+                    
+                    if (transactions && transactions.length > 0) {
+                        transactions.forEach(transaction => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${transaction.id}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${transaction.user_id}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(transaction.amount)}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        ${transaction.status === 'success' ? 'bg-green-100 text-green-800' : 
+                                          transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                          'bg-red-100 text-red-800'}">
+                                        ${transaction.status}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    ${new Date(transaction.created_at).toLocaleDateString('id-ID')}
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada transaksi terbaru</td></tr>';
+                    }
+                } catch (error) {
+                    console.error('Error loading recent transactions:', error);
+                }
+            }
+
+            showError(message) {
+                // Simple error display - could be enhanced with toast notifications
+                console.error(message);
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new DashboardMain();
+        });
+    </script>
+</body>
+</html>

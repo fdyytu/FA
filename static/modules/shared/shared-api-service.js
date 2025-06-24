@@ -58,7 +58,7 @@ class SharedAPIService {
     // Logout helper
     logout() {
         localStorage.removeItem('adminToken');
-        window.location.href = 'login_android.html';
+        window.location.href = '/static/admin/login_android.html';
     }
 }
 
