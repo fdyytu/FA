@@ -1,21 +1,26 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
-from typing import List, Optional, Tuple
-import json
+from typing import List, Optional, Tuple, Dict, Any
 
 from app.common.base_classes.base_service import BaseService
-from app.domains.admin.repositories.admin_repository import ProductManagementRepository, AuditLogRepository
 from app.domains.admin.schemas.admin_schemas import ProductCreate, ProductUpdate
 from app.domains.ppob.models.ppob import PPOBProduct
+from .product import (
+    ProductCrudService,
+    ProductValidationService,
+    ProductStatsService
+)
+
 
 class ProductManagementService(BaseService):
-    """Service untuk manajemen produk - Single Responsibility: Product management"""
+    """Facade Service untuk manajemen produk - Facade Pattern: Menggabungkan semua product services"""
     
     def __init__(self, db: Session):
         self.db = db
-        self.product_repo = ProductManagementRepository(db)
-        self.audit_repo = AuditLogRepository(db)
+        self.crud_service = ProductCrudService(db)
+        self.validation_service = ProductValidationService(db)
+        self.stats_service = ProductStatsService(db)
     
+    # CRUD Operations - delegated to ProductCrudService
     def get_products(
         self,
         skip: int = 0,
@@ -25,51 +30,19 @@ class ProductManagementService(BaseService):
         is_active: Optional[bool] = None
     ) -> Tuple[List[PPOBProduct], int]:
         """Ambil daftar produk dengan filter"""
-        return self.product_repo.get_products_with_pagination(
-            skip, limit, search, category, is_active
-        )
+        return self.crud_service.get_products(skip, limit, search, category, is_active)
     
     def get_product_categories(self) -> List[str]:
         """Ambil semua kategori produk"""
-        return self.product_repo.get_product_categories()
+        return self.crud_service.get_product_categories()
     
     def create_product(self, product_data: ProductCreate, admin_id: str) -> PPOBProduct:
-        """Buat produk baru"""
-        # Check if product code already exists
-        existing_product = self.db.query(PPOBProduct).filter(
-            PPOBProduct.product_code == product_data.product_code
-        ).first()
+        """Buat produk baru dengan validasi"""
+        # Validasi data terlebih dahulu
+        self.validation_service.validate_product_data(product_data)
         
-        if existing_product:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Kode produk sudah digunakan"
-            )
-        
-        product = PPOBProduct(
-            product_code=product_data.product_code,
-            product_name=product_data.product_name,
-            category=product_data.category,
-            price=product_data.price,
-            admin_fee=product_data.admin_fee,
-            description=product_data.description,
-            is_active="1" if product_data.is_active else "0"
-        )
-        
-        self.db.add(product)
-        self.db.commit()
-        self.db.refresh(product)
-        
-        # Log creation
-        self.audit_repo.create_log(
-            admin_id=admin_id,
-            action="CREATE",
-            resource="product",
-            resource_id=product.id,
-            new_values=json.dumps(product_data.dict(), default=str)
-        )
-        
-        return product
+        # Buat produk
+        return self.crud_service.create_product(product_data, admin_id)
     
     def update_product(
         self,
@@ -77,42 +50,31 @@ class ProductManagementService(BaseService):
         product_data: ProductUpdate,
         admin_id: str
     ) -> PPOBProduct:
-        """Update produk"""
-        product = self.db.query(PPOBProduct).filter(PPOBProduct.id == product_id).first()
-        if not product:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Produk tidak ditemukan"
-            )
+        """Update produk dengan validasi"""
+        # Validasi produk exists
+        self.validation_service.validate_product_exists(product_id)
         
-        # Store old values
-        old_values = {
-            "product_name": product.product_name,
-            "price": str(product.price),
-            "admin_fee": str(product.admin_fee),
-            "description": product.description,
-            "is_active": product.is_active
-        }
-        
-        # Update fields
-        update_data = product_data.dict(exclude_unset=True)
-        for field, value in update_data.items():
-            if field == "is_active":
-                setattr(product, field, "1" if value else "0")
-            else:
-                setattr(product, field, value)
-        
-        self.db.commit()
-        self.db.refresh(product)
-        
-        # Log update
-        self.audit_repo.create_log(
-            admin_id=admin_id,
-            action="UPDATE",
-            resource="product",
-            resource_id=product_id,
-            old_values=json.dumps(old_values),
-            new_values=json.dumps(update_data, default=str)
-        )
-        
-        return product
+        # Update produk
+        return self.crud_service.update_product(product_id, product_data, admin_id)
+    
+    # Statistics Operations - delegated to ProductStatsService
+    def get_product_stats(self) -> Dict[str, Any]:
+        """Ambil statistik produk"""
+        return self.stats_service.get_product_stats()
+    
+    def get_category_stats(self) -> List[Dict[str, Any]]:
+        """Ambil statistik per kategori"""
+        return self.stats_service.get_category_stats()
+    
+    def get_price_distribution(self) -> Dict[str, int]:
+        """Ambil distribusi harga produk"""
+        return self.stats_service.get_price_distribution()
+    
+    # Validation Operations - delegated to ProductValidationService
+    def validate_product_code_unique(self, product_code: str, exclude_id: Optional[str] = None) -> bool:
+        """Validasi kode produk unik"""
+        return self.validation_service.validate_product_code_unique(product_code, exclude_id)
+    
+    def validate_product_exists(self, product_id: str) -> PPOBProduct:
+        """Validasi produk exists"""
+        return self.validation_service.validate_product_exists(product_id)
