@@ -1,22 +1,43 @@
+"""
+Margin Management Service - Facade Pattern
+Dipecah dari file besar menjadi 3 sub-services untuk meningkatkan maintainability
+
+Sub-services:
+- MarginCalculationService: Kalkulasi margin
+- MarginCrudService: Operasi CRUD margin
+- MarginValidationService: Validasi margin
+"""
+
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
 from typing import Optional
 from decimal import Decimal
-import json
 
 from app.common.base_classes.base_service import BaseService
 from app.domains.ppob.models.ppob import PPOBMarginConfig
-from app.domains.admin.repositories.admin_repository import PPOBMarginRepository, AuditLogRepository
 from app.domains.admin.schemas.admin_schemas import MarginConfigCreate, MarginConfigUpdate
 
+from .margin import (
+    MarginCalculationService,
+    MarginCrudService,
+    MarginValidationService
+)
+
+
 class MarginManagementService(BaseService):
-    """Service untuk manajemen margin - Single Responsibility: Margin management"""
+    """
+    Facade Service untuk manajemen margin
+    
+    Pattern: Facade Pattern - Menyediakan interface sederhana untuk sub-services
+    Single Responsibility: Orchestrate margin management operations
+    """
     
     def __init__(self, db: Session):
         self.db = db
-        self.margin_repo = PPOBMarginRepository(db)
-        self.audit_repo = AuditLogRepository(db)
+        self.calculation_service = MarginCalculationService(db)
+        self.crud_service = MarginCrudService(db)
+        self.validation_service = MarginValidationService(db)
     
+    # Delegation to calculation service
     def calculate_price_with_margin(
         self, 
         base_price: Decimal, 
@@ -24,46 +45,33 @@ class MarginManagementService(BaseService):
         product_code: Optional[str] = None
     ) -> Decimal:
         """Hitung harga dengan margin - KISS principle: Simple calculation"""
-        # Try to get product-specific margin first
-        margin_config = None
-        if product_code:
-            margin_config = self.margin_repo.get_by_product_code(product_code)
-        
-        # If no product-specific margin, get category margin
-        if not margin_config:
-            margin_config = self.margin_repo.get_global_margin(category)
-        
-        # If no margin config found, return base price
-        if not margin_config:
-            return base_price
-        
-        # Calculate margin
-        if margin_config.margin_type == "percentage":
-            margin_amount = base_price * (margin_config.margin_value / 100)
-        else:  # fixed
-            margin_amount = margin_config.margin_value
-        
-        return base_price + margin_amount
+        return self.calculation_service.calculate_price_with_margin(
+            base_price, category, product_code
+        )
     
+    def calculate_margin_amount(
+        self,
+        base_price: Decimal,
+        margin_type: str,
+        margin_value: Decimal
+    ) -> Decimal:
+        """Hitung jumlah margin berdasarkan tipe dan nilai"""
+        return self.calculation_service.calculate_margin_amount(
+            base_price, margin_type, margin_value
+        )
+    
+    # Delegation to CRUD service
     def create_margin_config(
         self, 
         margin_data: MarginConfigCreate, 
         admin_id: str
     ) -> PPOBMarginConfig:
         """Buat konfigurasi margin baru"""
-        margin_config = PPOBMarginConfig(**margin_data.dict())
-        created_config = self.margin_repo.create(margin_config)
+        # Validate first
+        self.validation_service.validate_margin_config(margin_data)
         
-        # Log creation
-        self.audit_repo.create_log(
-            admin_id=admin_id,
-            action="CREATE",
-            resource="margin_config",
-            resource_id=created_config.id,
-            new_values=json.dumps(margin_data.dict(), default=str)
-        )
-        
-        return created_config
+        # Then create
+        return self.crud_service.create_margin_config(margin_data, admin_id)
     
     def update_margin_config(
         self,
@@ -72,36 +80,36 @@ class MarginManagementService(BaseService):
         admin_id: str
     ) -> PPOBMarginConfig:
         """Update konfigurasi margin"""
-        config = self.margin_repo.get_by_id(config_id)
-        if not config:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Konfigurasi margin tidak ditemukan"
-            )
+        # Validate first
+        self.validation_service.validate_margin_update(config_id, margin_data)
         
-        # Store old values
-        old_values = {
-            "margin_type": config.margin_type if config.margin_type else None,
-            "margin_value": str(config.margin_value),
-            "description": config.description,
-            "is_active": config.is_active
-        }
-        
-        # Update fields
-        update_data = margin_data.dict(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(config, field, value)
-        
-        updated_config = self.margin_repo.update(config)
-        
-        # Log update
-        self.audit_repo.create_log(
-            admin_id=admin_id,
-            action="UPDATE",
-            resource="margin_config",
-            resource_id=config_id,
-            old_values=json.dumps(old_values),
-            new_values=json.dumps(update_data, default=str)
+        # Then update
+        return self.crud_service.update_margin_config(config_id, margin_data, admin_id)
+    
+    def get_margin_config(self, config_id: str) -> PPOBMarginConfig:
+        """Ambil konfigurasi margin berdasarkan ID"""
+        return self.crud_service.get_margin_config(config_id)
+    
+    def get_all_margin_configs(self, skip: int = 0, limit: int = 100) -> list:
+        """Ambil semua konfigurasi margin"""
+        return self.crud_service.get_all_margin_configs(skip, limit)
+    
+    def delete_margin_config(self, config_id: str, admin_id: str) -> bool:
+        """Hapus konfigurasi margin"""
+        return self.crud_service.delete_margin_config(config_id, admin_id)
+    
+    # Delegation to validation service
+    def validate_margin_config(self, margin_data: MarginConfigCreate) -> bool:
+        """Validasi konfigurasi margin"""
+        return self.validation_service.validate_margin_config(margin_data)
+    
+    def validate_price_calculation(
+        self,
+        base_price: Decimal,
+        margin_type: str,
+        margin_value: Decimal
+    ) -> bool:
+        """Validasi kalkulasi harga"""
+        return self.validation_service.validate_price_calculation(
+            base_price, margin_type, margin_value
         )
-        
-        return updated_config

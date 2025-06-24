@@ -1,124 +1,61 @@
 """
-Controller untuk Discord worlds/servers dan logs
-Dipecah dari admin_discord_controller.py untuk meningkatkan maintainability
+Discord Worlds Controller - Facade Pattern
+Dipecah dari file besar menjadi 3 sub-controllers untuk meningkatkan maintainability
+
+Sub-controllers:
+- WorldManagementController: Manajemen Discord worlds/servers
+- WorldConfigController: Konfigurasi Discord worlds/servers
+- WorldStatsController: Statistik dan logs Discord worlds/servers
 """
 
-from fastapi import APIRouter, HTTPException
-from typing import Dict, Any
+from fastapi import APIRouter
+import logging
 
-from app.common.logging.admin_logger import admin_logger
-from app.domains.discord.services.bot_manager import bot_manager
+from .worlds import (
+    world_management_controller,
+    world_config_controller,
+    world_stats_controller
+)
+
+logger = logging.getLogger(__name__)
 
 
 class DiscordWorldsController:
-    """Controller untuk Discord worlds/servers dan logs"""
+    """
+    Facade Controller untuk Discord worlds/servers management
+    
+    Pattern: Facade Pattern - Menyediakan interface sederhana untuk sub-controllers
+    Single Responsibility: Orchestrate Discord world operations
+    """
     
     def __init__(self):
         self.router = APIRouter()
         self._setup_routes()
-        admin_logger.info("DiscordWorldsController initialized")
+        logger.info("DiscordWorldsController (Facade) initialized with 3 sub-controllers")
     
     def _setup_routes(self):
-        """Setup Discord worlds dan logs routes"""
+        """Setup routes dengan delegation ke sub-controllers"""
         
-        @self.router.get("/worlds")
-        async def get_discord_worlds() -> Dict[str, Any]:
-            """Get Discord worlds/servers"""
-            try:
-                admin_logger.info("Mengambil daftar Discord worlds/servers")
-                
-                bot_status = bot_manager.get_bot_status()
-                guilds = bot_status.get("guilds", [])
-                
-                worlds_data = []
-                for guild in guilds:
-                    world_data = {
-                        "id": guild.get("id"),
-                        "name": guild.get("name"),
-                        "players": guild.get("member_count", 0),
-                        "status": "online",
-                        "owner_id": guild.get("owner_id"),
-                        "icon": guild.get("icon")
-                    }
-                    worlds_data.append(world_data)
-                
-                admin_logger.info(f"Berhasil mengambil {len(worlds_data)} Discord worlds")
-                return {
-                    "success": True,
-                    "data": worlds_data
-                }
-                
-            except Exception as e:
-                admin_logger.error("Error getting Discord worlds", e)
-                return {
-                    "success": False,
-                    "error": "Failed to get Discord worlds",
-                    "data": []
-                }
+        # Include World Management routes (CRUD operations)
+        self.router.include_router(
+            world_management_controller.router,
+            tags=["Discord Worlds - Management"]
+        )
         
-        @self.router.get("/commands/recent")
-        async def get_recent_commands() -> Dict[str, Any]:
-            """Get recent Discord commands"""
-            try:
-                admin_logger.info("Mengambil recent Discord commands")
-                
-                # Get real data from database or command logs
-                commands_data = []
-                
-                admin_logger.info(f"Berhasil mengambil {len(commands_data)} recent commands")
-                return {
-                    "success": True,
-                    "data": commands_data
-                }
-                
-            except Exception as e:
-                admin_logger.error("Error getting recent commands", e)
-                return {
-                    "success": False,
-                    "error": "Failed to get recent commands",
-                    "data": []
-                }
+        # Include World Config routes (configuration)
+        self.router.include_router(
+            world_config_controller.router,
+            tags=["Discord Worlds - Config"]
+        )
         
-        @self.router.get("/logs")
-        async def get_bot_logs() -> Dict[str, Any]:
-            """Get Discord bot logs"""
-            try:
-                admin_logger.info("Mengambil Discord bot logs")
-                
-                # Get real data from log files
-                logs_data = []
-                
-                admin_logger.info(f"Berhasil mengambil {len(logs_data)} bot logs")
-                return {
-                    "success": True,
-                    "data": logs_data
-                }
-                
-            except Exception as e:
-                admin_logger.error("Error getting bot logs", e)
-                return {
-                    "success": False,
-                    "error": "Failed to get bot logs",
-                    "data": []
-                }
+        # Include World Stats routes (statistics, logs)
+        self.router.include_router(
+            world_stats_controller.router,
+            tags=["Discord Worlds - Stats"]
+        )
         
-        @self.router.delete("/logs")
-        async def clear_logs() -> Dict[str, Any]:
-            """Clear Discord bot logs"""
-            try:
-                admin_logger.info("Menghapus Discord bot logs")
-                
-                # Clear real log files
-                admin_logger.info("Discord bot logs berhasil dihapus")
-                return {
-                    "success": True,
-                    "message": "Log berhasil dihapus"
-                }
-                
-            except Exception as e:
-                admin_logger.error("Error clearing logs", e)
-                raise HTTPException(status_code=500, detail=str(e))
+        logger.info("Discord Worlds Facade Pattern implemented with 3 sub-controllers")
 
 
-# Create controller instance
+# Create facade controller instance
 discord_worlds_controller = DiscordWorldsController()
