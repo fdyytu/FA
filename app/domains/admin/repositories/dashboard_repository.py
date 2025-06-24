@@ -1,107 +1,60 @@
 """
-Dashboard Repository
-Repository untuk data access dashboard statistics dan analytics
+Repository gabungan untuk dashboard
+Menggunakan repository yang sudah dipecah untuk meningkatkan maintainability
 """
 
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc
-from typing import List, Dict, Any
-from datetime import datetime, timedelta
+from typing import Dict, Any, List
 
-from app.domains.auth.models.user import User
-from app.domains.ppob.models.ppob import PPOBTransaction, TransactionStatus
+from app.common.logging.admin_logger import admin_logger
+from app.domains.admin.repositories.dashboard_stats_repository import DashboardStatsRepository
+from app.domains.admin.repositories.dashboard_transactions_repository import DashboardTransactionsRepository
+from app.domains.admin.repositories.dashboard_products_repository import DashboardProductsRepository
 
 
 class DashboardRepository:
     """
-    Repository untuk dashboard - Single Responsibility: Data access untuk dashboard
+    Repository gabungan untuk dashboard - Menggunakan composition pattern
     """
     
     def __init__(self, db: Session):
         self.db = db
+        self.stats_repo = DashboardStatsRepository(db)
+        self.transactions_repo = DashboardTransactionsRepository(db)
+        self.products_repo = DashboardProductsRepository(db)
+        admin_logger.info("DashboardRepository initialized dengan sub-repositories")
     
     def get_dashboard_stats(self) -> Dict[str, Any]:
         """Ambil statistik untuk dashboard"""
-        # User stats
-        total_users = self.db.query(User).count()
-        active_users = self.db.query(User).filter(User.is_active == True).count()
-        
-        # Transaction stats
-        total_transactions = self.db.query(PPOBTransaction).count()
-        pending_transactions = self.db.query(PPOBTransaction).filter(
-            PPOBTransaction.status == TransactionStatus.PENDING
-        ).count()
-        failed_transactions = self.db.query(PPOBTransaction).filter(
-            PPOBTransaction.status == TransactionStatus.FAILED
-        ).count()
-        
-        # Revenue stats
-        total_revenue = self.db.query(
-            func.sum(PPOBTransaction.total_amount)
-        ).filter(
-            PPOBTransaction.status == TransactionStatus.SUCCESS
-        ).scalar() or 0
-        
-        return {
-            "total_users": total_users,
-            "active_users": active_users,
-            "total_transactions": total_transactions,
-            "total_revenue": float(total_revenue),
-            "pending_transactions": pending_transactions,
-            "failed_transactions": failed_transactions
-        }
+        return self.stats_repo.get_dashboard_stats()
     
-    def get_recent_transactions(self, limit: int = 10) -> List[PPOBTransaction]:
+    def get_recent_transactions(self, limit: int = 10):
         """Ambil transaksi terbaru"""
-        return self.db.query(PPOBTransaction).order_by(
-            desc(PPOBTransaction.created_at)
-        ).limit(limit).all()
+        return self.transactions_repo.get_recent_transactions(limit)
     
-    def get_transaction_trends(self, days: int = 7) -> List[Dict[str, Any]]:
+    def get_transaction_trends(self, days: int = 7):
         """Ambil trend transaksi"""
-        start_date = datetime.utcnow() - timedelta(days=days)
-        
-        results = self.db.query(
-            func.date(PPOBTransaction.created_at).label('date'),
-            func.count(PPOBTransaction.id).label('count'),
-            func.sum(PPOBTransaction.total_amount).label('amount')
-        ).filter(
-            PPOBTransaction.created_at >= start_date
-        ).group_by(
-            func.date(PPOBTransaction.created_at)
-        ).all()
-        
-        return [
-            {
-                "date": str(result.date),
-                "count": result.count,
-                "amount": float(result.amount or 0)
-            }
-            for result in results
-        ]
+        return self.transactions_repo.get_transaction_trends(days)
     
-    def get_top_products(self, limit: int = 5) -> List[Dict[str, Any]]:
+    def get_top_products(self, limit: int = 5):
         """Ambil produk terpopuler"""
-        results = self.db.query(
-            PPOBTransaction.product_code,
-            PPOBTransaction.product_name,
-            func.count(PPOBTransaction.id).label('transaction_count'),
-            func.sum(PPOBTransaction.total_amount).label('total_amount')
-        ).filter(
-            PPOBTransaction.status == TransactionStatus.SUCCESS
-        ).group_by(
-            PPOBTransaction.product_code,
-            PPOBTransaction.product_name
-        ).order_by(
-            desc(func.count(PPOBTransaction.id))
-        ).limit(limit).all()
-        
-        return [
-            {
-                "product_code": result.product_code,
-                "product_name": result.product_name,
-                "transaction_count": result.transaction_count,
-                "total_amount": float(result.total_amount or 0)
+        return self.products_repo.get_top_products(limit)
+    
+    def get_complete_dashboard_data(self) -> Dict[str, Any]:
+        """Ambil semua data dashboard dalam satu call"""
+        try:
+            admin_logger.info("Mengambil complete dashboard data")
+            
+            data = {
+                "stats": self.get_dashboard_stats(),
+                "recent_transactions": self.get_recent_transactions(10),
+                "transaction_trends": self.get_transaction_trends(7),
+                "top_products": self.get_top_products(5)
             }
-            for result in results
-        ]
+            
+            admin_logger.info("Complete dashboard data berhasil diambil")
+            return data
+            
+        except Exception as e:
+            admin_logger.error("Error saat mengambil complete dashboard data", e)
+            raise

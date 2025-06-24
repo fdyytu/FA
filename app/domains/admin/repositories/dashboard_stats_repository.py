@@ -1,107 +1,63 @@
 """
-Dashboard Stats Repository
 Repository untuk statistik dashboard
+Dipecah dari admin_repository.py untuk meningkatkan maintainability
 """
 
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import Dict, Any
-import logging
 
+from app.common.logging.admin_logger import admin_logger
 from app.domains.auth.models.user import User
-from app.domains.ppob.models.ppob import PPOBTransaction, PPOBProduct, PPOBCategory, TransactionStatus
-from app.common.base_classes.base_repository import BaseRepository
-
-logger = logging.getLogger(__name__)
+from app.domains.ppob.models.ppob import PPOBTransaction, TransactionStatus
 
 
-class DashboardStatsRepository(BaseRepository):
-    """Repository untuk statistik dashboard"""
+class DashboardStatsRepository:
+    """
+    Repository untuk statistik dashboard - Single Responsibility: Data access untuk dashboard stats
+    """
     
     def __init__(self, db: Session):
         self.db = db
+        admin_logger.info("DashboardStatsRepository initialized")
     
-    def get_user_stats(self) -> Dict[str, Any]:
-        """Ambil statistik user"""
+    def get_dashboard_stats(self) -> Dict[str, Any]:
+        """Ambil statistik untuk dashboard"""
         try:
+            admin_logger.info("Mengambil statistik dashboard")
+            
+            # User stats
             total_users = self.db.query(User).count()
             active_users = self.db.query(User).filter(User.is_active == True).count()
             
-            return {
+            # Transaction stats
+            total_transactions = self.db.query(PPOBTransaction).count()
+            pending_transactions = self.db.query(PPOBTransaction).filter(
+                PPOBTransaction.status == TransactionStatus.PENDING
+            ).count()
+            failed_transactions = self.db.query(PPOBTransaction).filter(
+                PPOBTransaction.status == TransactionStatus.FAILED
+            ).count()
+            
+            # Revenue stats
+            total_revenue = self.db.query(
+                func.sum(PPOBTransaction.total_amount)
+            ).filter(
+                PPOBTransaction.status == TransactionStatus.SUCCESS
+            ).scalar() or 0
+            
+            stats = {
                 "total_users": total_users,
                 "active_users": active_users,
-                "inactive_users": total_users - active_users
-            }
-        except Exception as e:
-            logger.error(f"Error getting user stats: {e}")
-            return {
-                "total_users": 0,
-                "active_users": 0,
-                "inactive_users": 0
-            }
-    
-    def get_category_stats(self) -> Dict[str, Any]:
-        """Ambil statistik kategori"""
-        try:
-            categories = self.db.query(PPOBCategory).filter(
-                PPOBCategory.is_active == True
-            ).all()
-            
-            category_stats = {}
-            for category in categories:
-                category_stats[category.code] = {
-                    "name": category.name,
-                    "total_transactions": 0,
-                    "total_revenue": 0,
-                    "pending_transactions": 0,
-                    "failed_transactions": 0
-                }
-            
-            return category_stats
-        except Exception as e:
-            logger.error(f"Error getting category stats: {e}")
-            return {}
-    
-    def get_transaction_summary(self) -> Dict[str, Any]:
-        """Ambil ringkasan transaksi"""
-        try:
-            transactions = self.db.query(PPOBTransaction).all()
-            
-            total_transactions = 0
-            pending_transactions = 0
-            failed_transactions = 0
-            total_revenue = 0
-            
-            for tx in transactions:
-                try:
-                    total_transactions += 1
-                    
-                    if hasattr(tx, 'amount') and tx.amount:
-                        total_revenue += float(tx.amount)
-                    
-                    if hasattr(tx, 'status'):
-                        if tx.status == TransactionStatus.PENDING:
-                            pending_transactions += 1
-                        elif tx.status == TransactionStatus.FAILED:
-                            failed_transactions += 1
-                            
-                except Exception as tx_error:
-                    logger.warning(f"Error processing transaction {tx.id}: {tx_error}")
-                    continue
-            
-            return {
                 "total_transactions": total_transactions,
+                "total_revenue": float(total_revenue),
                 "pending_transactions": pending_transactions,
-                "failed_transactions": failed_transactions,
-                "success_transactions": total_transactions - pending_transactions - failed_transactions,
-                "total_revenue": total_revenue
+                "failed_transactions": failed_transactions
             }
+            
+            admin_logger.info("Statistik dashboard berhasil diambil", stats)
+            return stats
+            
         except Exception as e:
-            logger.error(f"Error getting transaction summary: {e}")
-            return {
-                "total_transactions": 0,
-                "pending_transactions": 0,
-                "failed_transactions": 0,
-                "success_transactions": 0,
-                "total_revenue": 0
-            }
+            admin_logger.error("Error saat mengambil statistik dashboard", e)
+            raise
