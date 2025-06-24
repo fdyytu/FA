@@ -654,14 +654,9 @@
                     throw new Error('API not available');
                 } catch (error) {
                     console.error('Error loading recent transactions:', error);
-                    // Use demo data
-                    this.updateTransactionTable([
-                        { id: 'TRX001', user_id: 'user123', amount: 50000, status: 'success', created_at: new Date().toISOString() },
-                        { id: 'TRX002', user_id: 'user456', amount: 25000, status: 'pending', created_at: new Date().toISOString() },
-                        { id: 'TRX003', user_id: 'user789', amount: 75000, status: 'success', created_at: new Date().toISOString() },
-                        { id: 'TRX004', user_id: 'user101', amount: 100000, status: 'success', created_at: new Date().toISOString() },
-                        { id: 'TRX005', user_id: 'user202', amount: 30000, status: 'failed', created_at: new Date().toISOString() }
-                    ]);
+                    // Show empty state instead of dummy data
+                    this.updateTransactionTable([]);
+                    this.showNotification('Tidak dapat memuat data transaksi. Periksa koneksi database.', 'warning');
                 }
             }
 
@@ -696,22 +691,7 @@
                 }
             }
 
-            loadDemoData() {
-                // Load demo stats
-                this.updateStatsCards({
-                    total_users: 1250,
-                    total_transactions: 3420,
-                    total_revenue: 15750000,
-                    active_products: 89
-                });
 
-                // Load demo transactions
-                this.updateTransactionTable([
-                    { id: 'TRX001', user_id: 'user123', amount: 50000, status: 'success', created_at: new Date().toISOString() },
-                    { id: 'TRX002', user_id: 'user456', amount: 25000, status: 'pending', created_at: new Date().toISOString() },
-                    { id: 'TRX003', user_id: 'user789', amount: 75000, status: 'success', created_at: new Date().toISOString() }
-                ]);
-            }
 
             async refreshData() {
                 const refreshBtn = document.getElementById('refreshBtn');
