@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Testing - FA Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6">Dashboard Module Testing</h1>
+        <div id="test-results"></div>
+        <button onclick="runTests()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            Run Module Tests
+        </button>
+    </div>
+
+    <!-- Load shared modules first -->
+    <script src="/static/modules/shared/api/api-service.js"></script>
+    <script src="/static/modules/shared/auth/auth-service.js"></script>
+    <script src="/static/modules/shared/ui/ui-service.js"></script>
+    <script src="/static/modules/shared/utils/format-utils.js"></script>
+    <script src="/static/modules/shared/utils/validation-utils.js"></script>
+    
+    <!-- Load bridge modules -->
+    <script src="/static/modules/shared/bridge/module-bridge-core.js"></script>
+    <script src="/static/modules/shared/bridge/module-loaders.js"></script>
+    <script src="/static/modules/shared/bridge/bridge-methods.js"></script>
+    <script src="/static/modules/shared/bridge/dashboard-bridge-main.js"></script>
+    
+    <!-- Load utility modules -->
+    <script src="/static/modules/shared/ui/floating-action-button.js"></script>
+    <script src="/static/modules/shared/utils/dashboard-utils.js"></script>
+
+    <script>
+        function addTestResult(message, type = 'info') {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.textContent = message;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function runTests() {
+            document.getElementById('test-results').innerHTML = '';
+            addTestResult('Starting module tests...', 'info');
+
+            // Test 1: Check if shared modules are loaded
+            try {
+                if (typeof ApiService !== 'undefined') {
+                    addTestResult('✅ ApiService loaded successfully', 'success');
+                } else {
+                    addTestResult('❌ ApiService not found', 'error');
+                }
+            } catch (e) {
+                addTestResult('❌ Error testing ApiService: ' + e.message, 'error');
+            }
+
+            // Test 2: Check if bridge modules are loaded
+            try {
+                if (typeof ModuleBridgeCore !== 'undefined') {
+                    addTestResult('✅ ModuleBridgeCore loaded successfully', 'success');
+                } else {
+                    addTestResult('❌ ModuleBridgeCore not found', 'error');
+                }
+            } catch (e) {
+                addTestResult('❌ Error testing ModuleBridgeCore: ' + e.message, 'error');
+            }
+
+            // Test 3: Check if DashboardBridge is available
+            try {
+                if (typeof window.DashboardBridge !== 'undefined') {
+                    addTestResult('✅ DashboardBridge available globally', 'success');
+                } else {
+                    addTestResult('❌ DashboardBridge not available globally', 'error');
+                }
+            } catch (e) {
+                addTestResult('❌ Error testing DashboardBridge: ' + e.message, 'error');
+            }
+
+            // Test 4: Check if FloatingActionButton is loaded
+            try {
+                if (typeof FloatingActionButton !== 'undefined') {
+                    addTestResult('✅ FloatingActionButton loaded successfully', 'success');
+                } else {
+                    addTestResult('❌ FloatingActionButton not found', 'error');
+                }
+            } catch (e) {
+                addTestResult('❌ Error testing FloatingActionButton: ' + e.message, 'error');
+            }
+
+            // Test 5: Check if DashboardUtils is loaded
+            try {
+                if (typeof DashboardUtils !== 'undefined') {
+                    addTestResult('✅ DashboardUtils loaded successfully', 'success');
+                } else {
+                    addTestResult('❌ DashboardUtils not found', 'error');
+                }
+            } catch (e) {
+                addTestResult('❌ Error testing DashboardUtils: ' + e.message, 'error');
+            }
+
+            // Test 6: Test module instantiation
+            try {
+                const fab = new FloatingActionButton();
+                if (fab) {
+                    addTestResult('✅ FloatingActionButton can be instantiated', 'success');
+                } else {
+                    addTestResult('❌ FloatingActionButton instantiation failed', 'error');
+                }
+            } catch (e) {
+                addTestResult('❌ Error instantiating FloatingActionButton: ' + e.message, 'error');
+            }
+
+            addTestResult('Module testing completed!', 'info');
+        }
+
+        // Auto-run tests when page loads
+        window.addEventListener('load', () => {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+</html>
