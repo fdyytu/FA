@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - FA Application</title>
+    <script>
+        // Device detection and redirect
+        function detectDeviceAndRedirect() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+            const isTablet = /ipad|android(?!.*mobile)/i.test(userAgent);
+            const screenWidth = window.innerWidth;
+            
+            // Check if explicitly requesting Android version
+            const urlParams = new URLSearchParams(window.location.search);
+            const forceAndroid = urlParams.get('android') === 'true';
+            const forceDesktop = urlParams.get('desktop') === 'true';
+            
+            if (forceAndroid || (isMobile && screenWidth <= 768)) {
+                // Redirect to Android dashboard
+                window.location.href = 'dashboard_android.html';
+            } else if (forceDesktop || (!isMobile && screenWidth > 768)) {
+                // Redirect to desktop dashboard
+                window.location.href = 'dashboard_main.html';
+            } else {
+                // Default to desktop for tablets and uncertain cases
+                window.location.href = 'dashboard_main.html';
+            }
+        }
+        
+        // Redirect immediately
+        detectDeviceAndRedirect();
+    </script>
+</head>
+<body>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: Arial, sans-serif;">
+        <div style="text-align: center;">
+            <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <p>Mengarahkan ke dashboard yang sesuai...</p>
+        </div>
+    </div>
+    
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</body>
+</html>
