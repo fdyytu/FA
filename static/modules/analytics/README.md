@@ -1,34 +1,20 @@
-# Analytics Dashboard Modules
+# Analytics Dashboard Module
 
 ## Struktur Modul Analytics (Maksimal 50 baris per file)
 
 ### API Services
-- `api/analytics-api-service.js` - Service untuk komunikasi API analytics
-  - loadOverviewStats() - Memuat statistik overview
-  - loadChartData() - Memuat data chart
-  - loadTopProducts() - Memuat produk terlaris
-  - loadRecentActivity() - Memuat aktivitas terbaru
-  - loadPerformanceMetrics() - Memuat metrik performa
-  - loadGeographicData() - Memuat data geografis
+- `api/analytics-api-service.js` - Koneksi API analytics utama
 
 ### UI Components  
 - `ui/analytics-ui-components.js` - Komponen UI analytics
-  - updateOverviewStats() - Update kartu statistik
-  - renderTopProducts() - Render daftar produk terlaris
-  - renderRecentActivity() - Render aktivitas terbaru
-  - renderPerformanceMetrics() - Render metrik performa
+- `components/analytics-chart-manager.js` - Manager chart analytics
 
-### Chart Components
-- `components/analytics-chart-manager.js` - Manager untuk semua chart
-  - initCharts() - Inisialisasi semua chart
-  - initRevenueChart() - Chart revenue
-  - initTransactionChart() - Chart transaksi
-  - initUserGrowthChart() - Chart pertumbuhan user
-  - initPaymentMethodsChart() - Chart metode pembayaran
-
-### Main Controller
+### Main Files
+- `analytics-data-service.js` - Service data analytics
 - `analytics-main-controller.js` - Controller utama analytics
-- `analytics-module-loader.js` - Module loader
+- `analytics-ui-controller.js` - Controller UI analytics
+- `analytics-main.js` - File utama analytics
+- `analytics-module-loader.js` - Module loader analytics
 
 ## Cara Penggunaan
 
@@ -37,15 +23,21 @@
 <script src="/static/modules/analytics/analytics-module-loader.js"></script>
 ```
 
-2. Gunakan file modular sebagai pengganti:
+2. Atau load manual dalam urutan yang benar:
 ```html
-<script src="/static/admin/dashboard/dashboard_analytics.js"></script>
+<script src="/static/modules/analytics/api/analytics-api-service.js"></script>
+<script src="/static/modules/analytics/components/analytics-chart-manager.js"></script>
+<script src="/static/modules/analytics/ui/analytics-ui-components.js"></script>
+<script src="/static/modules/analytics/analytics-data-service.js"></script>
+<script src="/static/modules/analytics/analytics-ui-controller.js"></script>
+<script src="/static/modules/analytics/analytics-main-controller.js"></script>
+<script src="/static/modules/analytics/analytics-main.js"></script>
 ```
 
 ## File yang Diganti
 
-- `dashboard_analytics.js` (751 baris) → Dipecah menjadi 6 modul kecil
-- Backup tersimpan di `dashboard_analytics_backup.js`
+- `dashboard_analytics.js` (751 baris) → Dipecah menjadi 8+ modul kecil
+- Backup tersimpan di `dashboard_analytics_backup.js` (sudah dihapus)
 
 ## Keuntungan Pemecahan
 
@@ -55,11 +47,5 @@
 4. **Performance**: Lazy loading modules
 5. **Collaboration**: Tim dapat bekerja pada modul berbeda
 
-## Dependencies
-
-- Chart.js untuk chart rendering
-- Shared utilities (formatCurrency, formatNumber, dll)
-- API client untuk komunikasi backend
-
 ## Status: ✅ SELESAI
-Dashboard Analytics berhasil dipecah dari 751 baris menjadi 6 modul kecil.
+Dashboard Analytics berhasil dipecah dari 751 baris menjadi 8+ modul kecil.

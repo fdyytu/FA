@@ -1,20 +1,20 @@
-# Charts Dashboard Modules
+# Charts Dashboard Module
 
 ## Struktur Modul Charts (Maksimal 50 baris per file)
 
 ### API Services
 - `api/charts-api-service.js` - Service untuk mengambil data chart dari API
 
-### Components  
-- `components/transaction-chart.js` - Komponen chart transaksi (line chart)
+### Components
 - `components/category-chart.js` - Komponen chart kategori (doughnut chart)
+- `components/transaction-chart.js` - Komponen chart transaksi (line chart)
 
 ### Utilities
 - `utils/charts-config.js` - Konfigurasi chart (options, styling)
 
 ### Main Files
 - `charts-main-controller.js` - Controller utama untuk charts
-- `charts-module-loader.js` - Module loader
+- `charts-module-loader.js` - Module loader charts
 
 ## Cara Penggunaan
 
@@ -23,9 +23,13 @@
 <script src="/static/modules/charts/charts-module-loader.js"></script>
 ```
 
-2. Gunakan file modular sebagai pengganti:
+2. Atau load manual dalam urutan yang benar:
 ```html
-<script src="/static/admin/dashboard/dashboard_charts.js"></script>
+<script src="/static/modules/charts/api/charts-api-service.js"></script>
+<script src="/static/modules/charts/utils/charts-config.js"></script>
+<script src="/static/modules/charts/components/category-chart.js"></script>
+<script src="/static/modules/charts/components/transaction-chart.js"></script>
+<script src="/static/modules/charts/charts-main-controller.js"></script>
 ```
 
 3. Inisialisasi charts:
@@ -37,12 +41,12 @@ await initCharts();
 ## File yang Diganti
 
 - `dashboard_charts.js` (223 baris) → Dipecah menjadi 6 modul kecil
-- Backup tersimpan di `dashboard_charts_backup.js`
+- Backup file sudah dihapus
 
 ## Keuntungan Pemecahan
 
 1. **Maintainability**: Setiap modul fokus pada satu tanggung jawab
-2. **Reusability**: Komponen chart dapat digunakan ulang
+2. **Reusability**: Komponen chart dapat digunakan ulang di bagian lain
 3. **Testability**: Mudah untuk testing individual
 4. **Performance**: Lazy loading modules
 5. **Collaboration**: Tim dapat bekerja pada modul berbeda

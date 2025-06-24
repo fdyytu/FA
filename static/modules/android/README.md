@@ -1,19 +1,23 @@
-# Android Dashboard Modules
+# Android Dashboard Module
 
 ## Struktur Modul Android (Maksimal 50 baris per file)
 
 ### API Services
-- `api/android-api-service.js` - Service API untuk dashboard stats dan transaksi
+- `api/android-api-service.js` - Koneksi API android utama
+
+### Charts Services
+- `charts/android-chart-service.js` - Service chart android
 
 ### UI Components  
-- `ui/android-ui-service.js` - Service UI untuk stats cards dan transaksi
-
-### Charts
-- `charts/android-chart-service.js` - Service chart untuk transaction dan category
+- `ui/android-ui-service.js` - Komponen UI android
 
 ### Main Files
-- `android-main-controller.js` - Controller utama
-- `android-module-loader.js` - Module loader
+- `android-data-service.js` - Service data android
+- `android-main-controller.js` - Controller utama android
+- `android-ui-controller.js` - Controller UI android
+- `android-chart-manager.js` - Manager chart android
+- `android-main.js` - File utama android
+- `android-module-loader.js` - Module loader android
 
 ## Cara Penggunaan
 
@@ -22,15 +26,22 @@
 <script src="/static/modules/android/android-module-loader.js"></script>
 ```
 
-2. Gunakan file modular sebagai pengganti:
+2. Atau load manual dalam urutan yang benar:
 ```html
-<script src="/static/admin/dashboard/dashboard_android.js"></script>
+<script src="/static/modules/android/api/android-api-service.js"></script>
+<script src="/static/modules/android/charts/android-chart-service.js"></script>
+<script src="/static/modules/android/ui/android-ui-service.js"></script>
+<script src="/static/modules/android/android-data-service.js"></script>
+<script src="/static/modules/android/android-chart-manager.js"></script>
+<script src="/static/modules/android/android-ui-controller.js"></script>
+<script src="/static/modules/android/android-main-controller.js"></script>
+<script src="/static/modules/android/android-main.js"></script>
 ```
 
 ## File yang Diganti
 
-- `dashboard_android.js` (332 baris) → Dipecah menjadi 5+ modul kecil
-- Backup tersimpan di `dashboard_android_backup.js`
+- `dashboard_android.js` (332 baris) → Dipecah menjadi 8+ modul kecil
+- Backup file sudah dihapus
 
 ## Keuntungan Pemecahan
 
@@ -40,10 +51,5 @@
 4. **Performance**: Lazy loading modules
 5. **Collaboration**: Tim dapat bekerja pada modul berbeda
 
-## Dependencies
-
-- Shared modules (auth, ui, api services)
-- Chart.js untuk grafik
-
 ## Status: ✅ SELESAI
-Dashboard Android berhasil dipecah dari 332 baris menjadi 5+ modul kecil.
+Dashboard Android berhasil dipecah dari 332 baris menjadi 8+ modul kecil.

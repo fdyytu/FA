@@ -1,24 +1,37 @@
-# Shared Dashboard Modules
+# Shared Modules
 
 ## Struktur Modul Shared (Maksimal 50 baris per file)
 
-### Authentication Services
-- `auth/auth-service.js` - Service autentikasi dan logout
+### API Services
+- `api/api-service.js` - Service API umum
 
-### API Services  
-- `api/api-service.js` - Service API request dengan error handling
+### Auth Services
+- `auth/auth-service.js` - Service autentikasi
 
-### UI Components
-- `ui/ui-service.js` - Service navigasi dan mobile menu
-- `ui/notification-service.js` - Service loading dan toast notifications
-- `ui/ui-utils.js` - Utility UI seperti modal dan status badge
+### Bridge Services
+- `bridge/module-bridge-core.js` - Inti sistem bridge
+- `bridge/module-loaders.js` - Sistem loading modul
+- `bridge/bridge-methods.js` - Metode kompatibilitas
+- `bridge/dashboard-bridge-main.js` - Bridge utama dashboard
+
+### UI Components  
+- `ui/notification-service.js` - Service notifikasi
+- `ui/ui-service.js` - Service UI umum
+- `ui/ui-utils.js` - Utility UI
+- `ui/floating-action-button.js` - Komponen FAB
 
 ### Utilities
-- `utils/format-utils.js` - Utility format currency, date, number
-- `utils/validation-utils.js` - Utility validasi dan localStorage
+- `utils/format-utils.js` - Utility format data
+- `utils/validation-utils.js` - Utility validasi
+- `utils/dashboard-utils.js` - Utility dashboard
 
 ### Main Files
-- `shared-module-loader.js` - Module loader utama
+- `shared-api-service.js` - Service API shared
+- `shared-auth-service.js` - Service auth shared
+- `shared-main.js` - File utama shared
+- `shared-module-loader.js` - Module loader shared
+- `shared-ui-service.js` - Service UI shared
+- `shared-utilities-service.js` - Service utilities shared
 
 ## Cara Penggunaan
 
@@ -27,15 +40,20 @@
 <script src="/static/modules/shared/shared-module-loader.js"></script>
 ```
 
-2. Gunakan file modular sebagai pengganti:
+2. Atau load manual dalam urutan yang benar:
 ```html
-<script src="/static/admin/dashboard/dashboard_shared.js"></script>
+<script src="/static/modules/shared/api/api-service.js"></script>
+<script src="/static/modules/shared/auth/auth-service.js"></script>
+<script src="/static/modules/shared/ui/ui-service.js"></script>
+<script src="/static/modules/shared/utils/format-utils.js"></script>
+<script src="/static/modules/shared/utils/validation-utils.js"></script>
+<script src="/static/modules/shared/shared-main.js"></script>
 ```
 
 ## File yang Diganti
 
-- `dashboard_shared.js` (375 baris) → Dipecah menjadi 7+ modul kecil
-- Backup tersimpan di `dashboard_shared_backup.js`
+- `dashboard_shared.js` (375 baris) → Dipecah menjadi 15+ modul kecil
+- Backup file sudah dihapus
 
 ## Keuntungan Pemecahan
 
@@ -46,4 +64,4 @@
 5. **Collaboration**: Tim dapat bekerja pada modul berbeda
 
 ## Status: ✅ SELESAI
-Dashboard Shared berhasil dipecah dari 375 baris menjadi 7+ modul kecil.
+Shared modules berhasil dipecah dari 375 baris menjadi 15+ modul kecil.

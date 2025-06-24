@@ -1,21 +1,23 @@
-# Dashboard Main Modules
+# Dashboard Main Module
 
 ## Struktur Modul Dashboard (Maksimal 50 baris per file)
 
 ### API Services
-- `api/dashboard-api-service.js` - Service untuk API dashboard utama
+- `api/dashboard-api-service.js` - Koneksi API dashboard utama
+
+### Components
+- `components/dashboard-chart.js` - Komponen chart dashboard
 
 ### UI Components  
-- `ui/dashboard-stats-ui.js` - Komponen UI untuk statistik dashboard
-- `components/dashboard-chart.js` - Komponen chart transaksi
+- `ui/dashboard-stats-ui.js` - Komponen statistik dashboard
 
 ### Utilities
-- `utils/dashboard-notifications.js` - Utility untuk notifikasi
-- `utils/dashboard-auth.js` - Utility untuk autentikasi
+- `utils/dashboard-auth.js` - Utility autentikasi dashboard
+- `utils/dashboard-notifications.js` - Utility notifikasi dashboard
 
 ### Main Files
 - `dashboard-main-controller.js` - Controller utama dashboard
-- `dashboard-module-loader.js` - Module loader
+- `dashboard-module-loader.js` - Module loader dashboard
 
 ## Cara Penggunaan
 
@@ -24,15 +26,20 @@
 <script src="/static/modules/dashboard/dashboard-module-loader.js"></script>
 ```
 
-2. Gunakan file modular sebagai pengganti:
+2. Atau load manual dalam urutan yang benar:
 ```html
-<script src="/static/admin/dashboard_main.js"></script>
+<script src="/static/modules/dashboard/api/dashboard-api-service.js"></script>
+<script src="/static/modules/dashboard/components/dashboard-chart.js"></script>
+<script src="/static/modules/dashboard/ui/dashboard-stats-ui.js"></script>
+<script src="/static/modules/dashboard/utils/dashboard-auth.js"></script>
+<script src="/static/modules/dashboard/utils/dashboard-notifications.js"></script>
+<script src="/static/modules/dashboard/dashboard-main-controller.js"></script>
 ```
 
 ## File yang Diganti
 
-- `dashboard_main.js` (251 baris) → Dipecah menjadi 6 modul kecil
-- Backup tersimpan di `dashboard_main_backup.js`
+- File dashboard utama yang dipecah menjadi modul-modul kecil
+- Backup file sudah dihapus
 
 ## Keuntungan Pemecahan
 
@@ -43,4 +50,4 @@
 5. **Collaboration**: Tim dapat bekerja pada modul berbeda
 
 ## Status: ✅ SELESAI
-Dashboard Main berhasil dipecah dari 251 baris menjadi 6 modul kecil.
+Dashboard Main berhasil dipecah menjadi 6+ modul kecil.
