@@ -1,140 +1,89 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing import Optional
+from fastapi import APIRouter
 import logging
+import time
 
-from app.core.database import get_db
-from app.domains.admin.services.admin_management_service import AdminManagementService
-from app.domains.admin.schemas.admin_schemas import (
-    AdminCreate, AdminUpdate, AdminResponse, PaginatedResponse, AuditLogResponse
-)
-from app.common.dependencies.admin_auth_deps import get_current_admin, get_current_super_admin
-from app.domains.admin.models.admin import Admin
+from .admin import AdminCrudController, AdminAuthController, AdminAuditController
 
+# Setup enhanced logging
 logger = logging.getLogger(__name__)
 
 
 class AdminManagementController:
     """
-    Controller untuk manajemen admin - Single Responsibility: Admin management endpoints
+    Facade Controller untuk manajemen admin
+    
+    Pattern: Facade Pattern - Menyediakan interface sederhana untuk sub-controllers
+    Single Responsibility: Orchestrate admin management operations
+    
+    Sub-controllers:
+    - AdminCrudController: Handle CRUD operations
+    - AdminAuthController: Handle authentication & authorization  
+    - AdminAuditController: Handle audit logs & monitoring
     """
     
     def __init__(self):
         self.router = APIRouter()
+        self._initialize_controllers()
         self._setup_routes()
+        logger.info("AdminManagementController (Facade) initialized with enhanced logging")
+    
+    def _initialize_controllers(self):
+        """Initialize sub-controllers dengan logging"""
+        start_time = time.time()
+        
+        try:
+            logger.debug("Initializing AdminManagementController sub-controllers...")
+            
+            # Initialize sub-controllers
+            self.crud_controller = AdminCrudController()
+            self.auth_controller = AdminAuthController()
+            self.audit_controller = AdminAuditController()
+            
+            duration = time.time() - start_time
+            logger.info(f"Successfully initialized all admin sub-controllers in {duration:.3f}s")
+            
+        except Exception as e:
+            duration = time.time() - start_time
+            logger.error(f"Error initializing admin sub-controllers after {duration:.3f}s: {str(e)}", exc_info=True)
+            raise
     
     def _setup_routes(self):
-        """Setup routes untuk manajemen admin"""
+        """Setup routes dengan delegation ke sub-controllers"""
+        start_time = time.time()
         
-        @self.router.get("/", response_model=PaginatedResponse)
-        async def get_admins(
-            page: int = 1,
-            size: int = 10,
-            current_admin: Admin = Depends(get_current_super_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Ambil daftar admin"""
-            admin_service = AdminManagementService(db)
-            skip = (page - 1) * size
+        try:
+            logger.debug("Setting up AdminManagementController routes...")
             
-            admins, total = admin_service.get_admins(skip, size)
-            
-            return PaginatedResponse(
-                items=[AdminResponse.from_orm(admin) for admin in admins],
-                total=total,
-                page=page,
-                size=size,
-                pages=(total + size - 1) // size
+            # Include CRUD routes (admin management)
+            self.router.include_router(
+                self.crud_controller.router,
+                tags=["Admin CRUD"],
+                prefix=""
             )
-        
-        @self.router.post("/", response_model=AdminResponse)
-        async def create_admin(
-            admin_data: AdminCreate,
-            current_admin: Admin = Depends(get_current_super_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Buat admin baru"""
-            admin_service = AdminManagementService(db)
             
-            admin = admin_service.create_admin(admin_data, current_admin.id)
-            
-            return AdminResponse.from_orm(admin)
-        
-        @self.router.get("/{admin_id}", response_model=AdminResponse)
-        async def get_admin(
-            admin_id: str,
-            current_admin: Admin = Depends(get_current_super_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Ambil detail admin"""
-            admin_service = AdminManagementService(db)
-            
-            admin = admin_service.get_admin_by_id(admin_id)
-            
-            if not admin:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Admin tidak ditemukan"
-                )
-            
-            return AdminResponse.from_orm(admin)
-        
-        @self.router.put("/{admin_id}", response_model=AdminResponse)
-        async def update_admin(
-            admin_id: str,
-            admin_data: AdminUpdate,
-            current_admin: Admin = Depends(get_current_super_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Update admin"""
-            admin_service = AdminManagementService(db)
-            
-            admin = admin_service.update_admin(admin_id, admin_data, current_admin.id)
-            
-            return AdminResponse.from_orm(admin)
-        
-        @self.router.delete("/{admin_id}")
-        async def delete_admin(
-            admin_id: str,
-            current_admin: Admin = Depends(get_current_super_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Hapus admin"""
-            admin_service = AdminManagementService(db)
-            
-            success = admin_service.delete_admin(admin_id, current_admin.id)
-            
-            if not success:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Admin tidak ditemukan"
-                )
-            
-            return {"message": "Admin berhasil dihapus"}
-        
-        @self.router.get("/audit-logs/", response_model=PaginatedResponse)
-        async def get_audit_logs(
-            page: int = 1,
-            size: int = 10,
-            action: Optional[str] = None,
-            resource: Optional[str] = None,
-            current_admin: Admin = Depends(get_current_admin),
-            db: Session = Depends(get_db)
-        ):
-            """Ambil audit logs"""
-            admin_service = AdminManagementService(db)
-            skip = (page - 1) * size
-            
-            logs, total = admin_service.get_audit_logs(skip, size, action, resource)
-            
-            return PaginatedResponse(
-                items=[AuditLogResponse.from_orm(log) for log in logs],
-                total=total,
-                page=page,
-                size=size,
-                pages=(total + size - 1) // size
+            # Include Auth routes (permissions, profile, validation)
+            self.router.include_router(
+                self.auth_controller.router,
+                tags=["Admin Auth"],
+                prefix=""
             )
+            
+            # Include Audit routes (audit logs, monitoring)
+            self.router.include_router(
+                self.audit_controller.router,
+                tags=["Admin Audit"],
+                prefix=""
+            )
+            
+            duration = time.time() - start_time
+            logger.info(f"Successfully setup admin management routes in {duration:.3f}s")
+            logger.info("Admin Management Facade Pattern implemented with 3 sub-controllers")
+            
+        except Exception as e:
+            duration = time.time() - start_time
+            logger.error(f"Error setting up admin routes after {duration:.3f}s: {str(e)}", exc_info=True)
+            raise
 
 
-# Initialize controller
+# Initialize facade controller
 admin_management_controller = AdminManagementController()
