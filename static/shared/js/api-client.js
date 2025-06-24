@@ -59,7 +59,7 @@ async function apiRequest(endpoint, options = {}) {
         if (!response.ok) {
             if (response.status === 401) {
                 localStorage.removeItem('adminToken');
-                window.location.href = 'login_android.html';
+                window.location.href = '/static/admin/login_android.html';
                 throw new Error('Unauthorized access');
             }
             throw new Error(`HTTP error! status: ${response.status}`);

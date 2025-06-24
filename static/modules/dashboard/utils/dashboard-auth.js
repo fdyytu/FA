@@ -6,7 +6,7 @@ class DashboardAuth {
 
     checkAuthentication() {
         if (!this.token) {
-            window.location.href = 'admin_login.html';
+            window.location.href = '../login_android.html';
             return false;
         }
         return true;
@@ -14,7 +14,7 @@ class DashboardAuth {
 
     logout() {
         localStorage.removeItem('adminToken');
-        window.location.href = 'admin_login.html';
+        window.location.href = '../login_android.html';
     }
 
     setupLogoutButton() {
