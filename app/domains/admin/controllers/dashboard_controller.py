@@ -43,3 +43,7 @@ class DashboardController:
         except Exception as e:
             logger.error(f"Error initializing dashboard controllers: {str(e)}", exc_info=True)
             raise
+
+
+# Initialize controller instance
+dashboard_controller = DashboardController()

@@ -46,3 +46,7 @@ class ConfigurationController:
         except Exception as e:
             logger.error(f"Error initializing configuration controllers: {str(e)}", exc_info=True)
             raise
+
+
+# Initialize controller instance
+configuration_controller = ConfigurationController()

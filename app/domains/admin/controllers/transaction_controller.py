@@ -43,3 +43,7 @@ class TransactionController:
         except Exception as e:
             logger.error(f"Error initializing transaction controllers: {str(e)}", exc_info=True)
             raise
+
+
+# Initialize controller instance
+transaction_controller = TransactionController()
